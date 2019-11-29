@@ -1,3 +1,3 @@
 struct Konkyo {
-    var text = "Hello, World!"
+    var version = 1
 }
