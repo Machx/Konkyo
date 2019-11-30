@@ -17,15 +17,15 @@
 import Foundation
 
 @propertyWrapper
-struct Atomic<Value> {
-	var value: Value
+public struct Atomic<Value> {
+	public var value: Value
 	let queue = DispatchQueue(label: "com.Konkyo.Atomic.\(String(describing: Value.self))")
 	
-	init(wrappedValue value: Value) {
+	public init(wrappedValue value: Value) {
 		self.value = value
 	}
 	
-	var wrappedValue: Value {
+	public var wrappedValue: Value {
 		get { queue.sync { value } }
 		set { queue.sync { value = newValue } }
 	}
