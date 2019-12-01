@@ -1,10 +1,10 @@
 # Konkyo
 
-A description of this package.
+A set of common code I use across my projects. Not meant to be all encompassing, this package is intended to be a small package that can be used in many different applications.
 
 ## License
 
-Apache 2 License
+The Konkyo Swift Package is licensed under the Apache 2 License.
 ```
 Copyright 2019 Colin Wheeler
 
