@@ -1,3 +1,3 @@
 struct Konkyo {
-    var version = 1
+    static var version = 1
 }
