@@ -1,9 +1,10 @@
 import XCTest
 @testable import Konkyo
 
+@available(OSX 10.12, *)
 final class KonkyoTests: XCTestCase {
 	
-	@Atomic var numbers = [Int]()
+	@Atomic var numbers: [Int] = []
 	
     func testExample() {
         // This is an example of a functional test case.
@@ -14,10 +15,10 @@ final class KonkyoTests: XCTestCase {
 		let queue = DispatchQueue(label: "com.konkyo.test", attributes: [.concurrent])
 		let group = DispatchGroup()
 		
-		for i in 0..<1000 {
+		for _ in 0..<1000 {
 			queue.async(group: group) { [weak self] in
 				guard let self = self else { return }
-				self.numbers.append(i)
+				self.numbers.append(Int.random(in: 1...500))
 			}
 		}
 		
