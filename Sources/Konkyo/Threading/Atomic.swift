@@ -16,17 +16,40 @@
 
 import Foundation
 
+@available(OSX 10.12, *)
 @propertyWrapper
-public struct Atomic<Value> {
+public final class Atomic<Value> {
 	public var value: Value
-	let queue = DispatchQueue(label: "com.Konkyo.Atomic.\(String(describing: Value.self))")
+	//var lock = os_unfair_lock()
+	//private var queue = DispatchQueue(label: "com.Konkyo.\(String(describing: Value.self))")
+	var lock = NSRecursiveLock()
 	
 	public init(wrappedValue value: Value) {
 		self.value = value
 	}
 	
 	public var wrappedValue: Value {
-		get { queue.sync { value } }
-		set { queue.sync { value = newValue } }
+		//get { queue.sync { value } }
+		//set { queue.sync { value = newValue } }
+//		get {
+//			os_unfair_lock_lock(&lock)
+//			defer { os_unfair_lock_unlock(&lock) }
+//			return value
+//		}
+//		set {
+//			os_unfair_lock_lock(&lock)
+//			defer { os_unfair_lock_unlock(&lock) }
+//			value = newValue
+//		}
+		get {
+			lock.lock()
+			defer { lock.unlock() }
+			return value
+		}
+		set {
+			lock.lock()
+			defer { lock.unlock() }
+			value = newValue
+		}
 	}
 }
