@@ -4,8 +4,6 @@ import XCTest
 @available(OSX 10.12, *)
 final class KonkyoTests: XCTestCase {
 	
-	@Atomic var numbers: [Int] = []
-	
     func testExample() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
