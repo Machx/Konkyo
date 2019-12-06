@@ -17,7 +17,7 @@ import Foundation
 
 public final class Atomic<Value> {
 	private var _value: Value
-	private let queue = DispatchQueue(label: "com.Konkyo.Atomic.\(String(describing: Value))")
+	private let queue = DispatchQueue(label: "com.Konkyo.Atomic.\(String(describing: Value.self))")
 	
 	public var value: Value {
 		get {
