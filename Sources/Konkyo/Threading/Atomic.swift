@@ -19,6 +19,10 @@ public final class Atomic<Value> {
 	private var _value: Value
 	private let queue = DispatchQueue(label: "com.Konkyo.Atomic.\(String(describing: Value.self))")
 	
+	init(_ value: Value) {
+		self._value = value
+	}
+	
 	public var value: Value {
 		get {
 			return queue.sync { self._value }
