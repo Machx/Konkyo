@@ -10,8 +10,27 @@ final class KonkyoTests: XCTestCase {
         // results.
         XCTAssertEqual(Konkyo.version, 1)
     }
+	
+	func testAtomic() {
+		let numbers = Atomic<[Int]>([])
+		let queue = DispatchQueue(label: "com.konkyo.unittests", attributes: [.concurrent])
+		let group = DispatchGroup()
+		
+		for i in 1...100 {
+			queue.async(group:group) {
+				numbers.mutate { (numbers) in
+					numbers.append(i)
+				}
+			}
+		}
+		
+		group.wait()
+		
+		XCTAssertEqual(numbers.value.count, 100)
+	}
 
     static var allTests = [
         ("testExample", testExample),
+		("testAtomic", testAtomic),
     ]
 }
