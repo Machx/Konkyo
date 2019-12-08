@@ -37,3 +37,10 @@ open class OperationBase: Operation {
 		}
 	}
 }
+
+open class OperationAsynchronousBase: OperationBase {
+	
+	open override var isAsynchronous: Bool {
+		return true
+	}
+}
