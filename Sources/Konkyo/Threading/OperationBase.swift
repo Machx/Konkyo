@@ -15,7 +15,11 @@
 
 import Foundation
 
-open class OperationBase: Operation {
+open class AsynchronousOperationBase: Operation {
+	
+	open override var isAsynchronous: Bool {
+		return true
+	}
 	
 	var _isExecuting: Bool = false
 	open override var isExecuting: Bool {
@@ -35,12 +39,5 @@ open class OperationBase: Operation {
 			_isFinished = newValue
 			didChangeValue(for: \.isFinished)
 		}
-	}
-}
-
-open class OperationAsynchronousBase: OperationBase {
-	
-	open override var isAsynchronous: Bool {
-		return true
 	}
 }
