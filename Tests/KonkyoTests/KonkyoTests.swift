@@ -16,7 +16,7 @@ final class KonkyoTests: XCTestCase {
 		let queue = DispatchQueue(label: "com.konkyo.unittests", attributes: [.concurrent])
 		let group = DispatchGroup()
 		
-		for i in 1...100 {
+		for i in 1...10000 {
 			queue.async(group:group) {
 				numbers.mutate { (numbers) in
 					numbers.append(i)
@@ -26,7 +26,7 @@ final class KonkyoTests: XCTestCase {
 		
 		group.wait()
 		
-		XCTAssertEqual(numbers.value.count, 100)
+		XCTAssertEqual(numbers.value.count, 10000)
 	}
 
     static var allTests = [
