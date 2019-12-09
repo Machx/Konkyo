@@ -19,7 +19,7 @@ public final class Atomic<Value> {
 	private var _value: Value
 	private let queue = DispatchQueue(label: "com.Konkyo.Atomic.\(String(describing: Value.self))")
 	
-	init(_ value: Value) {
+	public init(_ value: Value) {
 		self._value = value
 	}
 	
