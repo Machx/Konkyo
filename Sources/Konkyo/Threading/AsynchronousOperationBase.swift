@@ -21,7 +21,7 @@ open class AsynchronousOperationBase: Operation {
 		return true
 	}
 	
-	var _isExecuting: Bool = false
+	private var _isExecuting: Bool = false
 	open override var isExecuting: Bool {
 		get { _isExecuting }
 		set {
@@ -31,7 +31,7 @@ open class AsynchronousOperationBase: Operation {
 		}
 	}
 	
-	var _isFinished: Bool = false
+	private var _isFinished: Bool = false
 	open override var isFinished: Bool {
 		get { _isFinished }
 		set {
