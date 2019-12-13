@@ -48,6 +48,17 @@ final class KonkyoTests: XCTestCase {
 		
 		XCTAssertEqual(numbers.value.count, 10000)
 	}
+	
+	func testOperation() {
+		let queue = OperationQueue()
+		queue.maxConcurrentOperationCount = 1
+		
+		let op = IncrementOp(value: 1)
+		queue.addOperation(op)
+		
+		queue.waitUntilAllOperationsAreFinished()
+		XCTAssertEqual(op.value, 2)
+	}
 
     static var allTests = [
         ("testExample", testExample),
