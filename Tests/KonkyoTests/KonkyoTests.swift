@@ -31,6 +31,7 @@ final class KonkyoTests: XCTestCase {
         XCTAssertEqual(Konkyo.version, 1)
     }
 	
+	/// Make sure that Atomic mutation 
 	func testAtomic() {
 		let numbers = Atomic<[Int]>([])
 		let queue = DispatchQueue(label: "com.konkyo.unittests", attributes: [.concurrent])
@@ -49,6 +50,7 @@ final class KonkyoTests: XCTestCase {
 		XCTAssertEqual(numbers.value.count, 10000)
 	}
 	
+	/// Test Operation Access on isExecuting isFinished in AsyncOperationBase
 	func testOperation() {
 		let queue = OperationQueue()
 		queue.maxConcurrentOperationCount = 1
