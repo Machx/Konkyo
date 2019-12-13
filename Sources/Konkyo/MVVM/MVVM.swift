@@ -6,3 +6,7 @@
 //
 
 import Foundation
+
+protocol MVVM<T> {
+	var value:T
+}
