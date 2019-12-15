@@ -24,9 +24,7 @@ public final class Atomic<Value> {
 	}
 	
 	public var value: Value {
-		get {
-			return queue.sync { self._value }
-		}
+		get { return queue.sync { self._value } }
 	}
 	
 	public func mutate(_ transform: (inout Value) -> Void) {
