@@ -15,6 +15,8 @@
 
 import Foundation
 
+
+/// Operation Subclass that overrides isExecuting and isFinished while doing safe KVO.
 open class AsynchronousOperationBase: Operation {
 	
 	open override var isAsynchronous: Bool {
