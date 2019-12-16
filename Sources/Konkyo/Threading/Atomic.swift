@@ -23,10 +23,13 @@ public final class Atomic<Value> {
 		self._value = value
 	}
 	
+	/// Safely Reads the value and returns the value in a thread safe manner.
 	public var value: Value {
 		get { return queue.sync { self._value } }
 	}
 	
+	/// Passes the value to you and allows you to safely mutate the value.
+	/// - Parameter transform: a block in which the value is passed to you for safe mutation.
 	public func mutate(_ transform: (inout Value) -> Void) {
 		queue.sync {
 			transform(&self._value)
