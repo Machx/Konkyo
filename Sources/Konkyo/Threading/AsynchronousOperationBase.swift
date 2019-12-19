@@ -35,6 +35,7 @@ open class AsynchronousOperationBase: Operation {
 	}
 	
 	private var _isFinished: Bool = false
+	/// Automatically override the isFinished to make it assignable and do KVO
 	open override var isFinished: Bool {
 		get { _isFinished }
 		set {
