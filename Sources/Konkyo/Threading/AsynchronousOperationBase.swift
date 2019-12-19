@@ -24,6 +24,7 @@ open class AsynchronousOperationBase: Operation {
 	}
 	
 	private var _isExecuting: Bool = false
+	/// Automatically override the isExecuting to make it assignable and do KVO
 	open override var isExecuting: Bool {
 		get { _isExecuting }
 		set {
