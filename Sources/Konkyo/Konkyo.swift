@@ -1,3 +1,7 @@
 struct Konkyo {
-    static var version = 1
+	struct Version {
+		let major = 0
+		let minor = 1
+		let bugfix = 0
+	}
 }
