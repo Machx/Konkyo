@@ -28,7 +28,10 @@ final class KonkyoTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        XCTAssertEqual(Konkyo.version, 1)
+		let version = Konkyo.Version()
+		XCTAssertEqual(version.major, 0)
+		XCTAssertEqual(version.minor, 1)
+		XCTAssertEqual(version.bugfix, 0)
     }
 	
 	/// Make sure that Atomic mutation 
