@@ -15,6 +15,6 @@
 
 import Foundation
 
-protocol MVVM<T> {
-	var value:T
-}
+//protocol MVVM<T> {
+//	var value:T
+//}
