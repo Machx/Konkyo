@@ -24,10 +24,7 @@ public class IncrementOp: AsynchronousOperationBase {
 @available(OSX 10.12, *)
 final class KonkyoTests: XCTestCase {
 	
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
+    func testVersion() {
 		let version = Konkyo.Version()
 		XCTAssertEqual(version.major, 0)
 		XCTAssertEqual(version.minor, 1)
