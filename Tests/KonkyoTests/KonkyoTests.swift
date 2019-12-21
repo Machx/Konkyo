@@ -63,7 +63,7 @@ final class KonkyoTests: XCTestCase {
 	}
 
     static var allTests = [
-        ("testExample", testExample),
+        ("testVersion", testVersion),
 		("testAtomic", testAtomic),
     ]
 }
