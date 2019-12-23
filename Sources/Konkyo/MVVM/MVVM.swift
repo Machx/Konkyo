@@ -15,6 +15,7 @@
 
 import Foundation
 
+/// Common set of MVVM related operations as described in the protocol.
 public protocol MVVM<T> {
 	var value: T { get set }
 }
