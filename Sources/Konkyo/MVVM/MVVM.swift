@@ -15,10 +15,6 @@
 
 import Foundation
 
-//protocol MVVM<T> {
-//	var value:T
-//}
-
 public protocol MVVM<T> {
 	var value: T { get set }
 }
