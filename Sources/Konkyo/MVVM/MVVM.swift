@@ -17,5 +17,7 @@ import Foundation
 
 /// Common set of MVVM related operations as described in the protocol.
 public protocol MVVM<T> {
+	
+	/// The value that a view is being bound to.
 	var value: T { get set }
 }
