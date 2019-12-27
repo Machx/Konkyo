@@ -24,6 +24,8 @@ public final class Atomic<Value> {
 	}
 	
 	/// Safely Reads the value and returns the value in a thread safe manner.
+	///
+	/// - returns: The wrapped value in a thread safe manner.
 	public var value: Value {
 		get { return queue.sync { self._value } }
 	}
