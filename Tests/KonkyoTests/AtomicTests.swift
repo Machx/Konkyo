@@ -6,3 +6,9 @@
 //
 
 import Foundation
+import XCTest
+
+@available(OSX 10.12, *)
+final class AtomicTests: XCTestCase {
+	
+}
