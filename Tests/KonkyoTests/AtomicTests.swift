@@ -11,4 +11,11 @@ import XCTest
 @available(OSX 10.12, *)
 final class AtomicTests: XCTestCase {
 	
+	func testAtomic() {
+		XCTAssertEqual(3, 3)
+	}
+	
+	static var allTests = [
+		("testAtomic", testAtomic),
+    ]
 }
