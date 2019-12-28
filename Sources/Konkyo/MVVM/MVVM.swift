@@ -16,7 +16,8 @@
 import Foundation
 
 /// Common set of MVVM related operations as described in the protocol.
-public protocol MVVM<T> {
+public protocol MVVM {
+	associatedtype T
 	
 	/// The value that a view is being bound to.
 	var value: T { get set }
