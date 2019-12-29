@@ -31,25 +31,6 @@ final class KonkyoTests: XCTestCase {
 		XCTAssertEqual(version.bugfix, 0)
     }
 	
-	/// Make sure that Atomic mutation 
-	func testAtomic() {
-		let numbers = Atomic<[Int]>([])
-		let queue = DispatchQueue(label: "com.konkyo.unittests", attributes: [.concurrent])
-		let group = DispatchGroup()
-		
-		for i in 1...10000 {
-			queue.async(group:group) {
-				numbers.mutate { (numbers) in
-					numbers.append(i)
-				}
-			}
-		}
-		
-		group.wait()
-		
-		XCTAssertEqual(numbers.value.count, 10000)
-	}
-	
 	/// Test Operation Access on isExecuting isFinished in AsyncOperationBase
 	func testOperation() {
 		let queue = OperationQueue()
@@ -64,6 +45,5 @@ final class KonkyoTests: XCTestCase {
 
     static var allTests = [
         ("testVersion", testVersion),
-		("testAtomic", testAtomic),
     ]
 }
