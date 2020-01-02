@@ -36,6 +36,9 @@ final class AtomicTests: XCTestCase {
 		group.wait()
 		
 		XCTAssertEqual(numbers.value.count, 10000)
+		
+		let totalValue = numbers.value.reduce(0, +)
+		XCTAssertEqual(totalValue, 50005000)
 	}
 	
 	static var allTests = [
