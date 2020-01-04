@@ -19,6 +19,5 @@ import Foundation
 public protocol MVVM {
 	associatedtype T
 	
-	/// The value that a view is being bound to.
 	var value: T { get set }
 }
