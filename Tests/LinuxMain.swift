@@ -16,7 +16,11 @@
 import XCTest
 
 import KonkyoTests
+import AtomicTests
+import OperationTests
 
 var tests = [XCTestCaseEntry]()
 tests += KonkyoTests.allTests()
+tests += OperationTests.allTests()
+tests += AtomicTests.allTests()
 XCTMain(tests)
