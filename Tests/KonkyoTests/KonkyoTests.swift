@@ -16,8 +16,6 @@
 import XCTest
 @testable import Konkyo
 
-
-
 @available(OSX 10.12, *)
 final class KonkyoTests: XCTestCase {
 	
@@ -28,8 +26,6 @@ final class KonkyoTests: XCTestCase {
 		XCTAssertEqual(version.bugfix, 0)
     }
 	
-	
-
     static var allTests = [
         ("testVersion", testVersion),
     ]
