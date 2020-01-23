@@ -14,7 +14,16 @@
 /// limitations under the License.
 
 import XCTest
-@testable import Konkyo
+import Foundation
+import Konkyo
+
+class MyClass {
+	var myNum = 0
+	
+	init() {
+		myNum = 0
+	}
+}
 
 @available(OSX 10.12, *)
 final class KonkyoTests: XCTestCase {
@@ -26,7 +35,16 @@ final class KonkyoTests: XCTestCase {
 		XCTAssertEqual(version.bugfix, 0)
     }
 	
+	func testCreationOperator() {
+		let thing = MyClass() <- {
+			$0.myNum = 5
+		}
+		
+		XCTAssertEqual(thing.myNum, 5)
+	}
+	
     static var allTests = [
         ("testVersion", testVersion),
+		("testCreationOperator", testCreationOperator)
     ]
 }
