@@ -15,7 +15,7 @@
 
 import XCTest
 import Foundation
-import Konkyo
+@testable import Konkyo
 
 class MyClass {
 	var myNum = 0
