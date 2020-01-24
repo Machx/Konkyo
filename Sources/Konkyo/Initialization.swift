@@ -15,6 +15,23 @@
 
 import Foundation
 
+/// Allows for easier time initializing objects
+/// Instead of
+/// ```
+/// let myButton = {
+///    let button = UIButton()
+///    //.. customize button
+///    return button
+///  }()
+/// ```
+/// you can instead do
+/// ```
+/// let myButton = UIButton() <- {
+///     $0.setTitle("title", for: .normal)
+///     // customize...
+/// }
+/// ```
+
 infix operator <-
 public func <-<T>(object: T, function: (T)->Void) -> T {
 	function(object)
