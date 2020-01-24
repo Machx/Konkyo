@@ -33,6 +33,12 @@ import Foundation
 /// ```
 
 infix operator <-
+
+
+/// Takes the LHS and passes it to a fuction which is executed and the result returned
+/// - Parameters:
+///   - object: the object to be passed to function and returned
+///   - function: the function to operate on object
 public func <-<T>(object: T, function: (T)->Void) -> T {
 	function(object)
 	return object
