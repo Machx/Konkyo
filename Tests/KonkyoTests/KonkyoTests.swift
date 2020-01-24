@@ -35,16 +35,7 @@ final class KonkyoTests: XCTestCase {
 		XCTAssertEqual(version.bugfix, 0)
     }
 	
-	func testCreationOperator() {
-		let thing = MyClass() <- {
-			$0.myNum = 5
-		}
-		
-		XCTAssertEqual(thing.myNum, 5)
-	}
-	
     static var allTests = [
         ("testVersion", testVersion),
-		("testCreationOperator", testCreationOperator)
     ]
 }
