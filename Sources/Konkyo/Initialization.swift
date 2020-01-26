@@ -39,6 +39,7 @@ infix operator <-
 /// - Parameters:
 ///   - object: the object to be passed to function and returned
 ///   - function: the function to operate on object
+/// - Returns: the result of function applied to object
 public func <-<T>(object: T, function: (T)->Void) -> T {
 	function(object)
 	return object
