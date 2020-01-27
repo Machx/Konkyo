@@ -17,14 +17,6 @@ import XCTest
 import Foundation
 @testable import Konkyo
 
-class MyClass {
-	var myNum = 0
-	
-	init() {
-		myNum = 0
-	}
-}
-
 @available(OSX 10.12, *)
 final class KonkyoTests: XCTestCase {
 	

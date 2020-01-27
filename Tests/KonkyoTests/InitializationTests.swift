@@ -17,10 +17,18 @@ import Foundation
 import XCTest
 @testable import Konkyo
 
+class MyTestClass {
+	var myNum = 0
+	
+	init() {
+		myNum = 0
+	}
+}
+
 final class InitializationTests: XCTestCase {
 	
 	func testCreationOperator() {
-		let thing = MyClass() <- {
+		let thing = MyTestClass() <- {
 			$0.myNum = 5
 		}
 		
