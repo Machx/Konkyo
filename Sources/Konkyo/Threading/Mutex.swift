@@ -15,6 +15,7 @@
 
 import Foundation
 
+/// Simple wrapper around the pthread_mutex_t c api.
 public final class Mutex {
 	private typealias _MutexPointer = UnsafeMutablePointer<pthread_mutex_t>
 	
@@ -30,14 +31,19 @@ public final class Mutex {
 		mutex.deallocate()
 	}
 	
+	/// Locks the mutex if it is unlocked. If it is locked then it blocks until unlocked.
 	public func lock() {
 		pthread_mutex_lock(mutex)
 	}
 	
+	/// Unlocks the mutex
 	public func unlock() {
 		pthread_mutex_unlock(mutex)
 	}
 	
+	/// Tries to lock the mutex while not blocking the current thread until the lock is acequired.
+	///
+	/// - returns: True if the lock was acquired, false if the lock could not be acquired.
 	public func tryLock() -> Bool {
 		return pthread_mutex_trylock(mutex) == 0
 	}
