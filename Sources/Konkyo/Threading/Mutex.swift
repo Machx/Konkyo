@@ -21,7 +21,7 @@ public final class Mutex {
 	
 	private var mutex = _MutexPointer.allocate(capacity: 1)
 	
-	init() {
+	public init() {
 		pthread_mutex_init(mutex, nil)
 	}
 	
