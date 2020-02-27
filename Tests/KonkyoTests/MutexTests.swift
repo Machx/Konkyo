@@ -31,7 +31,7 @@ final class MutexTests: XCTestCase {
 			mutex.unlock()
 		}
 		
-		let expected = (iterations / 2) * (iterations + 1)
+		let expected = (iterations * (iterations + 1)) / 2
 		
 		XCTAssertEqual(total, expected, "Failed with Iterations: \(iterations)")
 	}
