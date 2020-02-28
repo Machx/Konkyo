@@ -16,7 +16,7 @@
 struct Konkyo {
 	struct Version {
 		let major = 0
-		let minor = 1
+		let minor = 2
 		let bugfix = 0
 	}
 }
