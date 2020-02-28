@@ -26,7 +26,7 @@ final class MutexTests: XCTestCase {
 		let iterations = Int.random(in: 5000...15000)
 		DispatchQueue.concurrentPerform(iterations: iterations) { (index) in
 			mutex.lock()
-			total += index + 1 // Because Indexes start at 0 so we adjust...
+			total += index + 1 // Adjust because indexes start at 0.
 			mutex.unlock()
 		}
 		
