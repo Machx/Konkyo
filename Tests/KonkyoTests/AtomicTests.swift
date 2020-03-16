@@ -22,23 +22,19 @@ final class AtomicTests: XCTestCase {
 	
 	func testAtomic() {
 		let numbers = Atomic<[Int]>([])
-		let queue = DispatchQueue(label: "com.konkyo.unittests", attributes: [.concurrent])
-		let group = DispatchGroup()
 		
-		for i in 1...10000 {
-			queue.async(group:group) {
-				numbers.mutate { (numbers) in
-					numbers.append(i)
-				}
+		let iterations = Int.random(in: 5_000...15_000)
+		DispatchQueue.concurrentPerform(iterations: iterations) { (index) in
+			numbers.mutate { (numbers) in
+				numbers.append(index + 1)
 			}
 		}
 		
-		group.wait()
-		
-		XCTAssertEqual(numbers.value.count, 10000)
+		XCTAssertEqual(numbers.value.count, iterations)
 		
 		let totalValue = numbers.value.reduce(0, +)
-		XCTAssertEqual(totalValue, 50005000)
+		let expected = (iterations * (iterations + 1)) / 2
+		XCTAssertEqual(totalValue, expected)
 	}
 	
 	static var allTests = [
