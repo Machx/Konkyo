@@ -15,7 +15,7 @@
 
 import Foundation
 
-/// Common set of MVVM related operations as described in the protocol.
+//FIXME: Need to expand on this code or delete it...
 public protocol MVVM {
 	associatedtype T
 	
