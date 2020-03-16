@@ -17,9 +17,8 @@ import Foundation
 
 @available(macOS 10.12,iOS 10.10, macCatalyst 13.0, tvOS 10.0, watchOS 3.0, *)
 public final class UnfairLock {
-	private typealias UnfairLock = os_unfair_lock
 	
-	private var unfairLock: UnfairLock = os_unfair_lock()
+	private var unfairLock = os_unfair_lock()
 	
 	public init() {
 	}
