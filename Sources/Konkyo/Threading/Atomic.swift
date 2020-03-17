@@ -17,6 +17,8 @@ import Foundation
 
 
 /// Provides Thread Safe Atomic access to a variable
+///
+/// 1.0.0
 public final class Atomic<Value> {
 	private var _value: Value
 	private let queue = DispatchQueue(label: "com.Konkyo.Atomic.\(String(describing: Value.self))")
@@ -28,6 +30,7 @@ public final class Atomic<Value> {
 	/// Safely Reads the value and returns the value in a thread safe manner.
 	///
 	/// - returns: The wrapped value in a thread safe manner.
+	/// 1.0.0
 	public var value: Value {
 		get { return queue.sync { self._value } }
 	}
@@ -40,6 +43,7 @@ public final class Atomic<Value> {
 	/// function is provided for those things that need only quick read only access.
 	///
 	/// - Parameter transform: a block in which the value is passed to you for safe mutation.
+	/// 1.0.0
 	public func mutate(_ transform: (inout Value) -> Void) {
 		queue.sync {
 			transform(&self._value)
