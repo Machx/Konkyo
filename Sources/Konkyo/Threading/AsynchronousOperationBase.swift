@@ -17,6 +17,12 @@ import Foundation
 
 
 /// Operation Subclass that overrides isExecuting and isFinished while doing safe KVO.
+///
+/// Automatically setup Operation so isAsynchronous returns true and isExecuting and
+/// isFinished are settable and automatically trigger KVO willChangeValue(for:) and
+/// didChangeValue(for:) notifications
+///
+/// 1.0.0
 open class AsynchronousOperationBase: Operation {
 	
 	open override var isAsynchronous: Bool {
