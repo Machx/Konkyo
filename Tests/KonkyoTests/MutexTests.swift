@@ -23,7 +23,7 @@ final class MutexTests: XCTestCase {
 	func testMutex() {
 		let mutex = Mutex()
 		var total = 0
-		let iterations = Int.random(in: 5000...15000)
+		let iterations = Int.random(in: 15_000...20000)
 		DispatchQueue.concurrentPerform(iterations: iterations) { (index) in
 			mutex.lock()
 			total += index + 1 // Adjust because indexes start at 0.
