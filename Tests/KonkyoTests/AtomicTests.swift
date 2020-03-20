@@ -23,7 +23,7 @@ final class AtomicTests: XCTestCase {
 	func testAtomic() {
 		let numbers = Atomic<[Int]>([])
 		
-		let iterations = Int.random(in: 5_000...15_000)
+		let iterations = Int.random(in: 15_000...20_000)
 		DispatchQueue.concurrentPerform(iterations: iterations) { (index) in
 			numbers.mutate { (numbers) in
 				numbers.append(index + 1)
