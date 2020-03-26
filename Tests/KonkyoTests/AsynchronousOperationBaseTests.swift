@@ -33,7 +33,14 @@ final class MyOperation: AsynchronousOperationBase {
 final class AsynchronousOperationBaseTests: XCTestCase {
 	
 	func testAsyncOperation() {
+		let operation = MyOperation()
+		let queue = OperationQueue()
 		
+		queue.addOperation(operation)
+		
+		queue.waitUntilAllOperationsAreFinished()
+		
+		XCTAssertEqual(operation.num, 152)
 	}
 	
 	static var allTests = [
