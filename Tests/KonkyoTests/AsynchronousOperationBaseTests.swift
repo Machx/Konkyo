@@ -17,6 +17,19 @@ import Foundation
 import XCTest
 import Konkyo
 
+final class MyOperation: AsynchronousOperationBase {
+	var num = 1
+	
+	override func start() {
+		isExecuting = true
+		DispatchQueue.global(qos: .background).async { [weak self] in
+			guard let self = self else { return }
+			self.num = 152
+			self.isFinished = true
+		}
+	}
+}
+
 final class AsynchronousOperationBaseTests: XCTestCase {
 	
 	func testAsyncOperation() {
