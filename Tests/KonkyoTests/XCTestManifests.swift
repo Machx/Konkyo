@@ -21,7 +21,10 @@ public func allTests() -> [XCTestCaseEntry] {
         testCase(KonkyoTests.allTests),
 		testCase(AtomicTests.allTests),
 		testCase(InitializationTests.allTests),
-		testCase(OperationTests.allTests)
+		testCase(OperationTests.allTests),
+		testCase(AsynchronousOperationBaseTests.allTests),
+		testCase(MutexTests.allTests),
+		testCase(UnfairLockTests.allTests),
     ]
 }
 #endif
