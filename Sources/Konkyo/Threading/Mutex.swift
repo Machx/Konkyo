@@ -23,8 +23,10 @@ public final class Mutex {
 	}
 	
 	private typealias _MutexPointer = UnsafeMutablePointer<pthread_mutex_t>
+	private typealias _MutexAttributesPointer = UnsafeMutablePointer<pthread_mutexattr_t>
 	
 	private var mutex = _MutexPointer.allocate(capacity: 1)
+	private var mutexAttr = _MutexAttributesPointer.allocate(capacity: 1)
 	
 	public init(type: MutexType = .normal) {
 	}
