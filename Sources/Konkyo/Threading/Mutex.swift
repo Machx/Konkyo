@@ -29,6 +29,18 @@ public final class Mutex {
 	private var mutexAttr = _MutexAttributesPointer.allocate(capacity: 1)
 	
 	public init(type: MutexType = .normal) {
+		//FIXME: CHECK mutexattr and mutex init for return values...
+		pthread_mutexattr_init(mutexAttr)
+		switch type {
+		case .normal:
+			pthread_mutexattr_settype(mutexAttr, PTHREAD_MUTEX_NORMAL)
+		case .recursive:
+			pthread_mutexattr_settype(mutexAttr, PTHREAD_MUTEX_RECURSIVE)
+		}
+		pthread_mutex_init(mutex, mutexAttr)
+		pthread_mutexattr_destroy(mutexAttr)
+		mutexAttr.deinitialize(count: 1)
+		mutexAttr.deallocate()
 	}
 	
 	deinit {
