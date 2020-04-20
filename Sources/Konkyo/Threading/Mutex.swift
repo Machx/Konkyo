@@ -13,7 +13,7 @@
 /// See the License for the specific language governing permissions and
 /// limitations under the License.
 
-import Foundation
+import Darwin.POSIX
 
 /// Simple wrapper around the pthread_mutex_t c api.
 public final class Mutex {
