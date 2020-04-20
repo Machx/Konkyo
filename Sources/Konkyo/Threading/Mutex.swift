@@ -17,12 +17,16 @@ import Darwin.POSIX
 
 /// Simple wrapper around the pthread_mutex_t c api.
 public final class Mutex {
+	public enum MutexType {
+		case normal
+		case recursive
+	}
+	
 	private typealias _MutexPointer = UnsafeMutablePointer<pthread_mutex_t>
 	
 	private var mutex = _MutexPointer.allocate(capacity: 1)
 	
-	public init() {
-		pthread_mutex_init(mutex, nil)
+	public init(type: MutexType = .normal) {
 	}
 	
 	deinit {
