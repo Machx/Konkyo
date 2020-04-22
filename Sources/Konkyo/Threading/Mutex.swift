@@ -30,7 +30,10 @@ public final class Mutex {
 	
 	public init(type: MutexType = .normal) {
 		//FIXME: CHECK mutexattr and mutex init for return values...
-		pthread_mutexattr_init(mutexAttr)
+		let mutexAttrResult = pthread_mutexattr_init(mutexAttr)
+		if mutexAttrResult == ENOMEM {
+			fatalError("Mutex has no memory to create pthread_mutex_attr...")
+		}
 		switch type {
 		case .normal:
 			pthread_mutexattr_settype(mutexAttr, PTHREAD_MUTEX_NORMAL)
