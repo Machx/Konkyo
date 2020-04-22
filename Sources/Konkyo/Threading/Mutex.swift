@@ -40,7 +40,10 @@ public final class Mutex {
 		case .recursive:
 			pthread_mutexattr_settype(mutexAttr, PTHREAD_MUTEX_RECURSIVE)
 		}
-		pthread_mutex_init(mutex, mutexAttr)
+		let mutexInitResult = pthread_mutex_init(mutex, mutexAttr)
+		if mutexInitResult == ENOMEM {
+			fatalError("Mutex has no memory to create pthread_mutex_t")
+		}
 		pthread_mutexattr_destroy(mutexAttr)
 		mutexAttr.deinitialize(count: 1)
 		mutexAttr.deallocate()
