@@ -35,6 +35,22 @@ final class MutexTests: XCTestCase {
 		XCTAssertEqual(total, expected, "Failed with Iterations: \(iterations)")
 	}
 	
+	func testRecursiveMutex() {
+		let mutex = Mutex(type: .recursive)
+		let expectation = XCTestExpectation()
+		
+		DispatchQueue.global(qos: .background).async {
+			mutex.lock()
+			mutex.lock()
+
+			expectation.fulfill()
+			
+			mutex.unlock()
+		}
+		
+		wait(for: [expectation], timeout: 2.0)
+	}
+	
 	
     static var allTests = [
         ("testMutex", testMutex),
