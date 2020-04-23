@@ -29,7 +29,6 @@ public final class Mutex {
 	private var mutexAttr = _MutexAttributesPointer.allocate(capacity: 1)
 	
 	public init(type: MutexType = .normal) {
-		//FIXME: CHECK mutexattr and mutex init for return values...
 		let mutexAttrResult = pthread_mutexattr_init(mutexAttr)
 		if mutexAttrResult == ENOMEM {
 			fatalError("Mutex has no memory to create pthread_mutex_attr...")
