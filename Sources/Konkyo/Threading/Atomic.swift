@@ -15,7 +15,6 @@
 
 import Foundation
 
-
 /// Provides Thread Safe Atomic access to a variable
 ///
 /// 1.0.0
