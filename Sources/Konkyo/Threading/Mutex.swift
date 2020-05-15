@@ -28,6 +28,8 @@ public final class Mutex {
 	private var mutex = _MutexPointer.allocate(capacity: 1)
 	private var mutexAttr = _MutexAttributesPointer.allocate(capacity: 1)
 	
+	/// Initializes the Mutex. If desired the type can be set to allow for creating a recursive mutex.
+	/// - Parameter type: The type of mutex. The default is normal, but .recursive can be set to allow a recursive mutex.
 	public init(type: MutexType = .normal) {
 		let mutexAttrResult = pthread_mutexattr_init(mutexAttr)
 		if mutexAttrResult == ENOMEM {
