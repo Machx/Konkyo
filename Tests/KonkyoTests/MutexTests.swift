@@ -46,6 +46,7 @@ final class MutexTests: XCTestCase {
 			expectation.fulfill()
 			
 			mutex.unlock()
+			mutex.unlock()
 		}
 		
 		wait(for: [expectation], timeout: 2.0)
