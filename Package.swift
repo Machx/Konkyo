@@ -30,5 +30,6 @@ let package = Package(
         .testTarget(
             name: "KonkyoTests",
             dependencies: ["Konkyo"]),
-    ]
+    ],
+	swiftLanguageVersions: [.v5]
 )
