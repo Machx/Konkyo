@@ -31,20 +31,14 @@ public final class Mutex {
 	/// Initializes the Mutex. If desired the type can be set to allow for creating a recursive mutex.
 	/// - Parameter type: The type of mutex. The default is normal, but .recursive can be set to allow a recursive mutex.
 	public init(type: MutexType = .normal) {
-		let mutexAttrResult = pthread_mutexattr_init(mutexAttr)
-		if mutexAttrResult == ENOMEM {
-			fatalError("Mutex has no memory to create pthread_mutex_attr...")
-		}
+		pthread_mutexattr_init(mutexAttr)
 		switch type {
 		case .normal:
 			pthread_mutexattr_settype(mutexAttr, PTHREAD_MUTEX_NORMAL)
 		case .recursive:
 			pthread_mutexattr_settype(mutexAttr, PTHREAD_MUTEX_RECURSIVE)
 		}
-		let mutexInitResult = pthread_mutex_init(mutex, mutexAttr)
-		if mutexInitResult == ENOMEM {
-			fatalError("Mutex has no memory to create pthread_mutex_t")
-		}
+		pthread_mutex_init(mutex, mutexAttr)
 		pthread_mutexattr_destroy(mutexAttr)
 		mutexAttr.deinitialize(count: 1)
 		mutexAttr.deallocate()
