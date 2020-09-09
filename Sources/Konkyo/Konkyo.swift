@@ -13,7 +13,7 @@
 /// See the License for the specific language governing permissions and
 /// limitations under the License.
 
-struct Konkyo {
+public struct Konkyo {
 	struct Version {
 		let major = 0
 		let minor = 3
