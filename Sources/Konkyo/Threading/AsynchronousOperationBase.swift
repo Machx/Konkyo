@@ -33,6 +33,7 @@ open class AsynchronousOperationBase: Operation {
 	open override var isExecuting: Bool {
 		get { _isExecuting }
 		set {
+			guard _isExecuting != newValue else { return }
 			willChangeValue(for: \.isExecuting)
 			_isExecuting = newValue
 			didChangeValue(for: \.isExecuting)
@@ -43,6 +44,7 @@ open class AsynchronousOperationBase: Operation {
 	open override var isFinished: Bool {
 		get { _isFinished }
 		set {
+			guard _isFinished != newValue else { return }
 			willChangeValue(for: \.isFinished)
 			_isFinished = newValue
 			didChangeValue(for: \.isFinished)
