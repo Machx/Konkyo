@@ -16,11 +16,11 @@
 import Foundation
 import Darwin.sys.sysctl
 
-final class CPUInfo {
+public final class CPUInfo {
 	/// Returns the number of CPU Cores on Device
 	///
 	/// - returns: Number of CPU Cores on Device
-	class func cpuCoreCount() -> Int {
+	public class func cpuCoreCount() -> Int {
 		var size:Int = 0
 		sysctlbyname("hw.ncpu", nil, &size, nil, 0)
 		var ncpu:Int = 0
