@@ -34,6 +34,7 @@ final class AsynchronousOperationBaseTests: XCTestCase {
 	
 	func testAsyncOperation() {
 		let operation = MyOperation()
+		XCTAssertTrue(operation.isAsynchronous)
 		let queue = OperationQueue()
 		
 		queue.addOperation(operation)
