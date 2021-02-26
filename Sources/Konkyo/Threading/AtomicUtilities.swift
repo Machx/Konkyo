@@ -14,3 +14,11 @@
 /// limitations under the License.
 
 import Foundation
+
+public func CWAtomicCompareAndSwap(_ value: inout Comparable, expected: Comparable, newValue: Any) -> Bool {
+	return DispatchQueue(label: "com.Konkyo.CWAtomicCompareAndSwap").sync {
+		guard value == expected else { return false }
+		value = newValue
+		return true
+	}
+}
