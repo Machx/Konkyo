@@ -16,11 +16,11 @@ final class RollingDictionaryTests: XCTestCase {
 		
 		dictionary["Ted"] = 1
 		
-		let keys1 = dictionary.keys
-		
-		XCTAssertEqual(keys1, 1)
-		XCTAssertEqual(["Ted"], keys1)
+		XCTAssertEqual(dictionary["Ted"], 1)
 		
 		dictionary["Lasso"] = 2
+		
+		XCTAssertEqual(dictionary["Lasso"], 2)
+		XCTAssertNil(dictionary["Ted"])
 	}
 }
