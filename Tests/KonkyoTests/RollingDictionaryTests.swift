@@ -11,7 +11,7 @@ import Konkyo
 
 final class RollingDictionaryTests: XCTestCase {
 	
-	func testBasicRollingDictionary() {
+	func testBasicRollingDictionaryWith1Value() {
 		var dictionary = RollingDictionary<String,Int>(limit: 1)
 		
 		dictionary["Ted"] = 1
