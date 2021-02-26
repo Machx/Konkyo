@@ -39,7 +39,7 @@ public struct RollingDictionary<Key:Hashable,Value> {
 			if oldValue == nil {
 				self._keys.append(key)
 			}
-			if _keys.count == _limit {
+			if _keys.count > _limit {
 				_dictionary.removeValue(forKey: _keys[0])
 			}
 		}
