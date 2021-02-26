@@ -15,10 +15,11 @@
 
 import Foundation
 
-public func CWAtomicCompareAndSwap(_ value: inout Comparable, expected: Comparable, newValue: Any) -> Bool {
-	return DispatchQueue(label: "com.Konkyo.CWAtomicCompareAndSwap").sync {
-		guard value == expected else { return false }
-		value = newValue
-		return true
-	}
-}
+//experimental do not use
+//public func CWAtomicCompareAndSwap(_ value: inout Comparable, expected: Comparable, newValue: Any) -> Bool {
+//	return DispatchQueue(label: "com.Konkyo.CWAtomicCompareAndSwap").sync {
+//		guard value == expected else { return false }
+//		value = newValue
+//		return true
+//	}
+//}
