@@ -15,7 +15,14 @@
 
 import Foundation
 
-public struct RollingDictionary<Key:Hashable,Value> {
+public struct RollingDictionary<Key:Hashable,Value>: ExpressibleByDictionaryLiteral {
+	public init(dictionaryLiteral elements: (Key, Value)...) {
+		self.init()
+		for element in elements {
+			self[element.0] = element.1
+		}
+	}
+	
 	var _keys: Array<Key>
 	var _dictionary: Dictionary<Key,Value>
 	var _limit: Int
