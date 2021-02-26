@@ -27,6 +27,12 @@ public struct RollingDictionary<Key:Hashable,Value>: ExpressibleByDictionaryLite
 	var _dictionary: Dictionary<Key,Value>
 	var _limit: Int
 	
+	init() {
+		_keys = [Key]()
+		_dictionary = [Key: Value]()
+		_limit = Int.max
+	}
+	
 	public init(limit keyLimit: Int) {
 		_keys = [Key]()
 		_dictionary = [Key: Value]()
