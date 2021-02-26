@@ -14,3 +14,34 @@
 /// limitations under the License.
 
 import Foundation
+
+public struct RollingDictionary<Key:Hashable,Value> {
+	var keys: Array<Key>
+	var dictionary: Dictionary<Key,Value>
+	var limit: Int
+	
+	init(limit keyLimit: Int) {
+		keys = [Key]()
+		dictionary = [Key: Value]()
+		limit = keyLimit
+	}
+	
+	subscript(key: Key) -> Value? {
+		get {
+			dictionary[key]
+		}
+		set(newValue) {
+			guard let newValue = newValue else {
+				self.dictionary.removeValue(forKey: key)
+				return
+			}
+			let oldValue = self.dictionary.updateValue(newValue!, forKey: key)
+			if oldValue == nil {
+				self.keys.append(key)
+			}
+			guard keys.count <= limit else {
+				dictionary.removeValue(forKey: keys[0])
+			}
+		}
+	}
+}
