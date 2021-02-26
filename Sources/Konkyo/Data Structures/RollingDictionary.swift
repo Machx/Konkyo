@@ -16,32 +16,36 @@
 import Foundation
 
 public struct RollingDictionary<Key:Hashable,Value> {
-	var keys: Array<Key>
-	var dictionary: Dictionary<Key,Value>
-	var limit: Int
+	var _keys: Array<Key>
+	var _dictionary: Dictionary<Key,Value>
+	var _limit: Int
 	
-	init(limit keyLimit: Int) {
-		keys = [Key]()
-		dictionary = [Key: Value]()
-		limit = keyLimit
+	public init(limit keyLimit: Int) {
+		_keys = [Key]()
+		_dictionary = [Key: Value]()
+		_limit = keyLimit
 	}
 	
-	subscript(key: Key) -> Value? {
+	public subscript(key: Key) -> Value? {
 		get {
-			dictionary[key]
+			_dictionary[key]
 		}
 		set(newValue) {
 			guard let newValue = newValue else {
-				self.dictionary.removeValue(forKey: key)
+				self._dictionary.removeValue(forKey: key)
 				return
 			}
-			let oldValue = self.dictionary.updateValue(newValue!, forKey: key)
+			let oldValue = self._dictionary.updateValue(newValue, forKey: key)
 			if oldValue == nil {
-				self.keys.append(key)
+				self._keys.append(key)
 			}
-			guard keys.count <= limit else {
-				dictionary.removeValue(forKey: keys[0])
+			if _keys.count == _limit {
+				_dictionary.removeValue(forKey: _keys[0])
 			}
 		}
+	}
+	
+	public var keys: Dictionary<Key, Value>.Keys {
+		return _dictionary.keys
 	}
 }
