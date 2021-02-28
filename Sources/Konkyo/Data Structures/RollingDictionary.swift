@@ -55,4 +55,9 @@ public struct RollingDictionary<Key:Hashable,Value> {
 	public var keys: Dictionary<Key, Value>.Keys {
 		return _dictionary.keys
 	}
+	
+	public mutating func setLimit(_ maxKeysCount: Int) {
+		_limit = maxKeysCount
+		print("Key Limit is now \(_limit)")
+	}
 }
