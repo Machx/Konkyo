@@ -46,9 +46,7 @@ public struct RollingDictionary<Key:Hashable,Value> {
 			if oldValue == nil {
 				self._keys.append(key)
 			}
-			if _keys.count > _limit {
-				_dictionary.removeValue(forKey: _keys[0])
-			}
+			filterExcessEntries()
 		}
 	}
 	
@@ -59,6 +57,9 @@ public struct RollingDictionary<Key:Hashable,Value> {
 	public mutating func setLimit(_ maxKeysCount: Int) {
 		_limit = maxKeysCount
 		print("Key Limit is now \(_limit)")
+		filterExcessEntries()
+	}
+	
 	private mutating func filterExcessEntries() {
 		while _keys.count > _limit {
 			_dictionary.removeValue(forKey: _keys[0])
