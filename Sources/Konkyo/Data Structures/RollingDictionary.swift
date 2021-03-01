@@ -17,8 +17,11 @@ import Foundation
 
 public struct RollingDictionary<Key:Hashable,Value> {
 	
+	// Array of keys stored to preserve the ordering.
 	private var _keys: Array<Key>
+	// Rolling Dictionary wraps around Dictionary providing additional functionality.
 	private var _dictionary: Dictionary<Key,Value>
+	// The max amount of Keys that an instance should store.
 	private var _limit: Int
 	
 	init() {
