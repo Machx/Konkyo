@@ -35,6 +35,12 @@ public struct RollingDictionary<Key:Hashable,Value>:ExpressibleByDictionaryLiter
 		_limit = keyLimit
 	}
 	
+	public init(dictionaryLiteral elements: (Key, Value)...) {
+		_limit = Int.max
+		_dictionary = Dictionary<Key,Value>(uniqueKeysWithValues: elements)
+		_keys = Array(_dictionary.keys)
+	}
+	
 	public subscript(key: Key) -> Value? {
 		get {
 			_dictionary[key]
