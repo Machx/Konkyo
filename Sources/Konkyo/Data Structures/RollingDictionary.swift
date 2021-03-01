@@ -17,9 +17,9 @@ import Foundation
 
 public struct RollingDictionary<Key:Hashable,Value> {
 	
-	var _keys: Array<Key>
-	var _dictionary: Dictionary<Key,Value>
-	var _limit: Int
+	private var _keys: Array<Key>
+	private var _dictionary: Dictionary<Key,Value>
+	private var _limit: Int
 	
 	init() {
 		_keys = [Key]()
