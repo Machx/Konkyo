@@ -66,10 +66,19 @@ public struct RollingDictionary<Key:Hashable,Value>:ExpressibleByDictionaryLiter
 		}
 	}
 	
+	/// Returns a collection of just the keys in the dictionary
 	public var keys: Dictionary<Key, Value>.Keys { _dictionary.keys }
 	
+	/// Returns the maximum number of keys allowed in the Rolling Dictionary
+	/// - Returns: A Int representing the maximum number of allowed key/value pairs in the dictionary.
 	public func getKeyLimit() -> Int { _limit }
 	
+	/// Sets the maximum number of key/value pairs allowed in the dictionary
+	///
+	/// When setting this the dictionary records the maximum allowed number of
+	/// key/value pairs and then purges excess key/value pairs if the count is
+	/// greater than the given maximum.
+	/// - Parameter maxKeysCount: The intended maximum allowed number of key value pairs for the dictionary.
 	public mutating func setLimit(_ maxKeysCount: Int) {
 		_limit = maxKeysCount
 		print("Key Limit is now \(_limit)")
