@@ -15,6 +15,14 @@
 
 import Foundation
 
+/// Rolling Dictionary is a Dictionary intended to only hold a rolling buffer of the last n keys set.
+///
+/// Rolling Dictionary is a Dictionary that is intended to hold a limited number of
+/// records compared to Dictionary. You can use it like a regular dictionary by default
+/// the max number of keys is Int.max. However if you set it to any other number it will
+/// check to make sure it only has <= the limit of keys its been set to store. If it has
+/// more then it will delete key value pairs by using the key ordering from oldest to
+/// yongest until it has limit number of key/value pairs.
 public struct RollingDictionary<Key:Hashable,Value>:ExpressibleByDictionaryLiteral {
 	// Array of keys stored to preserve the ordering.
 	private var _keys: Array<Key>
