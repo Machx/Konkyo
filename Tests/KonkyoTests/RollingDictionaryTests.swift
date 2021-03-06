@@ -89,4 +89,20 @@ final class RollingDictionaryTests: XCTestCase {
 		//XCTAssertNil(dictionary["A"])
 		//XCTAssertNotNil(dictionary["B"])
 	}
+	
+	func testDictionaryKeys() {
+		var dictionary: RollingDictionary = ["A": 1,
+											 "B": 2,
+											 "C": 3,
+											 "D": 4]
+		
+		let keys = Array(dictionary.keys)
+		
+		XCTAssertEqual(keys.count, 4)
+		
+		dictionary.setLimit(2)
+		
+		// Related to Issue #6
+		//XCTAssertEqual(keys.count, 2)
+	}
 }
