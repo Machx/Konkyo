@@ -37,12 +37,17 @@ public struct RollingDictionary<Key:Hashable,Value>:ExpressibleByDictionaryLiter
 		_limit = Int.max
 	}
 	
+	/// Initializes a Rolling Dictionary with a specified Key limit.
+	/// - Parameter keyLimit: The maximum number of key/value pairs to configure the rolling dictionary with.
 	public init(limit keyLimit: Int) {
 		_keys = [Key]()
 		_dictionary = [Key: Value]()
 		_limit = keyLimit
 	}
 	
+	/// Initializes a Rolling Dictionary with a dictionary literal and Int.max Maximum number of key/value pairs.
+	///
+	/// - Parameter elements: The Dictionary literal for key/value pairs to initialize the structure with.
 	public init(dictionaryLiteral elements: (Key, Value)...) {
 		_limit = Int.max
 		_dictionary = Dictionary<Key,Value>(uniqueKeysWithValues: elements)
