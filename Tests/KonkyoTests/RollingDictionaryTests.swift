@@ -75,4 +75,16 @@ final class RollingDictionaryTests: XCTestCase {
 		XCTAssertEqual(dictionary["B"], 2)
 	}
 	
+	func testDictionaryLiteralAndSetLimit() {
+		var dictionary: RollingDictionary = ["A": 1, "B": 2]
+		
+		XCTAssertNotNil(dictionary)
+		XCTAssertEqual(dictionary["A"], 1)
+		XCTAssertEqual(dictionary["B"], 2)
+		
+		dictionary.setLimit(1)
+		
+		XCTAssertNil(dictionary["A"])
+		XCTAssertNotNil(dictionary["B"])
+	}
 }
