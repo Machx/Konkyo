@@ -88,8 +88,8 @@ final class RollingDictionaryTests: XCTestCase {
 		XCTAssertEqual(dictionary.getKeyLimit(), 1)
 		
 		// Issue #6
-		//XCTAssertNil(dictionary["A"])
-		//XCTAssertNotNil(dictionary["B"])
+		XCTAssertNil(dictionary["A"])
+		XCTAssertNotNil(dictionary["B"])
 	}
 	
 	func testDictionaryKeys() {
