@@ -76,8 +76,6 @@ final class RollingDictionaryTests: XCTestCase {
 	}
 	
 	func testDictionaryLiteralAndSetLimit() {
-		//XCTExpectFailure("Investigating Bug")
-		
 		var dictionary: RollingDictionary = ["A": 1, "B": 2]
 		
 		XCTAssertNotNil(dictionary)
@@ -85,9 +83,8 @@ final class RollingDictionaryTests: XCTestCase {
 		XCTAssertEqual(dictionary["B"], 2)
 		
 		dictionary.setLimit(1)
-		XCTAssertEqual(dictionary.getKeyLimit(), 1)
 		
-		// Issue #6
+		XCTAssertEqual(dictionary.getKeyLimit(), 1)
 		XCTAssertNil(dictionary["A"])
 		XCTAssertNotNil(dictionary["B"])
 	}
