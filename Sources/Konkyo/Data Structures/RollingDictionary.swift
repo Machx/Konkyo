@@ -93,7 +93,6 @@ public struct RollingDictionary<Key:Hashable,Value>:ExpressibleByDictionaryLiter
 	/// - Parameter maxKeysCount: The intended maximum allowed number of key value pairs for the dictionary.
 	public mutating func setLimit(_ maxKeysCount: Int) {
 		_limit = maxKeysCount
-		print("Key Limit is now \(_limit)")
 		filterExcessEntries()
 	}
 	
