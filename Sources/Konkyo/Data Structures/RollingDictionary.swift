@@ -50,8 +50,13 @@ public struct RollingDictionary<Key:Hashable,Value>:ExpressibleByDictionaryLiter
 	/// - Parameter elements: The Dictionary literal for key/value pairs to initialize the structure with.
 	public init(dictionaryLiteral elements: (Key, Value)...) {
 		_limit = Int.max
-		_dictionary = Dictionary<Key,Value>(uniqueKeysWithValues: elements)
-		_keys = Array(_dictionary.keys)
+		// do it this way to preserve ordering
+		_dictionary = Dictionary<Key,Value>()
+		_keys = [Key]()
+		for (key,value) in elements {
+			_dictionary[key] = value
+			_keys.append(key)
+		}
 	}
 	
 	public subscript(key: Key) -> Value? {
