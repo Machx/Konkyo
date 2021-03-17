@@ -31,7 +31,6 @@ final class UnfairLockTests: XCTestCase {
 		}
 		
 		let expected = (iterations * (iterations + 1)) / 2
-		
 		XCTAssertEqual(total, expected, "Failed with Iterations: \(iterations)")
 	}
 	
