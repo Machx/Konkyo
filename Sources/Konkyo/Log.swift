@@ -17,6 +17,8 @@ import Foundation
 import os.log
 
 @available(OSX 11.0, iOS 14.0, *)
+/// Log is a struct meant to be extended with additional logs thus making it
+/// a common point to access for logging.
 public struct Log {
 	static let konkyo = Logger(subsystem: "com.Konkyo", category: "general")
 }
