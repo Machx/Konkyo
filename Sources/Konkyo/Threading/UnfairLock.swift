@@ -27,15 +27,11 @@ public final class UnfairLock {
 	}
 	
 	/// Locks the unfair lock
-	///
-	/// 1.0.0
 	public func lock() {
 		os_unfair_lock_lock(&unfairLock)
 	}
 	
 	/// Unlocks the unfair lock
-	///
-	/// 1.0.0
 	public func unlock() {
 		os_unfair_lock_unlock(&unfairLock)
 	}
@@ -44,8 +40,6 @@ public final class UnfairLock {
 	///
 	/// If this function returns false the program must be able to continue
 	/// not having acquired the lock, or call `lock` directly.
-	///
-	/// 1.0.0
 	public func tryLock() -> Bool {
 		return os_unfair_lock_trylock(&unfairLock)
 	}
