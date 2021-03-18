@@ -22,3 +22,6 @@ import os.log
 public struct Log {
 }
 
+/// extension Log {
+///     internal static let myCustomLogger = Logger(...)
+/// }
