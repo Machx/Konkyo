@@ -20,6 +20,7 @@ import os.log
 /// Log is a struct meant to be extended with additional logs thus making it
 /// a common point to access for logging.
 public struct Log {
+	internal let konkyo = Logger(subsystem: "com.konkyo", category: "general")
 }
 
 /// extension Log {
