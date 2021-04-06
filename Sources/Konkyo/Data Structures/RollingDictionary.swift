@@ -98,8 +98,10 @@ public struct RollingDictionary<Key:Hashable,Value>:ExpressibleByDictionaryLiter
 	
 	private mutating func filterExcessEntries() {
 		while _keys.count > _limit {
-			_dictionary.removeValue(forKey: _keys[0])
-			_keys.remove(at: 0)
+			if let value = _dictionary.removeValue(forKey: _keys[0]) {
+				//Log.konkyo.debug("Removing Key/value pair (\(_keys[0]), \(value)")
+				_keys.remove(at: 0)
+			}
 		}
 	}
 }
