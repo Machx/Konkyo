@@ -26,3 +26,9 @@ public struct Log {
 /// extension Log {
 ///     internal static let myCustomLogger = Logger(...)
 /// }
+
+public extension Error {
+	func description() -> String {
+		return (self as NSError).description
+	}
+}
