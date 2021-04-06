@@ -28,6 +28,7 @@ public struct Log {
 /// }
 
 public extension Error {
+	/// Convenience function to add a description onto Error for printing in Logs.
 	func description() -> String {
 		return (self as NSError).description
 	}
