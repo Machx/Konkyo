@@ -16,7 +16,6 @@
 import Foundation
 import Darwin
 
-@available(OSX 10.12,iOS 6, *)
 public final class Condition {
 	fileprivate var uuid = UUID()
 	
@@ -77,7 +76,6 @@ public final class Condition {
 	}
 }
 
-@available(OSX 10.12,iOS 6, *)
 extension Condition: CustomDebugStringConvertible {
 	public var debugDescription: String {
 		let customName = uuid.uuidString
@@ -86,7 +84,6 @@ extension Condition: CustomDebugStringConvertible {
 	}
 }
 
-@available(OSX 10.12,iOS 6, *)
 extension Condition: Equatable, Hashable {
 	public static func == (lhs: Condition, rhs: Condition) -> Bool {
 		lhs.uuid == rhs.uuid
@@ -100,7 +97,6 @@ extension Condition: Equatable, Hashable {
 	}
 }
 
-@available(OSX 10.12,iOS 6, *)
 extension Condition: NSLocking {
 	public func unlock() {
 		pthread_mutex_unlock(mutex)

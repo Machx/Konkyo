@@ -17,7 +17,6 @@ import Foundation
 import XCTest
 @testable import Konkyo
 
-@available(OSX 10.12, *)
 final class AtomicTests: XCTestCase {
 	
 	func testAtomic() {

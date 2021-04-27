@@ -17,7 +17,6 @@ import Foundation
 import XCTest
 import Konkyo
 
-@available(OSX 10.12, *)
 final class CWConditionTests: XCTestCase {
 	
 	func testCWCondition() {

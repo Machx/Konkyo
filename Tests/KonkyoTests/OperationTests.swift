@@ -37,7 +37,6 @@ public class IncrementOp: AsynchronousOperationBase {
 	}
 }
 
-@available(OSX 10.12, *)
 final class OperationTests: XCTestCase {
 	
 	/// Test Operation Access on isExecuting isFinished in AsyncOperationBase
