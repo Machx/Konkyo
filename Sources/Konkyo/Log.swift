@@ -32,3 +32,15 @@ public extension Error {
 		return (self as NSError).description
 	}
 }
+
+/// Convenience function for returning the File, Function and Line string for use with OSLog
+/// - Parameters:
+///   - file: The file the print message is used in. Obtained automatically.
+///   - function: The function the print message is used in. Obtained automatically.
+///   - line: The line of the file the print message is used in. Obtained automatically.
+/// - Returns: A string formatted with the print log location.
+public func logLocation(file: String = #file,
+						function: String = #function,
+						line: Int = #line) -> String {
+	"\n\n\(file) - \(function) - \(line)"
+}
