@@ -98,9 +98,9 @@ public struct RollingDictionary<Key:Hashable,Value>:ExpressibleByDictionaryLiter
 	
 	private mutating func filterExcessEntries() {
 		while _keys.count > _limit {
-			if let value = _dictionary.removeValue(forKey: _keys[0]) {
-				//FIXME: convert to OSLog upon Xcode 12.5 release
-				print("Removing Key/value pair (\(_keys[0]), \(value)")
+			let firstKey: Dictionary<Key,Value>.Key = _keys[0]
+			if let value = _dictionary.removeValue(forKey: firstKey) {
+				Log.konkyo.debug("Removing value \(String(describing: value)) \(logLocation())")
 				_keys.remove(at: 0)
 			}
 		}
