@@ -36,7 +36,7 @@ public final class Atomic<Value> {
 	
 	/// Passes the value to you and allows you to safely mutate the value.
 	///
-	/// It is not reccomended that you call this right after reading in the value.
+	/// It is not recommended that you call this right after reading in the value.
 	/// It is possible that the value can change between reading the value and mutation. If
 	/// you must you can use this function to both read and quickly write the value. The value
 	/// function is provided for those things that need only quick read only access.
