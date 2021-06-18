@@ -17,8 +17,11 @@ import Darwin.POSIX.pthread
 
 /// Simple wrapper around the pthread_mutex_t c api.
 public final class Mutex {
+	/// Type used to initialize the underlying mutex.
 	public enum MutexType {
+		// Initializes the Mutex to a normal mutex. This is the default.
 		case normal
+		// Initializes the Mutex to be recursive for the same thread.
 		case recursive
 	}
 	
