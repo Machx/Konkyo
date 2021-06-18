@@ -20,9 +20,10 @@ import Foundation
 /// Konkyo 0.2.0
 public final class UnfairLock {
 	
-	private var unfairLock = os_unfair_lock()
+	private var unfairLock: os_unfair_lock
 	
 	public init() {
+		unfairLock = os_unfair_lock()
 	}
 	
 	/// Locks the unfair lock
