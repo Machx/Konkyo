@@ -58,14 +58,14 @@ public final class Mutex {
 		pthread_mutex_lock(mutex)
 	}
 	
-	/// Unlocks the mutex. If you try to unlock the mutex from a thread that didnt lock it, it is undefined behavior.
+	/// Unlocks the mutex. If you try to unlock the mutex from a thread that didn't lock it, it is undefined behavior.
 	///
-	/// See `pthread_mutex_t` for more infomration on the undefined behavior aspect of this api.
+	/// See `pthread_mutex_t` for more information on the undefined behavior aspect of this api.
 	public func unlock() {
 		pthread_mutex_unlock(mutex)
 	}
 	
-	/// Tries to lock the mutex while not blocking the current thread until the lock is acequired.
+	/// Tries to lock the mutex while not blocking the current thread until the lock is acquired.
 	///
 	/// - returns: True if the lock was acquired, false if the lock could not be acquired.
 	public func tryLock() -> Bool {
