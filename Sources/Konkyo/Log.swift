@@ -15,6 +15,7 @@
 
 import Foundation
 import os.log
+import struct CoreGraphics.CGGeometry.CGPoint
 
 /// Log is a struct meant to be extended with additional logs thus making it
 /// a common point to access for logging.
@@ -43,4 +44,11 @@ public func logLocation(file: String = #file,
 						function: String = #function,
 						line: Int = #line) -> String {
 	"\n\n\(file) - \(function) - \(line)"
+}
+
+extension CGPoint: CustomStringConvertible {
+	/// Returns a string representation of the point made by rounding to 2 decimal places.
+	public var description: String {
+		"CGPoint { x: \(String(format: "%.2f", x)) y: \(String(format: "%.2f", y))"
+	}
 }
