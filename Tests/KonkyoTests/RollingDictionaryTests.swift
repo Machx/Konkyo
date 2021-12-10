@@ -120,5 +120,14 @@ final class RollingDictionaryTests: XCTestCase {
 		XCTAssertEqual(dictionary.keys.count, 2)
 		XCTAssertEqual(dictionary["C"], 3)
 		XCTAssertEqual(dictionary["D"], 4)
+		
+		dictionary["E"] = 5
+		dictionary["F"] = 6
+		
+		dictionary.setLimit(2)
+		
+		XCTAssertEqual(dictionary.keys.count, 2)
+		XCTAssertEqual(dictionary["E"], 5)
+		XCTAssertEqual(dictionary["F"], 6)
 	}
 }
