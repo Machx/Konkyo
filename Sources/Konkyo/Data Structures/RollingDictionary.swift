@@ -63,7 +63,7 @@ public struct RollingDictionary<Key:Hashable,Value>:ExpressibleByDictionaryLiter
 		get {
 			_dictionary[key]
 		}
-		set(newValue) {
+		set {
 			guard let newValue = newValue else {
 				self._dictionary.removeValue(forKey: key)
 				return
