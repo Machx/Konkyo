@@ -118,5 +118,7 @@ final class RollingDictionaryTests: XCTestCase {
 		dictionary.setLimit(2)
 		
 		XCTAssertEqual(dictionary.keys.count, 2)
+		XCTAssertEqual(dictionary["C"], 3)
+		XCTAssertEqual(dictionary["D"], 4)
 	}
 }
