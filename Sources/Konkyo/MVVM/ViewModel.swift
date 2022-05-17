@@ -14,3 +14,9 @@
 /// limitations under the License.
 
 import Foundation
+
+/// The ViewModel Protocol
+/// This guarantees that any view model adheres to observable object and thus is also a class
+protocol ViewModel: ObservableObject {
+	
+}
