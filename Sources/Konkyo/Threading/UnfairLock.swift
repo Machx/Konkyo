@@ -20,20 +20,26 @@ import Foundation
 /// Konkyo 0.2.0
 public final class UnfairLock {
 	
-	private var unfairLock: os_unfair_lock
+	private var unfairLock:  UnsafeMutablePointer<os_unfair_lock>
 	
 	public init() {
-		unfairLock = os_unfair_lock()
+		//unfairLock = os_unfair_lock()
+		unfairLock = UnsafeMutablePointer<os_unfair_lock>.allocate(capacity: 1)
+		unfairLock.initialize(to: os_unfair_lock())
+	}
+
+	deinit {
+		unfairLock.deallocate()
 	}
 	
 	/// Locks the unfair lock
 	public func lock() {
-		os_unfair_lock_lock(&unfairLock)
+		os_unfair_lock_lock(unfairLock)
 	}
 	
 	/// Unlocks the unfair lock
 	public func unlock() {
-		os_unfair_lock_unlock(&unfairLock)
+		os_unfair_lock_unlock(unfairLock)
 	}
 	
 	/// Attempts to lock the unfair lock
@@ -41,6 +47,6 @@ public final class UnfairLock {
 	/// If this function returns false the program must be able to continue
 	/// not having acquired the lock, or call `lock` directly.
 	public func tryLock() -> Bool {
-		return os_unfair_lock_trylock(&unfairLock)
+		return os_unfair_lock_trylock(unfairLock)
 	}
 }
