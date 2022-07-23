@@ -47,6 +47,6 @@ public final class UnfairLock {
 	/// If this function returns false the program must be able to continue
 	/// not having acquired the lock, or call `lock` directly.
 	public func tryLock() -> Bool {
-		return os_unfair_lock_trylock(unfairLock)
+		os_unfair_lock_trylock(unfairLock)
 	}
 }
