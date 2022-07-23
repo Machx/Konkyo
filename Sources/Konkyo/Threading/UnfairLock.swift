@@ -23,7 +23,6 @@ public final class UnfairLock {
 	private var unfairLock:  UnsafeMutablePointer<os_unfair_lock>
 	
 	public init() {
-		//unfairLock = os_unfair_lock()
 		unfairLock = UnsafeMutablePointer<os_unfair_lock>.allocate(capacity: 1)
 		unfairLock.initialize(to: os_unfair_lock())
 	}
