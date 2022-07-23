@@ -34,8 +34,4 @@ final class InitializationTests: XCTestCase {
 		
 		XCTAssertEqual(thing.myNum, 5)
 	}
-	
-	static var allTests = [
-		("testCreationOperator", testCreationOperator)
-    ]
 }

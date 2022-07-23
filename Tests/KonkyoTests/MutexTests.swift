@@ -51,9 +51,4 @@ final class MutexTests: XCTestCase {
 		
 		wait(for: [expectation], timeout: 2.0)
 	}
-	
-    static var allTests = [
-        ("testMutex", testMutex),
-		("testRecursiveMutex", testRecursiveMutex),
-    ]
 }

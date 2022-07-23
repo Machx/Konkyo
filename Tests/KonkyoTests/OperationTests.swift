@@ -50,8 +50,4 @@ final class OperationTests: XCTestCase {
 		queue.waitUntilAllOperationsAreFinished()
 		XCTAssertEqual(op.value, 2)
 	}
-	
-	static var allTests = [
-        ("testOperation", testOperation),
-    ]
 }

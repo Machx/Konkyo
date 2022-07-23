@@ -66,11 +66,4 @@ final class CWConditionTests: XCTestCase {
 		let result = condition.wait(until: Date())
 		XCTAssertFalse(result)
 	}
-	
-	static var allTests = [
-		("testCWCondition", testCWCondition),
-		("testNegativeCondition", testNegativeCondition),
-		("testWaitUntilDate", testWaitUntilDate),
-		("testWaitUntilDateNegative",testWaitUntilDateNegative),
-	]
 }

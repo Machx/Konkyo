@@ -42,8 +42,4 @@ final class AsynchronousOperationBaseTests: XCTestCase {
 		
 		XCTAssertEqual(operation.num, 152)
 	}
-	
-	static var allTests = [
-		("testAsyncOperation", testAsyncOperation),
-    ]
 }

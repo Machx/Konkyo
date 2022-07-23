@@ -35,8 +35,4 @@ final class AtomicTests: XCTestCase {
 		let expected = (iterations * (iterations + 1)) / 2
 		XCTAssertEqual(totalValue, expected)
 	}
-	
-	static var allTests = [
-		("testAtomic", testAtomic),
-    ]
 }
