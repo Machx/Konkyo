@@ -32,4 +32,18 @@ final class UnfairLockTests: XCTestCase {
 		let expected = (iterations * (iterations + 1)) / 2
 		XCTAssertEqual(total, expected, "Failed with Iterations: \(iterations)")
 	}
+
+	func testUnfairLockWithLock() {
+		let lock = UnfairLock()
+		var total = 0
+		let iterations = Int.random(in: 5000...15000)
+		DispatchQueue.concurrentPerform(iterations: iterations) { (index) in
+			lock.withLock {
+				total += index + 1 // Adjust because indexes start at 0.
+			}
+		}
+
+		let expected = (iterations * (iterations + 1)) / 2
+		XCTAssertEqual(total, expected, "Failed with Iterations: \(iterations)")
+	}
 }
