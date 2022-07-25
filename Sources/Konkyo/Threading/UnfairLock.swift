@@ -56,4 +56,15 @@ public final class UnfairLock {
 		block()
 	}
 
+	/// Attempts to acquire the lock, and if the lock is acquired will execute block.
+	///
+	/// This uses tryLock to try and acquire the lock and if the lock is acquired it
+	/// will execute the block. If the lock is not acquired, the block will not be
+	/// executed and nothing will happen.
+	public func withLockIfAvailable(_ block: @escaping ()->Void) {
+		if tryLock() {
+			block()
+		}
+		self.unlock()
+	}
 }
