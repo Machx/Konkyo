@@ -41,7 +41,7 @@ public final class UnfairLock {
 		os_unfair_lock_unlock(unfairLock)
 	}
 	
-	/// Attempts to lock the unfair lock
+	/// Attempts to lock the unfair lock.
 	///
 	/// If this function returns false the program must be able to continue
 	/// not having acquired the lock, or call `lock` directly.
