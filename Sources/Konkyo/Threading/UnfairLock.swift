@@ -48,4 +48,12 @@ public final class UnfairLock {
 	public func tryLock() -> Bool {
 		os_unfair_lock_trylock(unfairLock)
 	}
+
+	/// Executes a block while having acquired the lock.
+	public func withLock(_ block: @escaping ()-> Void) {
+		self.lock()
+		defer { self.unlock() }
+		block()
+	}
+
 }
