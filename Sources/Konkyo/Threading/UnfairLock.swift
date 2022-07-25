@@ -62,9 +62,9 @@ public final class UnfairLock {
 	/// will execute the block. If the lock is not acquired, the block will not be
 	/// executed and nothing will happen.
 	public func withLockIfAvailable(_ block: @escaping ()->Void) {
-		if tryLock() {
+		if os_unfair_lock_trylock(unfairLock) {
 			block()
+			os_unfair_lock_unlock(unfairLock)
 		}
-		self.unlock()
 	}
 }
