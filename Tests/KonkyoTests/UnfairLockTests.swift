@@ -20,6 +20,8 @@ import Konkyo
 final class UnfairLockTests: XCTestCase {
 	
 	func testUnfairLock() {
+		/// Test manual lock and unlock of UnfairLock (os_unfair_lock)
+		/// Using concurrent perform blocks forcing lots of contention on the lock
 		let lock = UnfairLock()
 		var total = 0
 		let iterations = Int.random(in: 5000...15000)
@@ -34,6 +36,7 @@ final class UnfairLockTests: XCTestCase {
 	}
 
 	func testUnfairLockWithLock() {
+		/// Same as `testUnfairLock` but using the `withLock{}` api
 		let lock = UnfairLock()
 		var total = 0
 		let iterations = Int.random(in: 5000...15000)
@@ -48,6 +51,7 @@ final class UnfairLockTests: XCTestCase {
 	}
 
 	func testUnfairLockWithLockIfAvailable() {
+		/// Same as `testUnfairLockWithLock` but using `withLockIfAvailable{}`
 		let lock = UnfairLock()
 
 		var total = 0
