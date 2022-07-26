@@ -68,6 +68,8 @@ final class UnfairLockTests: XCTestCase {
 	}
 
 	func testUnfairLockWithLockIfAvailable2() {
+		/// Manual locking and unlocking to make sure
+		/// `withLockIfAvailable {}` responds as expected
 		let lock = UnfairLock()
 		var total = 0
 
@@ -85,6 +87,8 @@ final class UnfairLockTests: XCTestCase {
 	}
 
 	func testTryLock() {
+		/// Manual locking and unlock to make sure
+		/// `tryLock` responds as expected
 		let lock = UnfairLock()
 
 		XCTAssertTrue(lock.tryLock())
