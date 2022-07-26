@@ -51,8 +51,8 @@ public final class UnfairLock {
 
 	/// Executes a block while having acquired the lock.
 	public func withLock(_ block: @escaping ()-> Void) {
-		self.lock()
-		defer { self.unlock() }
+		os_unfair_lock_lock(unfairLock)
+		defer { os_unfair_lock_unlock(unfairLock) }
 		block()
 	}
 
