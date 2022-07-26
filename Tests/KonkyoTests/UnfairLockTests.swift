@@ -62,4 +62,15 @@ final class UnfairLockTests: XCTestCase {
 		XCTAssertNotEqual(total, iterations)
 		XCTAssertTrue(total > 0)
 	}
+
+	func testTryLock() {
+		let lock = UnfairLock()
+
+		XCTAssertTrue(lock.tryLock())
+		lock.unlock()
+
+		lock.lock()
+		XCTAssertFalse(lock.tryLock())
+		lock.unlock()
+	}
 }
