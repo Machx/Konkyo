@@ -63,6 +63,23 @@ final class UnfairLockTests: XCTestCase {
 		XCTAssertTrue(total > 0)
 	}
 
+	func testUnfairLockWithLockIfAvailable2() {
+		let lock = UnfairLock()
+		var total = 0
+
+		lock.withLockIfAvailable {
+			total += 1
+		}
+		XCTAssertEqual(total, 1)
+
+		lock.lock()
+		lock.withLockIfAvailable {
+			total += 100
+		}
+		XCTAssertEqual(total, 1)
+		lock.unlock()
+	}
+
 	func testTryLock() {
 		let lock = UnfairLock()
 
