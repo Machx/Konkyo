@@ -63,8 +63,8 @@ public final class UnfairLock {
 	/// executed and nothing will happen.
 	public func withLockIfAvailable(_ block: @escaping ()->Void) {
 		if os_unfair_lock_trylock(unfairLock) {
+			defer { os_unfair_lock_unlock(unfairLock) }
 			block()
-			os_unfair_lock_unlock(unfairLock)
 		}
 	}
 }
