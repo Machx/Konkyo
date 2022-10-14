@@ -71,4 +71,10 @@ public final class Mutex {
 	public func tryLock() -> Bool {
 		return pthread_mutex_trylock(mutex) == 0
 	}
+
+	public func withLock(_ block: ()->Void) {
+		pthread_mutex_lock(mutex)
+		block()
+		pthread_mutex_unlock(mutex)
+	}
 }
