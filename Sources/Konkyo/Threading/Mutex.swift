@@ -72,6 +72,7 @@ public final class Mutex {
 		return pthread_mutex_trylock(mutex) == 0
 	}
 
+	/// Tries to lock the mutex, execute the block, and then unlock the mutex.
 	public func withLock(_ block: ()->Void) {
 		pthread_mutex_lock(mutex)
 		block()
