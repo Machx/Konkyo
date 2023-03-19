@@ -7,7 +7,10 @@
 
 import Foundation
 
-public final class Promise<T,E> {
-	public var value: T?
-	public var error: E?
+public final class Promise<Result> {
+	var result: Result?
+}
+
+public func withPromise() {
+	
 }
