@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+public final class Promise<T,E> {
+	public var value: T?
+	public var error: E?
+}
