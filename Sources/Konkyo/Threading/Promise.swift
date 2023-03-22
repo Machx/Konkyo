@@ -15,10 +15,10 @@
 
 import Foundation
 
-public final class Promise<Result> {
-	private var result: Result?
+public final class Promise<T,E> where E: Error {
+	private var result: Result<T,E>?
 
-	func resume(returning returnValue: Result) {
+	func resume(returning returnValue: Result<T,E>) {
 		result = returnValue
 	}
 }
