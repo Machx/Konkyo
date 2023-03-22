@@ -17,8 +17,16 @@ import Foundation
 
 public final class Promise<Result> {
 	var result: Result?
+
+	func resume(returning returnValue: Result) {
+		result = returnValue
+	}
 }
 
-public func withPromise() {
-	
+public func withPromise<T>(function: String = #function, _ body: (Promise<T,Never>) -> Void) -> T {
+	var promise = Promise()
+	DispatchQueue.global(priority: .background).async {
+		body(promise)
+	}
+	return promise.result
 }
