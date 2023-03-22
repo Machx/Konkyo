@@ -16,7 +16,7 @@
 import Foundation
 
 public final class Promise<Result> {
-	var result: Result?
+	private var result: Result?
 
 	func resume(returning returnValue: Result) {
 		result = returnValue
