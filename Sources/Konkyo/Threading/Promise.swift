@@ -18,7 +18,7 @@ import Foundation
 public final class Promise<T,E> where E: Error {
 	private var result: Result<T,E>?
 
-	func resume(returning returnValue: T) {
+	public func resume(returning returnValue: T) {
 		result = .success(returnValue)
 	}
 
