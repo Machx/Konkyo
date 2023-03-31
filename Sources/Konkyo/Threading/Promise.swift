@@ -27,10 +27,10 @@ public final class Promise<T,E> where E: Error {
 	}
 }
 
-public func withPromise<T>(function: String = #function, _ body: (Promise<T,Never>) -> Void) -> T {
-	var promise = Promise()
-	DispatchQueue.global(priority: .background).async {
-		body(promise)
-	}
-	return promise.result
-}
+//public func withPromise<T>(function: String = #function, _ body: (Promise<T,Never>) -> Void) -> T {
+//	var promise = Promise()
+//	DispatchQueue.global(priority: .background).async {
+//		body(promise)
+//	}
+//	return promise.result
+//}
