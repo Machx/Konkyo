@@ -55,6 +55,10 @@ public final class Condition {
 	
 	/// Waits until the given date, returns if the condition was unlocked.
 	///
+	/// This function additionally may return false for other reasons including:
+	/// - Date is in the past.
+	/// - Date was unable to be converted to its timespec type equivalent.
+	///
 	/// 1.0.0
 	public func wait(until: Date) -> Bool {
 		guard var untilSpec = timeSpecFrom(date: until) else { return false }
