@@ -53,7 +53,7 @@ public final class Condition {
 						tv_nsec: Int(intervalNS % nsecPerSec))
 	}
 	
-	/// Waits until the given date, returns if the condition was unlocked.
+	/// Waits until the given date, blocking the thread, returns if the condition was unlocked.
 	///
 	/// This function additionally may return false for other reasons including:
 	/// - Date is in the past.
