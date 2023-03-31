@@ -22,7 +22,7 @@ public final class Promise<T,E> where E: Error {
 		result = .success(returnValue)
 	}
 
-	func resume(returning errorValue: E) {
+	public func resume(returning errorValue: E) {
 		result = .failure(errorValue)
 	}
 }
