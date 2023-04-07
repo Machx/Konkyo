@@ -60,8 +60,11 @@ public final class Condition {
 	/// - Date was unable to be converted to its timespec type equivalent.
 	///
 	/// 1.0.0
-	public func wait(until: Date) -> Bool {
-		guard var untilSpec = timeSpecFrom(date: until) else { return false }
+	public func wait(until waitDate: Date = Date.distantFuture) -> Bool {
+		guard waitDate != .distantFuture else {
+			pthread_cond_wait(cond, mutex)
+			return true
+		}
 		return pthread_cond_timedwait(cond, mutex, &untilSpec) == 0
 	}
 	
