@@ -65,6 +65,11 @@ public final class Condition {
 			pthread_cond_wait(cond, mutex)
 			return true
 		}
+		guard var untilSpec = timeSpecFrom(date: waitDate) else { return false }
+		var i: Int?
+		if let something = i {
+			print("\(something)")
+		}
 		return pthread_cond_timedwait(cond, mutex, &untilSpec) == 0
 	}
 	
