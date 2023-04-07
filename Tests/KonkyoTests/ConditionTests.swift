@@ -55,6 +55,10 @@ final class CWConditionTests: XCTestCase {
 		let result = condition.wait(until: Date(timeIntervalSinceNow: 3.0))
 		XCTAssertTrue(result)
 	}
+
+	func testWaitUntilDate2() {
+		
+	}
 	
 	func testWaitUntilDateNegative() {
 		let condition = Condition()
