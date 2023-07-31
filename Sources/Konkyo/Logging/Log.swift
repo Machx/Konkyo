@@ -23,10 +23,6 @@ public struct Log {
 	internal static let konkyo = Logger(subsystem: "com.konkyo", category: "general")
 }
 
-/// extension Log {
-///     internal static let myCustomLogger = Logger(...)
-/// }
-
 /// Convenience function for returning the File, Function and Line string for use with OSLog
 /// - Parameters:
 ///   - file: The file the print message is used in. Obtained automatically.
