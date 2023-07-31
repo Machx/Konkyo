@@ -17,8 +17,14 @@ import Foundation
 import os.log
 import CoreGraphics.CGGeometry
 
-/// Log is a struct meant to be extended with additional logs thus making it
-/// a common point to access for logging.
+/// Log is a struct meant to be a central access point & extension for more logs.
+///
+/// Log can be extended to add central access to a variety of logs like so.
+/// ```swift
+/// extension Log {
+/// 	static let myLogger = Logger(subsystem: "com.myapp.networking", category: "networking")
+/// }
+/// ```
 public struct Log {
 	internal static let konkyo = Logger(subsystem: "com.konkyo", category: "general")
 }
