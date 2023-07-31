@@ -27,13 +27,6 @@ public struct Log {
 ///     internal static let myCustomLogger = Logger(...)
 /// }
 
-public extension Error {
-	/// Convenience function to add a description onto Error for printing in Logs.
-	func description() -> String {
-		return (self as NSError).description
-	}
-}
-
 /// Convenience function for returning the File, Function and Line string for use with OSLog
 /// - Parameters:
 ///   - file: The file the print message is used in. Obtained automatically.
