@@ -15,6 +15,13 @@
 
 import Foundation
 
+public extension Error {
+	/// Convenience function to add a description onto Error for printing in Logs.
+	func description() -> String {
+		return (self as NSError).description
+	}
+}
+
 extension CGPoint: CustomStringConvertible {
 	/// Returns a string representation of the point made by rounding to 2 decimal places.
 	public var description: String {
