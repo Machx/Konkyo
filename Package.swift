@@ -14,6 +14,10 @@ let package = Package(
         .library(
             name: "Konkyo",
             targets: ["Konkyo"]),
+		.library(
+			name: "UnitTestKit",
+			targets: ["UnitTestKit"]
+		)
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -28,6 +32,9 @@ let package = Package(
         .testTarget(
             name: "KonkyoTests",
             dependencies: ["Konkyo"]),
+		.target(
+			name: "UnitTestKit",
+			dependencies: []),
     ],
 	swiftLanguageVersions: [.v5]
 )
