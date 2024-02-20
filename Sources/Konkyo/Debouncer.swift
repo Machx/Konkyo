@@ -26,10 +26,10 @@ public final class Debouncer {
 		self.timer = DispatchSource.makeTimerSource(flags: [], queue: .main)
 		self.timer.setEventHandler(handler: { [weak self] in
 			guard let self else { return }
-			if self.oneShot && self.fired { return }
-			self.action()
-			guard self.oneShot else { return }
-			self.fired = true
+			if oneShot && fired { return }
+			action()
+			guard oneShot else { return }
+			fired = true
 		})
 		self.timer.schedule(deadline: .now() + delay, repeating: 0.0)
 		self.timer.resume()
