@@ -39,7 +39,7 @@ public final class Debouncer {
 			guard oneShot else { return }
 			fired = true
 		})
-		self.timer.schedule(deadline: .now() + delay, repeating: 0.0)
+		self.timer.schedule(deadline: .now() + delay, repeating: oneShot ? 0.0 : delay)
 		self.timer.resume()
 	}
 
