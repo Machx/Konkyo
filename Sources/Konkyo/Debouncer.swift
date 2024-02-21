@@ -25,7 +25,7 @@ public final class Debouncer {
 
 	private var timer: DispatchSourceTimer
 
-	public init(oneShot: Bool = false,
+	public init(oneShot: Bool = true,
 				delay: Double,
 				_ eventHandler: @escaping DebouncerAction) {
 		self.delay = delay
