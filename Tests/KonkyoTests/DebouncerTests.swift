@@ -26,7 +26,7 @@ public final class DebouncerTests: XCTestCase {
 			expectation.fulfill()
 		}
 		for _ in 0...1000 {
-			bouncer.execute()
+			bouncer.reset()
 		}
 		wait(for: [expectation], timeout: 5.0)
 	}
