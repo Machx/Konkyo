@@ -43,7 +43,7 @@ public final class Debouncer {
 		self.timer.resume()
 	}
 
-	public func execute() {
+	public func reset() {
 		if oneShot && fired { return }
 		timer.cancel()
 		timer = DispatchSource.makeTimerSource(flags: [], queue: .main)
