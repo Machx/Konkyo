@@ -21,7 +21,7 @@ public final class DebouncerTests: XCTestCase {
 	func testDebouncer() {
 		let expectation = XCTestExpectation()
 		expectation.assertForOverFulfill = true
-		let bouncer = Debouncer(oneShot: true, delay: 1.0) {
+		let bouncer = Debouncer(delay: 1.0) {
 			print("Hello")
 			expectation.fulfill()
 		}
