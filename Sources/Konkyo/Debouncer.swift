@@ -57,4 +57,8 @@ public final class Debouncer {
 		timer.schedule(deadline: .now() + delay, repeating: 0.0)
 		timer.resume()
 	}
+
+	public func cancel() {
+		timer.cancel()
+	}
 }
