@@ -19,13 +19,15 @@ public final class Debouncer {
 	public typealias DebouncerAction = () -> Void
 
 	public let oneShot: Bool
-	private var fired = false
+	private var fired = 0
 	public let action: DebouncerAction
 	public let delay: Double
 	private var timer: DispatchSourceTimer
 	private let queue: DispatchQueue
+	private let cancelAfter: Int
 
 	public init(oneShot: Bool = true,
+				cancelAfter: Int,
 				delay: Double,
 				queue: DispatchQueue = .global(qos: .background),
 				_ eventHandler: @escaping DebouncerAction) {
@@ -33,28 +35,29 @@ public final class Debouncer {
 		self.action = eventHandler
 		self.oneShot = oneShot
 		self.queue = queue
+		self.cancelAfter = cancelAfter
 		self.timer = DispatchSource.makeTimerSource(flags: [], queue: queue)
 		self.timer.setEventHandler(handler: { [weak self] in
 			guard let self else { return }
-			if oneShot && fired { return }
+			if oneShot && (fired > 0) { return }
 			action()
 			guard oneShot else { return }
-			fired = true
+			fired += 1
 		})
 		self.timer.schedule(deadline: .now() + delay, repeating: oneShot ? 0.0 : delay)
 		self.timer.resume()
 	}
 
 	public func reset() {
-		if oneShot && fired { return }
+		if oneShot && (fired > 0) { return }
 		timer.cancel()
 		timer = DispatchSource.makeTimerSource(flags: [], queue: .main)
 		timer.setEventHandler(handler: { [weak self] in
 			guard let self else { return }
-			if oneShot && fired { return }
+			if oneShot && (fired > 0) { return }
 			action()
 			guard oneShot else { return }
-			fired = true
+			fired += 1
 		})
 		timer.schedule(deadline: .now() + delay, repeating: 0.0)
 		timer.resume()
