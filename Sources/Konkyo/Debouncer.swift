@@ -43,6 +43,9 @@ public final class Debouncer {
 			action()
 			guard oneShot else { return }
 			fired += 1
+			if fired >= cancelAfter {
+				timer.cancel()
+			}
 		})
 		self.timer.schedule(deadline: .now() + delay, repeating: oneShot ? 0.0 : delay)
 		self.timer.resume()
@@ -58,6 +61,9 @@ public final class Debouncer {
 			action()
 			guard oneShot else { return }
 			fired += 1
+			if fired >= cancelAfter {
+				timer.cancel()
+			}
 		})
 		timer.schedule(deadline: .now() + delay, repeating: 0.0)
 		timer.resume()
