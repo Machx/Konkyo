@@ -29,6 +29,7 @@ public final class DebouncerTests: XCTestCase {
 			bouncer.reset()
 		}
 		wait(for: [expectation], timeout: 5.0)
+		bouncer.cancel()
 	}
 
 	func testRepeatingDebouncer() {
