@@ -22,16 +22,18 @@ public final class Debouncer {
 	private var fired = false
 	public let action: DebouncerAction
 	public let delay: Double
-
 	private var timer: DispatchSourceTimer
+	private let queue: DispatchQueue
 
 	public init(oneShot: Bool = true,
 				delay: Double,
+				queue: DispatchQueue = .global(qos: .background),
 				_ eventHandler: @escaping DebouncerAction) {
 		self.delay = delay
 		self.action = eventHandler
 		self.oneShot = oneShot
-		self.timer = DispatchSource.makeTimerSource(flags: [], queue: .main)
+		self.queue = queue
+		self.timer = DispatchSource.makeTimerSource(flags: [], queue: queue)
 		self.timer.setEventHandler(handler: { [weak self] in
 			guard let self else { return }
 			if oneShot && fired { return }
