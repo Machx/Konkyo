@@ -27,7 +27,7 @@ public final class Debouncer {
 	private let cancelAfter: Int
 
 	public init(oneShot: Bool = true,
-				cancelAfter: Int,
+				cancelAfter: Int = 0,
 				delay: Double,
 				queue: DispatchQueue = .global(qos: .background),
 				_ eventHandler: @escaping DebouncerAction) {
