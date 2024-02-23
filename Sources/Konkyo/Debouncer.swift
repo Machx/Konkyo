@@ -28,46 +28,24 @@ public final class Debouncer {
 				_ eventHandler: @escaping DebouncerAction) {
 		self.delay = delay
 		self.action = eventHandler
-		self.oneShot = oneShot
 		self.queue = queue
-		self.cancelAfter = cancelAfter
 		self.timer = DispatchSource.makeTimerSource(flags: [], queue: queue)
 		self.timer.setEventHandler(handler: { [weak self] in
 			guard let self else { return }
-			if oneShot && (fired > 0) {
-				DispatchQueue.main.async { [weak self] in
-					guard let self else { return }
-					timer.cancel()
-				}
-				return
-			}
 			action()
-			guard oneShot else { return }
-			fired += 1
-			if fired >= cancelAfter {
-				DispatchQueue.main.async { [weak self] in
-					guard let self else { return }
-					timer.cancel()
-				}
-			}
+			timer.cancel()
 		})
-		self.timer.schedule(deadline: .now() + delay, repeating: oneShot ? 0.0 : delay)
+		self.timer.schedule(deadline: .now() + delay, repeating: 0.0)
 		self.timer.resume()
 	}
 
 	public func reset() {
-		if oneShot && (fired > 0) { return }
 		timer.cancel()
 		timer = DispatchSource.makeTimerSource(flags: [], queue: .main)
 		timer.setEventHandler(handler: { [weak self] in
 			guard let self else { return }
-			if oneShot && (fired > 0) { return }
 			action()
-			guard oneShot else { return }
-			fired += 1
-			if fired >= cancelAfter {
-				timer.cancel()
-			}
+			timer.cancel()
 		})
 		timer.schedule(deadline: .now() + delay, repeating: 0.0)
 		timer.resume()
