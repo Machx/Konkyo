@@ -18,17 +18,12 @@ import Foundation
 public final class Debouncer {
 	public typealias DebouncerAction = () -> Void
 
-	public let oneShot: Bool
-	private var fired = 0
 	public let action: DebouncerAction
 	public let delay: Double
 	private var timer: DispatchSourceTimer
 	private let queue: DispatchQueue
-	private let cancelAfter: Int
 
-	public init(oneShot: Bool = true,
-				cancelAfter: Int = 0,
-				delay: Double,
+	public init(delay: Double,
 				queue: DispatchQueue = .global(qos: .background),
 				_ eventHandler: @escaping DebouncerAction) {
 		self.delay = delay
