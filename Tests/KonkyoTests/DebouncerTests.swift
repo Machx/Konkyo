@@ -44,4 +44,16 @@ public final class DebouncerTests: XCTestCase {
 		wait(for: [expectation], timeout: 3.0)
 		bouncer.cancel()
 	}
+
+	func testCancelAfter() {
+		let expectation = XCTestExpectation()
+		expectation.expectedFulfillmentCount = 2
+		expectation.assertForOverFulfill = true
+		let bouncer = Debouncer(oneShot: false, cancelAfter: 2, delay: 1.0, queue: .main) { [weak self] in
+			guard self != nil else { return }
+			expectation.fulfill()
+		}
+		wait(for: [expectation], timeout: 4.0)
+		bouncer.cancel()
+	}
 }
