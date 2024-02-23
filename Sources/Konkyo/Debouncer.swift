@@ -17,7 +17,12 @@ import Foundation
 
 public final class Debouncer {
 	public typealias DebouncerAction = () -> Void
-
+	
+	/// The Action that will be executed after uninterrupted by the delay.
+	///
+	/// This action is executed when the Debouncer has been uninterrupted by
+	/// reset requests for the amount of time specified in the `delay` variable.
+	/// This will be executed once and only once.
 	public let action: DebouncerAction
 	public let delay: Double
 	private var timer: DispatchSourceTimer
