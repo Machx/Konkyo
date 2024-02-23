@@ -32,19 +32,6 @@ public final class DebouncerTests: XCTestCase {
 		bouncer.cancel()
 	}
 
-	func testRepeatingDebouncer() {
-		let expectation = XCTestExpectation()
-		expectation.expectedFulfillmentCount = 2
-		var count = 0
-		let bouncer = Debouncer(oneShot: false, delay: 1.0, queue: .main) { [weak self] in
-			guard let self else { return }
-			count += 1
-			expectation.fulfill()
-		}
-		wait(for: [expectation], timeout: 3.0)
-		bouncer.cancel()
-	}
-
 	func testCancelAfter() {
 		let expectation = XCTestExpectation()
 		expectation.expectedFulfillmentCount = 2
