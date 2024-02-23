@@ -49,6 +49,12 @@ public final class Debouncer {
 			action()
 			guard oneShot else { return }
 			fired += 1
+			if fired >= cancelAfter {
+				DispatchQueue.main.async { [weak self] in
+					guard let self else { return }
+					timer.cancel()
+				}
+			}
 		})
 		self.timer.schedule(deadline: .now() + delay, repeating: oneShot ? 0.0 : delay)
 		self.timer.resume()
