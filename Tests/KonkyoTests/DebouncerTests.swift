@@ -31,4 +31,15 @@ public final class DebouncerTests: XCTestCase {
 		wait(for: [expectation], timeout: 5.0)
 		bouncer.cancel()
 	}
+
+	func testCancelAction() {
+		let expectation = XCTestExpectation()
+		let bouncer = Debouncer(delay: 0.5) {
+			print("Hello")
+		} cancelAction: {
+			expectation.fulfill()
+		}
+		bouncer.reset()
+		wait(for: [expectation], timeout: 1.0)
+	}
 }
