@@ -42,4 +42,18 @@ public final class DebouncerTests: XCTestCase {
 		bouncer.reset()
 		wait(for: [expectation], timeout: 1.0)
 	}
+
+	func testMultipleCancels() {
+		let expectation = XCTestExpectation()
+		expectation.expectedFulfillmentCount = 3
+		let bouncer = Debouncer(delay: 0.5) {
+			print("Hello")
+		} cancelAction: {
+			expectation.fulfill()
+		}
+		bouncer.reset()
+		bouncer.reset()
+		bouncer.reset()
+		wait(for: [expectation], timeout: 3.0)
+	}
 }
