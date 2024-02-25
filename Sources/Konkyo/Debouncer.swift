@@ -24,6 +24,11 @@ public final class Debouncer {
 	/// reset requests for the amount of time specified in the `delay` variable.
 	/// This will be executed once and only once.
 	public let action: DebouncerAction
+
+	/// The Action that will be executed if the Debouncer is cancelled before the specified delay
+	///
+	/// If this is set then this action will be called anytime the Debouncer
+	/// is reset or cancelled.
 	public let cancelAction: DebouncerAction?
 	public let delay: Double
 	private var timer: DispatchSourceTimer
