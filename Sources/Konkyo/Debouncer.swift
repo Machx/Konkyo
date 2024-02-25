@@ -30,6 +30,11 @@ public final class Debouncer {
 	/// If this is set then this action will be called anytime the Debouncer
 	/// is reset or cancelled.
 	public let cancelAction: DebouncerAction?
+
+	/// The delay in seconds before the specified action is triggered.
+	///
+	/// This is a delay in seconds before the action is triggered. The Debouncer
+	/// can be reset or cancelled before the action is triggered.
 	public let delay: Double
 	private var timer: DispatchSourceTimer
 	private let queue: DispatchQueue
