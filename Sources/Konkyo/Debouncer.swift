@@ -24,21 +24,29 @@ public final class Debouncer {
 	/// reset requests for the amount of time specified in the `delay` variable.
 	/// This will be executed once and only once.
 	public let action: DebouncerAction
+	public let cancelAction: DebouncerAction?
 	public let delay: Double
 	private var timer: DispatchSourceTimer
 	private let queue: DispatchQueue
 
 	public init(delay: Double,
 				queue: DispatchQueue = .global(qos: .background),
-				_ eventHandler: @escaping DebouncerAction) {
+				_ eventHandler: @escaping DebouncerAction,
+				cancelAction: DebouncerAction? = nil) {
 		self.delay = delay
 		self.action = eventHandler
+		self.cancelAction = cancelAction
 		self.queue = queue
 		self.timer = DispatchSource.makeTimerSource(flags: [], queue: queue)
 		self.timer.setEventHandler(handler: { [weak self] in
 			guard let self else { return }
 			action()
 			timer.cancel()
+		})
+		self.timer.setCancelHandler(handler: { [weak self] in
+			guard let self,
+				  let cancelAction else { return }
+			cancelAction()
 		})
 		self.timer.schedule(deadline: .now() + delay, repeating: 0.0)
 		self.timer.resume()
@@ -52,6 +60,13 @@ public final class Debouncer {
 			action()
 			timer.cancel()
 		})
+		if let cancelAction {
+			self.timer.setCancelHandler(handler: { [weak self] in
+				guard let self,
+					  let cancelAction = self.cancelAction else { return }
+				cancelAction()
+			})
+		}
 		timer.schedule(deadline: .now() + delay, repeating: 0.0)
 		timer.resume()
 	}
