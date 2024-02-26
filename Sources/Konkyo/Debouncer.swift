@@ -42,7 +42,13 @@ public final class Debouncer {
 
 	/// The Queue that the event and cancel handlers will be dispatched on.
 	private let queue: DispatchQueue
-
+	
+	/// Initializes the one time use Debouncer
+	/// - Parameters:
+	///   - delay: The delay in seconds that the event handler will be executed after.
+	///   - queue: The Queue that the event and cancel handlers will be dispatched onto.
+	///   - eventHandler: The action that will take place after `delay` unless reset or cancelled.
+	///   - cancelAction: When a debouncer is cancelled this will be called in response to that event.
 	public init(delay: Double,
 				queue: DispatchQueue = .global(qos: .background),
 				_ eventHandler: @escaping DebouncerAction,
