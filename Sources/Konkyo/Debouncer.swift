@@ -43,7 +43,7 @@ public final class Debouncer {
 	/// The Queue that the event and cancel handlers will be dispatched on.
 	private let queue: DispatchQueue
 	
-	/// Initializes the one time use Debouncer
+	/// Initializes the one time use Debouncer.
 	/// - Parameters:
 	///   - delay: The delay in seconds that the event handler will be executed after.
 	///   - queue: The Queue that the event and cancel handlers will be dispatched onto.
@@ -71,7 +71,11 @@ public final class Debouncer {
 		self.timer.schedule(deadline: .now() + delay, repeating: 0.0)
 		self.timer.resume()
 	}
-
+	
+	/// Resets the Debouncer by cancelling the previous timer & starting a new one.
+	///
+	/// This cancels the previous timer source, and sets up a new one. When the previous
+	/// timer is cancelled, this will call the cancel handler if that is set.
 	public func reset() {
 		timer.cancel()
 		timer = DispatchSource.makeTimerSource(flags: [], queue: .main)
