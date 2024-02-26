@@ -36,7 +36,11 @@ public final class Debouncer {
 	/// This is a delay in seconds before the action is triggered. The Debouncer
 	/// can be reset or cancelled before the action is triggered.
 	public let delay: Double
+
+	/// The object responsible for scheduling the action to take place after a delay.
 	private var timer: DispatchSourceTimer
+
+	/// The Queue that the event and cancel handlers will be dispatched on.
 	private let queue: DispatchQueue
 
 	public init(delay: Double,
