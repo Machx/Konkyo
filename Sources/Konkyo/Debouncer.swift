@@ -94,7 +94,11 @@ public final class Debouncer {
 		timer.schedule(deadline: .now() + delay, repeating: 0.0)
 		timer.resume()
 	}
-
+	
+	/// Only cancels the timer, but does not reset it or start a new timer.
+	///
+	/// Unlike reset, this only cancels the timer, but does not reset it. Making it
+	/// possible to start it again in the future.
 	public func cancel() {
 		timer.cancel()
 	}
