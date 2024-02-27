@@ -58,12 +58,16 @@ public final class DebouncerTests: XCTestCase {
 	}
 
 	func testResetAfterCancel() {
-		let expectation = XCTestExpectation()
+		let eventExpectation = XCTestExpectation()
+		let cancelExpectation = XCTestExpectation()
 		let bouncer = Debouncer(delay: 0.5) {
-			expectation.fulfill()
+			eventExpectation.fulfill()
+		} cancelAction: {
+			cancelExpectation.fulfill()
 		}
 		bouncer.cancel()
+		wait(for: [cancelExpectation], timeout: 0.5)
 		bouncer.reset()
-		wait(for: [expectation], timeout: 1.0)
+		wait(for: [eventExpectation], timeout: 1.0)
 	}
 }
