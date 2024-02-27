@@ -65,8 +65,10 @@ public final class DebouncerTests: XCTestCase {
 		} cancelAction: {
 			cancelExpectation.fulfill()
 		}
+		// Test Cancellation
 		bouncer.cancel()
 		wait(for: [cancelExpectation], timeout: 0.5)
+		// Check if event block executes after cancellation
 		bouncer.reset()
 		wait(for: [eventExpectation], timeout: 1.0)
 	}
