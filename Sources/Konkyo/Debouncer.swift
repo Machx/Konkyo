@@ -63,11 +63,12 @@ public final class Debouncer {
 			action()
 			timer.cancel()
 		})
-		self.timer.setCancelHandler(handler: { [weak self] in
-			guard let self,
-				  let cancelAction else { return }
-			cancelAction()
-		})
+		if let cancelAction {
+			self.timer.setCancelHandler(handler: { [weak self] in
+				guard let self else { return }
+				cancelAction()
+			})
+		}
 		self.timer.schedule(deadline: .now() + delay, repeating: 0.0)
 		self.timer.resume()
 	}
