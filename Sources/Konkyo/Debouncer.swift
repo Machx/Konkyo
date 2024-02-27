@@ -87,8 +87,7 @@ public final class Debouncer {
 		})
 		if let cancelAction {
 			self.timer.setCancelHandler(handler: { [weak self] in
-				guard let self,
-					  let cancelAction = self.cancelAction else { return }
+				guard self != nil else { return }
 				cancelAction()
 			})
 		}
