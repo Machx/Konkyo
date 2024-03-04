@@ -15,6 +15,11 @@
 
 import Foundation
 
+/// Debouncer is a wrapper for functionality around a timer event handler with reset functionality.
+///
+/// Debouncer wraps a dispatch source timer with reset functionality. That is that it can be reset
+/// over and over, until the event actually triggers. Once triggered the event function will be
+/// executed once and only once. Anytime the timer is reset, the cancel block will be executed
 public final class Debouncer {
 	public typealias DebouncerAction = () -> Void
 	
