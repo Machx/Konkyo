@@ -23,7 +23,7 @@ import Foundation
 /// Unlike the event handler, the cancel handler will be executed anytime the debouncer is reset.
 ///
 /// The Debouncer must be initialized on a serial queue. If the queue the Debouncer is set to
-/// execute the event/cancel handlers on is not a serial queue it may lead to unpredictable
+/// execute the event/cancel handlers on is not a serial queue, it may lead to unpredictable
 /// behavior as to how many times the event and/or cancel handlers are executed.
 public final class Debouncer {
 	public typealias DebouncerAction = () -> Void
