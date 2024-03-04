@@ -18,6 +18,7 @@ import Foundation
 /// Simple wrapper around os_unfair_lock
 ///
 /// Konkyo 0.2.0
+@available(*, deprecated, renamed: "OSAllocatedUnfairLock", message: "Since iOS 16 a native unfair lock has been available, please use OSAllocatedUnfairLock.")
 public final class UnfairLock {
 	
 	private var unfairLock:  UnsafeMutablePointer<os_unfair_lock>
