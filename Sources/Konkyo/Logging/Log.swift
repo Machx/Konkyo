@@ -27,6 +27,9 @@ import CoreGraphics.CGGeometry
 /// ```
 public struct Log {
 	internal static let konkyo = Logger(subsystem: "com.konkyo", category: "general")
+
+	/// General Logger for anything to use as a starting point
+	public static let general = Logger(subsystem: "com.konkyo.general", category: "general")
 }
 
 /// Convenience function for returning the File, Function and Line string for use with OSLog
