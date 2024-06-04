@@ -17,10 +17,6 @@ import Foundation
 import os.log
 import CoreGraphics.CGGeometry
 
-@globalActor public actor LogActor {
-	public static var shared = LogActor()
-}
-
 /// Log is a struct meant to be a central access point & extension for more logs.
 ///
 /// Log can be extended to add central access to a variety of logs like so.
