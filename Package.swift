@@ -26,7 +26,7 @@ let package = Package(
 			name: "Konkyo",
 			dependencies: [],
 			swiftSettings: [
-				.enableExperimentalFeature("StrictConcurrency")
+				//.enableExperimentalFeature("StrictConcurrency")
 			]),
         .testTarget(
             name: "KonkyoTests",
