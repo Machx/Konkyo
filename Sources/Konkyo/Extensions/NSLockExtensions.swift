@@ -16,7 +16,9 @@
 import Foundation
 
 public extension NSLock {
-
+	
+	/// Convenience for locking the lock, performing action(s) and then unlocking the lock
+	/// - Parameter block: Captured actions to perform while lock is locked
 	func withLock(_ block: ()->Void) {
 		self.lock()
 		block()
