@@ -29,7 +29,7 @@ extension CGPoint: @retroactive CustomStringConvertible {
 	}
 }
 
-extension CGRect: CustomStringConvertible {
+extension CGRect: @retroactive CustomStringConvertible {
 	/// Returns a string representation of the rect made by rounding its x,y,width and height to 2 decimal places.
 	public var description: String {
 		"""
