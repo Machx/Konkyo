@@ -22,7 +22,7 @@ public extension Error {
 	}
 }
 
-extension CGPoint: CustomStringConvertible {
+extension CGPoint: @retroactive CustomStringConvertible {
 	/// Returns a string representation of the point made by rounding to 2 decimal places.
 	public var description: String {
 		"CGPoint { x: \(String(format: "%.2f", x)) y: \(String(format: "%.2f", y))"
