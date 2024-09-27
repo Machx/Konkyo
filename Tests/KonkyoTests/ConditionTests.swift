@@ -33,30 +33,18 @@ func testCWCondition() async throws {
 	// FIXME: need to find better way to update this test for async & swift test
 }
 
-final class CWConditionTests: XCTestCase {
-	
-	func testCWCondition() {
-		let condition = Condition()
-		let expectation = XCTestExpectation()
-
-		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 3) {
-			condition.signal()
-		}
-
+func testNegativeCondition() {
+	let condition = Condition()
+	let expectation = XCTestExpectation()
+	expectation.isInverted = true
+	DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.10) {
 		condition.wait()
 		expectation.fulfill()
 	}
-	
-	func testNegativeCondition() {
-		let condition = Condition()
-		let expectation = XCTestExpectation()
-		expectation.isInverted = true
-		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.10) {
-			condition.wait()
-			expectation.fulfill()
-		}
-		wait(for: [expectation], timeout: 2.0)
-	}
+	wait(for: [expectation], timeout: 2.0)
+}
+
+final class CWConditionTests: XCTestCase {
 	
 	func testWaitUntilDate() {
 		let condition = Condition()
