@@ -46,21 +46,22 @@ func testNegativeCondition() async throws {
 	//wait(for: [expectation], timeout: 2.0)
 }
 
-final class CWConditionTests: XCTestCase {
-	
-	func testWaitUntilDate() {
-		let condition = Condition()
-		let expectaction = XCTestExpectation()
-		expectaction.isInverted = true
-		
-		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1.0) {
-			condition.signal()
-			expectaction.fulfill()
-		}
-		
-		let result = condition.wait(until: Date(timeIntervalSinceNow: 3.0))
-		XCTAssertTrue(result)
+@Test("Test wait until date")
+func testWaitUntilDate() async throws {
+	let condition = Condition()
+	let expectaction = XCTestExpectation()
+	expectaction.isInverted = true
+
+	DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1.0) {
+		condition.signal()
+		expectaction.fulfill()
 	}
+
+	let result = condition.wait(until: Date(timeIntervalSinceNow: 3.0))
+	XCTAssertTrue(result)
+}
+
+final class CWConditionTests: XCTestCase {
 
 	func testWaitUntilDate2() {
 		let condition = Condition()
