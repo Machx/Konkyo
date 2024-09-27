@@ -14,8 +14,9 @@
 /// limitations under the License.
 
 import Foundation
-import XCTest
+//import XCTest
 import Konkyo
+import Testing
 
 final class MyOperation: AsynchronousOperationBase {
 	var num = 1
@@ -30,16 +31,28 @@ final class MyOperation: AsynchronousOperationBase {
 	}
 }
 
-final class AsynchronousOperationBaseTests: XCTestCase {
-	
-	func testAsyncOperation() {
-		let operation = MyOperation()
-		XCTAssertTrue(operation.isAsynchronous)
-		
-		let queue = OperationQueue()
-		queue.addOperation(operation)
-		queue.waitUntilAllOperationsAreFinished()
-		
-		XCTAssertEqual(operation.num, 152)
-	}
+func testAsyncOperation() {
+	let operation = MyOperation()
+	#expect(operation.isAsynchronous)
+
+	let queue = OperationQueue()
+	queue.addOperation(operation)
+	queue.waitUntilAllOperationsAreFinished()
+
+	//XCTAssertEqual(operation.num, 152)
+	#expect(operation.num == 152)
 }
+
+//final class AsynchronousOperationBaseTests: XCTestCase {
+//	
+//	func testAsyncOperation() {
+//		let operation = MyOperation()
+//		XCTAssertTrue(operation.isAsynchronous)
+//		
+//		let queue = OperationQueue()
+//		queue.addOperation(operation)
+//		queue.waitUntilAllOperationsAreFinished()
+//		
+//		XCTAssertEqual(operation.num, 152)
+//	}
+//}
