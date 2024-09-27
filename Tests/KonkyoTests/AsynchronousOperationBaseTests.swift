@@ -17,7 +17,7 @@ import Foundation
 import Konkyo
 import Testing
 
-final class MyOperation: AsynchronousOperationBase {
+final class MyOperation: AsynchronousOperationBase, @unchecked Sendable {
 	var num = 1
 	
 	override func start() {
