@@ -16,17 +16,33 @@
 import Foundation
 import XCTest
 import Konkyo
+import Testing
+
+@Test("Test Condition")
+func testCWCondition() async throws {
+	let condition = Condition()
+	//let expectation = XCTestExpectation()
+
+	await withCheckedContinuation { continuation in
+		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 3) {
+			continuation.resume()
+		}
+	}
+
+	condition.wait()
+	expectation.fulfill()
+}
 
 final class CWConditionTests: XCTestCase {
 	
 	func testCWCondition() {
 		let condition = Condition()
 		let expectation = XCTestExpectation()
-		
+
 		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 3) {
 			condition.signal()
 		}
-		
+
 		condition.wait()
 		expectation.fulfill()
 	}
