@@ -59,7 +59,7 @@ func testWaitUntilDate() async throws {
 }
 
 @Test("Test Wait Until with Negative Date")
-func testWaitUntilDateNegative() {
+func testWaitUntilDateNegative() throws {
 	let condition = Condition()
 
 	DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1.0) {
@@ -71,7 +71,8 @@ func testWaitUntilDateNegative() {
 	#expect(result == false)
 }
 
-func testWaitUntilDateNegative2() {
+@Test("Test wait until now")
+func testWaitUntilDateNegative2() throws {
 	let condition = Condition()
 
 	DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 2.0) {
@@ -79,5 +80,5 @@ func testWaitUntilDateNegative2() {
 	}
 
 	let result = condition.wait(until: Date())
-	XCTAssertFalse(result)
+	#expect(result == false)
 }
