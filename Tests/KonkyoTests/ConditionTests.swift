@@ -71,16 +71,13 @@ func testWaitUntilDateNegative() {
 	#expect(result == false)
 }
 
-final class CWConditionTests: XCTestCase {
-	
-	func testWaitUntilDateNegative() {
-		let condition = Condition()
-		
-		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 2.0) {
-			condition.signal()
-		}
-		
-		let result = condition.wait(until: Date())
-		XCTAssertFalse(result)
+func testWaitUntilDateNegative2() {
+	let condition = Condition()
+
+	DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 2.0) {
+		condition.signal()
 	}
+
+	let result = condition.wait(until: Date())
+	XCTAssertFalse(result)
 }
