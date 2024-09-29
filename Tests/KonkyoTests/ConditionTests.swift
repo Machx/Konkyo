@@ -58,19 +58,17 @@ func testWaitUntilDate() async throws {
 	#expect(result == true)
 }
 
-func testWaitUntilDate2() {
+@Test("Test Wait Until with Negative Date")
+func testWaitUntilDateNegative() {
 	let condition = Condition()
-	let expectation = XCTestExpectation()
-	expectation.isInverted = true
 
 	DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1.0) {
 		condition.signal()
-		expectation.fulfill()
 	}
 
 	// Give it a date way in the past so it should reject it
 	let result = condition.wait(until: Date(timeIntervalSince1970: 6))
-	XCTAssertFalse(result)
+	#expect(result == false)
 }
 
 final class CWConditionTests: XCTestCase {
