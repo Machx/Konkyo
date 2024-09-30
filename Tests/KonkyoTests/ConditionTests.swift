@@ -18,67 +18,72 @@ import XCTest
 import Konkyo
 import Testing
 
-@Test("Test Condition")
-func testCWCondition() async throws {
-	let condition = Condition()
+@Suite("CWCondition Tests")
+struct CWConditionTests {
+	
+	@Test("Test Condition")
+	func testCWCondition() async throws {
+		let condition = Condition()
 
-	await withCheckedContinuation { continuation in
-		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 3) {
-			condition.signal()
-			continuation.resume()
+		await withCheckedContinuation { continuation in
+			DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 3) {
+				condition.signal()
+				continuation.resume()
+			}
 		}
-	}
 
-	condition.wait()
-	// FIXME: need to find better way to update this test for async & swift test
-}
-
-@Test("Test Negative Condition")
-func testNegativeCondition() async throws {
-	let condition = Condition()
-
-	DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.10) {
 		condition.wait()
-		//expectation.fulfill()
+		// FIXME: need to find better way to update this test for async & swift test
 	}
 
-	// FIXME: re-evaluate this test and better way to implement it
-	//wait(for: [expectation], timeout: 2.0)
-}
+	@Test("Test Negative Condition")
+	func testNegativeCondition() async throws {
+		let condition = Condition()
 
-@Test("Test wait until date")
-func testWaitUntilDate() async throws {
-	let condition = Condition()
+		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.10) {
+			condition.wait()
+			//expectation.fulfill()
+		}
 
-	DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1.0) {
-		condition.signal()
+		// FIXME: re-evaluate this test and better way to implement it
+		//wait(for: [expectation], timeout: 2.0)
 	}
 
-	let result = condition.wait(until: Date(timeIntervalSinceNow: 3.0))
-	#expect(result == true)
-}
+	@Test("Test wait until date")
+	func testWaitUntilDate() async throws {
+		let condition = Condition()
 
-@Test("Test Wait Until with Negative Date")
-func testWaitUntilDateNegative() throws {
-	let condition = Condition()
+		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1.0) {
+			condition.signal()
+		}
 
-	DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1.0) {
-		condition.signal()
+		let result = condition.wait(until: Date(timeIntervalSinceNow: 3.0))
+		#expect(result == true)
 	}
 
-	// Give it a date way in the past so it should reject it
-	let result = condition.wait(until: Date(timeIntervalSince1970: 6))
-	#expect(result == false)
-}
+	@Test("Test Wait Until with Negative Date")
+	func testWaitUntilDateNegative() throws {
+		let condition = Condition()
 
-@Test("Test wait until now")
-func testWaitUntilDateNegative2() throws {
-	let condition = Condition()
+		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1.0) {
+			condition.signal()
+		}
 
-	DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 2.0) {
-		condition.signal()
+		// Give it a date way in the past so it should reject it
+		let result = condition.wait(until: Date(timeIntervalSince1970: 6))
+		#expect(result == false)
 	}
 
-	let result = condition.wait(until: Date())
-	#expect(result == false)
+	@Test("Test wait until now")
+	func testWaitUntilDateNegative2() throws {
+		let condition = Condition()
+
+		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 2.0) {
+			condition.signal()
+		}
+
+		let result = condition.wait(until: Date())
+		#expect(result == false)
+	}
 }
+
