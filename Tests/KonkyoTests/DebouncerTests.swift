@@ -34,20 +34,6 @@ func testDebouncer() async throws {
 
 public final class DebouncerTests: XCTestCase {
 
-	func testDebouncer() {
-		let expectation = XCTestExpectation()
-		expectation.assertForOverFulfill = true
-		let bouncer = Debouncer(delay: 1.0) {
-			print("Hello")
-			expectation.fulfill()
-		}
-		for _ in 0...1000 {
-			bouncer.reset()
-		}
-		wait(for: [expectation], timeout: 5.0)
-		bouncer.cancel()
-	}
-
 	func testCancelAction() {
 		let expectation = XCTestExpectation()
 		let bouncer = Debouncer(delay: 0.5) {
