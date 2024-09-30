@@ -32,6 +32,18 @@ func testDebouncer() async throws {
 	}
 }
 
+@Test("Test cancel action in Debouncer")
+func testCancelAction() async throws {
+	let expectation = XCTestExpectation()
+	let bouncer = Debouncer(delay: 0.5) {
+		print("Hello")
+	} cancelAction: {
+		expectation.fulfill()
+	}
+	bouncer.reset()
+	//wait(for: [expectation], timeout: 1.0)
+}
+
 public final class DebouncerTests: XCTestCase {
 
 	func testCancelAction() {
