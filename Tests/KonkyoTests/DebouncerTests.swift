@@ -17,18 +17,19 @@ import XCTest
 import Konkyo
 import Testing
 
-func testDebouncer() {
-	let expectation = XCTestExpectation()
-	expectation.assertForOverFulfill = true
-	let bouncer = Debouncer(delay: 1.0) {
-		print("Hello")
-		expectation.fulfill()
+@Test("Test basic debouncer API")
+func testDebouncer() async throws {
+	await confirmation("Confirm debouncedSignal is never called",
+					   expectedCount: 0) { debouncedSignal in
+		let bouncer = Debouncer(delay: 1.0) {
+			print("Hello")
+			debouncedSignal()
+		}
+		for _ in 0...1000 {
+			bouncer.reset()
+		}
+		bouncer.cancel()
 	}
-	for _ in 0...1000 {
-		bouncer.reset()
-	}
-	wait(for: [expectation], timeout: 5.0)
-	bouncer.cancel()
 }
 
 public final class DebouncerTests: XCTestCase {
