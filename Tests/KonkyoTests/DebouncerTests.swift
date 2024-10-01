@@ -46,18 +46,20 @@ func testCancelAction() async throws {
 	}
 }
 
-func testMultipleCancels() {
-	let expectation = XCTestExpectation()
-	expectation.expectedFulfillmentCount = 3
-	let bouncer = Debouncer(delay: 0.5) {
-		print("Hello")
-	} cancelAction: {
-		expectation.fulfill()
+@Test("Test Debouncer with multiple cancels")
+func testMultipleCancels() async throws {
+	try await confirmation(expectedCount: 3) { confirm in
+		let bouncer = Debouncer(delay: 0.5) {
+			print("Hello")
+		} cancelAction: {
+			confirm()
+		}
+		bouncer.reset()
+		bouncer.reset()
+		bouncer.reset()
+		// give a chance for the cancels to be triggered (1/2 second)
+		try await Task.sleep(for: .milliseconds(500))
 	}
-	bouncer.reset()
-	bouncer.reset()
-	bouncer.reset()
-	wait(for: [expectation], timeout: 3.0)
 }
 
 public final class DebouncerTests: XCTestCase {
