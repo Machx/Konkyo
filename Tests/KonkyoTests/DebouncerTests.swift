@@ -40,8 +40,9 @@ func testCancelAction() async throws {
 		} cancelAction: {
 			confirmCancel()
 		}
-		bouncer.reset()
-		try Thread.sleep(forTimeInterval: 1)
+		bouncer.cancel()
+		// give cancel action a tiny bit of time so that it can be triggered...
+		try await Task.sleep(for: .milliseconds(500))
 	}
 }
 
