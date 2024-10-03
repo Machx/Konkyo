@@ -17,74 +17,77 @@ import XCTest
 import Konkyo
 import Testing
 
-@Test("Test basic debouncer API")
-func testDebouncer() async throws {
-	await confirmation("Confirm debouncedSignal is never called",
-					   expectedCount: 0) { debouncedSignal in
-		let bouncer = Debouncer(delay: 1.0) {
-			print("Hello")
-			debouncedSignal()
+@Suite("Debouncer Tests")
+struct DebouncerTests {
+	@Test("Test basic debouncer API")
+	func testDebouncer() async throws {
+		await confirmation("Confirm debouncedSignal is never called",
+						   expectedCount: 0) { debouncedSignal in
+			let bouncer = Debouncer(delay: 1.0) {
+				print("Hello")
+				debouncedSignal()
+			}
+			for _ in 0...1000 {
+				bouncer.reset()
+			}
+			bouncer.cancel()
 		}
-		for _ in 0...1000 {
+	}
+
+	@Test("Test cancel action in Debouncer")
+	func testCancelAction() async throws {
+		await confirmation(expectedCount: 1) { confirmCancel in
+			let bouncer = Debouncer(delay: 0.5) {
+				print("Hello")
+			} cancelAction: {
+				confirmCancel()
+			}
+			bouncer.cancel()
+			// give cancel action a tiny bit of time so that it can be triggered...
+			let _ = DispatchQueue.main.sync {
+				RunLoop.current.run(mode: .default, before: .init(timeIntervalSinceNow: 0.5))
+			}
+		}
+	}
+
+	@Test("Test Debouncer with multiple cancels")
+	func testMultipleCancels() async throws {
+		try await confirmation(expectedCount: 3) { confirm in
+			let bouncer = Debouncer(delay: 0.5) {
+				print("Hello")
+			} cancelAction: {
+				confirm()
+			}
 			bouncer.reset()
+			bouncer.reset()
+			bouncer.reset()
+			// give a chance for the cancels to be triggered
+			let _ = DispatchQueue.main.sync {
+				RunLoop.current.run(mode: .default, before: .init(timeIntervalSinceNow: 0.5))
+			}
 		}
-		bouncer.cancel()
 	}
-}
 
-@Test("Test cancel action in Debouncer")
-func testCancelAction() async throws {
-	await confirmation(expectedCount: 1) { confirmCancel in
+	@Test("Test Reset after Cancel")
+	func testResetAfterCancel() async {
+		var bounceActionCompleted = false
+		var cancelActionCompleted = false
 		let bouncer = Debouncer(delay: 0.5) {
-			print("Hello")
+			bounceActionCompleted = true
 		} cancelAction: {
-			confirmCancel()
+			cancelActionCompleted = true
 		}
+		// Test Cancellation
 		bouncer.cancel()
-		// give cancel action a tiny bit of time so that it can be triggered...
 		let _ = DispatchQueue.main.sync {
 			RunLoop.current.run(mode: .default, before: .init(timeIntervalSinceNow: 0.5))
 		}
-	}
-}
-
-@Test("Test Debouncer with multiple cancels")
-func testMultipleCancels() async throws {
-	try await confirmation(expectedCount: 3) { confirm in
-		let bouncer = Debouncer(delay: 0.5) {
-			print("Hello")
-		} cancelAction: {
-			confirm()
-		}
+		#expect(cancelActionCompleted == true)
+		// Check if event block executes after cancellation
 		bouncer.reset()
-		bouncer.reset()
-		bouncer.reset()
-		// give a chance for the cancels to be triggered
 		let _ = DispatchQueue.main.sync {
 			RunLoop.current.run(mode: .default, before: .init(timeIntervalSinceNow: 0.5))
 		}
+		#expect(bounceActionCompleted == true)
 	}
-}
-
-@Test("Test Reset after Cancel")
-func testResetAfterCancel() async {
-	var bounceActionCompleted = false
-	var cancelActionCompleted = false
-	let bouncer = Debouncer(delay: 0.5) {
-		bounceActionCompleted = true
-	} cancelAction: {
-		cancelActionCompleted = true
-	}
-	// Test Cancellation
-	bouncer.cancel()
-	let _ = DispatchQueue.main.sync {
-		RunLoop.current.run(mode: .default, before: .init(timeIntervalSinceNow: 0.5))
-	}
-	#expect(cancelActionCompleted == true)
-	// Check if event block executes after cancellation
-	bouncer.reset()
-	let _ = DispatchQueue.main.sync {
-		RunLoop.current.run(mode: .default, before: .init(timeIntervalSinceNow: 0.5))
-	}
-	#expect(bounceActionCompleted == true)
 }
