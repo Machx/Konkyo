@@ -34,7 +34,7 @@ func testDebouncer() async throws {
 
 @Test("Test cancel action in Debouncer")
 func testCancelAction() async throws {
-	try await confirmation(expectedCount: 1) { confirmCancel in
+	await confirmation(expectedCount: 1) { confirmCancel in
 		let bouncer = Debouncer(delay: 0.5) {
 			print("Hello")
 		} cancelAction: {
@@ -42,7 +42,9 @@ func testCancelAction() async throws {
 		}
 		bouncer.cancel()
 		// give cancel action a tiny bit of time so that it can be triggered...
-		try await Task.sleep(for: .milliseconds(500))
+		let _ = DispatchQueue.main.sync {
+			RunLoop.current.run(mode: .default, before: .init(timeIntervalSinceNow: 0.5))
+		}
 	}
 }
 
@@ -57,8 +59,10 @@ func testMultipleCancels() async throws {
 		bouncer.reset()
 		bouncer.reset()
 		bouncer.reset()
-		// give a chance for the cancels to be triggered (1/2 second)
-		try await Task.sleep(for: .milliseconds(500))
+		// give a chance for the cancels to be triggered
+		let _ = DispatchQueue.main.sync {
+			RunLoop.current.run(mode: .default, before: .init(timeIntervalSinceNow: 0.5))
+		}
 	}
 }
 
