@@ -66,18 +66,29 @@ func testMultipleCancels() async throws {
 	}
 }
 
-func testResetAfterCancel() {
-	let eventExpectation = XCTestExpectation()
-	let cancelExpectation = XCTestExpectation()
+@Test("Test Reset after Cancel")
+func testResetAfterCancel() async {
+	var bounceActionCompleted = false
+	var cancelActionCompleted = false
 	let bouncer = Debouncer(delay: 0.5) {
-		eventExpectation.fulfill()
+		//eventExpectation.fulfill()
+		bounceActionCompleted = true
 	} cancelAction: {
-		cancelExpectation.fulfill()
+		//cancelExpectation.fulfill()
+		cancelActionCompleted = true
 	}
 	// Test Cancellation
 	bouncer.cancel()
-	wait(for: [cancelExpectation], timeout: 0.5)
+	let _ = DispatchQueue.main.sync {
+		RunLoop.current.run(mode: .default, before: .init(timeIntervalSinceNow: 0.5))
+	}
+	#expect(cancelActionCompleted == true)
+	//wait(for: [cancelExpectation], timeout: 0.5)
 	// Check if event block executes after cancellation
 	bouncer.reset()
-	wait(for: [eventExpectation], timeout: 1.0)
+	//wait(for: [eventExpectation], timeout: 1.0)
+	let _ = DispatchQueue.main.sync {
+		RunLoop.current.run(mode: .default, before: .init(timeIntervalSinceNow: 0.5))
+	}
+	#expect(bounceActionCompleted == true)
 }
