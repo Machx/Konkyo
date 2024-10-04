@@ -64,13 +64,14 @@ struct RollingDictionaryTests {
 		#expect(dictionary["Lasso"] == 2)
 	}
 
-	func testDictionaryLiteral() {
+	@Test("Test Rolling Dictionary with Dictionary Literal")
+	func testDictionaryLiteral() async {
 		let dictionary: RollingDictionary = ["A": 1, "B": 2]
 
-		XCTAssertNotNil(dictionary)
-		XCTAssertEqual(dictionary.getKeyLimit(), Int.max)
-		XCTAssertEqual(dictionary["A"], 1)
-		XCTAssertEqual(dictionary["B"], 2)
+		#expect(dictionary != nil)
+		#expect(dictionary.getKeyLimit() == Int.max)
+		#expect(dictionary["A"] == 1)
+		#expect(dictionary["B"] == 2)
 	}
 }
 
