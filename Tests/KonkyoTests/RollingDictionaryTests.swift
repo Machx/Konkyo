@@ -73,23 +73,23 @@ struct RollingDictionaryTests {
 		#expect(dictionary["A"] == 1)
 		#expect(dictionary["B"] == 2)
 	}
-}
 
-//final class RollingDictionaryTests: XCTestCase {
-	
 	func testDictionaryLiteralAndSetLimit() {
 		var dictionary: RollingDictionary = ["A": 1, "B": 2]
-		
+
 		XCTAssertNotNil(dictionary)
 		XCTAssertEqual(dictionary["A"], 1)
 		XCTAssertEqual(dictionary["B"], 2)
-		
+
 		dictionary.setLimit(1)
-		
+
 		XCTAssertEqual(dictionary.getKeyLimit(), 1)
 		XCTAssertNil(dictionary["A"])
 		XCTAssertNotNil(dictionary["B"])
 	}
+}
+
+//final class RollingDictionaryTests: XCTestCase {
 	
 	func testDictionaryKeys() {
 		var dictionary: RollingDictionary = ["A": 1,
