@@ -32,28 +32,28 @@ struct RollingDictionaryTests {
 		#expect(dictionary["Lasso"] == 2)
 		#expect(dictionary["Ted"] == nil)
 	}
-}
 
-//final class RollingDictionaryTests: XCTestCase {
-	
 	func testBasicRollingDictionaryWithMultipleValues() {
 		var dictionary = RollingDictionary<String,Int>(limit: 2)
-		
+
 		dictionary["Ted"] = 1
-		
+
 		XCTAssertEqual(dictionary["Ted"], 1)
-		
+
 		dictionary["Lasso"] = 2
-		
+
 		XCTAssertEqual(dictionary["Ted"], 1)
 		XCTAssertEqual(dictionary["Lasso"], 2)
-		
+
 		dictionary["Thing"] = 3
-		
+
 		XCTAssertEqual(dictionary["Lasso"], 2)
 		XCTAssertEqual(dictionary["Thing"], 3)
 		XCTAssertNil(dictionary["Ted"])
 	}
+}
+
+//final class RollingDictionaryTests: XCTestCase {
 	
 	func testRollingDictionaryLimitAPI() {
 		var dictionary = RollingDictionary<String,Int>(limit: 2)
