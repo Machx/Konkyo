@@ -50,19 +50,18 @@ struct RollingDictionaryTests {
 		#expect(dictionary["Ted"] == nil)
 	}
 
-	func testRollingDictionaryLimitAPI() {
+	@Test("Test Rolling Dictionary with Limit API")
+	func testRollingDictionaryLimitAPI() async {
 		var dictionary = RollingDictionary<String,Int>(limit: 2)
-
 		dictionary["Ted"] = 1
 		dictionary["Lasso"] = 2
 
-		XCTAssertEqual(dictionary["Ted"], 1)
-		XCTAssertEqual(dictionary["Lasso"], 2)
+		#expect(dictionary["Ted"] == 1)
+		#expect(dictionary["Lasso"] == 2)
 
 		dictionary.setLimit(1)
-
-		XCTAssertNil(dictionary["Ted"])
-		XCTAssertEqual(dictionary["Lasso"], 2)
+		#expect(dictionary["Ted"] == nil)
+		#expect(dictionary["Lasso"] == 2)
 	}
 }
 
