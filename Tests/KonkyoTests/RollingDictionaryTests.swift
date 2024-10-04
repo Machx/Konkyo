@@ -74,18 +74,16 @@ struct RollingDictionaryTests {
 		#expect(dictionary["B"] == 2)
 	}
 
-	func testDictionaryLiteralAndSetLimit() {
+	@Test("Test Dictionary Literal and Set Limit")
+	func testDictionaryLiteralAndSetLimit() async {
 		var dictionary: RollingDictionary = ["A": 1, "B": 2]
-
-		XCTAssertNotNil(dictionary)
-		XCTAssertEqual(dictionary["A"], 1)
-		XCTAssertEqual(dictionary["B"], 2)
+		#expect(dictionary["A"] == 1)
+		#expect(dictionary["B"] == 2)
 
 		dictionary.setLimit(1)
-
-		XCTAssertEqual(dictionary.getKeyLimit(), 1)
-		XCTAssertNil(dictionary["A"])
-		XCTAssertNotNil(dictionary["B"])
+		#expect(dictionary.getKeyLimit() == 1)
+		#expect(dictionary["A"] == nil)
+		#expect(dictionary["B"] != nil)
 	}
 }
 
