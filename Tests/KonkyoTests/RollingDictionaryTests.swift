@@ -21,23 +21,20 @@ import Testing
 @Suite("Rolling Dictionary Tests")
 struct RollingDictionaryTests {
 
-	
+	@Test("Test Rolling Dictionary with 1 Value")
+	func testBasicRollingDictionaryWith1Value() async {
+		var dictionary = RollingDictionary<String,Int>(limit: 1)
+
+		dictionary["Ted"] = 1
+		#expect(dictionary["Ted"] == 1)
+
+		dictionary["Lasso"] = 2
+		#expect(dictionary["Lasso"] == 2)
+		#expect(dictionary["Ted"] == nil)
+	}
 }
 
 //final class RollingDictionaryTests: XCTestCase {
-
-	func testBasicRollingDictionaryWith1Value() {
-		var dictionary = RollingDictionary<String,Int>(limit: 1)
-		
-		dictionary["Ted"] = 1
-		
-		XCTAssertEqual(dictionary["Ted"], 1)
-		
-		dictionary["Lasso"] = 2
-		
-		XCTAssertEqual(dictionary["Lasso"], 2)
-		XCTAssertNil(dictionary["Ted"])
-	}
 	
 	func testBasicRollingDictionaryWithMultipleValues() {
 		var dictionary = RollingDictionary<String,Int>(limit: 2)
