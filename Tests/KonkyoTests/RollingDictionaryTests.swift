@@ -16,9 +16,16 @@
 import Foundation
 import XCTest
 import Konkyo
+import Testing
 
-final class RollingDictionaryTests: XCTestCase {
+@Suite("Rolling Dictionary Tests")
+struct RollingDictionaryTests {
+
 	
+}
+
+//final class RollingDictionaryTests: XCTestCase {
+
 	func testBasicRollingDictionaryWith1Value() {
 		var dictionary = RollingDictionary<String,Int>(limit: 1)
 		
@@ -130,4 +137,4 @@ final class RollingDictionaryTests: XCTestCase {
 		XCTAssertEqual(dictionary["E"], 5)
 		XCTAssertEqual(dictionary["F"], 6)
 	}
-}
+//}
