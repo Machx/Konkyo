@@ -63,18 +63,18 @@ struct RollingDictionaryTests {
 		#expect(dictionary["Ted"] == nil)
 		#expect(dictionary["Lasso"] == 2)
 	}
-}
 
-//final class RollingDictionaryTests: XCTestCase {
-	
 	func testDictionaryLiteral() {
 		let dictionary: RollingDictionary = ["A": 1, "B": 2]
-		
+
 		XCTAssertNotNil(dictionary)
 		XCTAssertEqual(dictionary.getKeyLimit(), Int.max)
 		XCTAssertEqual(dictionary["A"], 1)
 		XCTAssertEqual(dictionary["B"], 2)
 	}
+}
+
+//final class RollingDictionaryTests: XCTestCase {
 	
 	func testDictionaryLiteralAndSetLimit() {
 		var dictionary: RollingDictionary = ["A": 1, "B": 2]
