@@ -49,24 +49,24 @@ struct RollingDictionaryTests {
 		#expect(dictionary["Thing"] == 3)
 		#expect(dictionary["Ted"] == nil)
 	}
-}
 
-//final class RollingDictionaryTests: XCTestCase {
-	
 	func testRollingDictionaryLimitAPI() {
 		var dictionary = RollingDictionary<String,Int>(limit: 2)
-		
+
 		dictionary["Ted"] = 1
 		dictionary["Lasso"] = 2
-		
+
 		XCTAssertEqual(dictionary["Ted"], 1)
 		XCTAssertEqual(dictionary["Lasso"], 2)
-		
+
 		dictionary.setLimit(1)
-		
+
 		XCTAssertNil(dictionary["Ted"])
 		XCTAssertEqual(dictionary["Lasso"], 2)
 	}
+}
+
+//final class RollingDictionaryTests: XCTestCase {
 	
 	func testDictionaryLiteral() {
 		let dictionary: RollingDictionary = ["A": 1, "B": 2]
