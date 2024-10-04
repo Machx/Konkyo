@@ -33,23 +33,21 @@ struct RollingDictionaryTests {
 		#expect(dictionary["Ted"] == nil)
 	}
 
-	func testBasicRollingDictionaryWithMultipleValues() {
+	@Test("Test Rolling Dictionary with Multiple Values")
+	func testBasicRollingDictionaryWithMultipleValues() async {
 		var dictionary = RollingDictionary<String,Int>(limit: 2)
 
 		dictionary["Ted"] = 1
-
-		XCTAssertEqual(dictionary["Ted"], 1)
+		#expect(dictionary["Ted"] == 1)
 
 		dictionary["Lasso"] = 2
-
-		XCTAssertEqual(dictionary["Ted"], 1)
-		XCTAssertEqual(dictionary["Lasso"], 2)
+		#expect(dictionary["Ted"] == 1)
+		#expect(dictionary["Lasso"] == 2)
 
 		dictionary["Thing"] = 3
-
-		XCTAssertEqual(dictionary["Lasso"], 2)
-		XCTAssertEqual(dictionary["Thing"], 3)
-		XCTAssertNil(dictionary["Ted"])
+		#expect(dictionary["Lasso"] == 2)
+		#expect(dictionary["Thing"] == 3)
+		#expect(dictionary["Ted"] == nil)
 	}
 }
 
