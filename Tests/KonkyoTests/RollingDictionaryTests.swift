@@ -85,43 +85,44 @@ struct RollingDictionaryTests {
 		#expect(dictionary["A"] == nil)
 		#expect(dictionary["B"] != nil)
 	}
-}
 
-@Test("Test Dcitionary Keys")
-func testDictionaryKeys() async {
-	var dictionary: RollingDictionary = ["A": 1,
-										 "B": 2,
-										 "C": 3,
-										 "D": 4]
-	let keys = Array(dictionary.keys)
+	@Test("Test Dcitionary Keys")
+	func testDictionaryKeys() async {
+		var dictionary: RollingDictionary = ["A": 1,
+											 "B": 2,
+											 "C": 3,
+											 "D": 4]
+		let keys = Array(dictionary.keys)
 
-	#expect(keys.count == 4)
+		#expect(keys.count == 4)
 
-	dictionary.setLimit(2)
-	#expect(dictionary["A"] == nil)
-	#expect(dictionary["B"] == nil)
-	#expect(dictionary["C"] == 3)
-	#expect(dictionary["D"] == 4)
-}
+		dictionary.setLimit(2)
+		#expect(dictionary["A"] == nil)
+		#expect(dictionary["B"] == nil)
+		#expect(dictionary["C"] == 3)
+		#expect(dictionary["D"] == 4)
+	}
 
-@Test("Test Dictionary Key Count")
-func testDictionaryKeyCount() async {
-	var dictionary: RollingDictionary = ["A": 1,
-										 "B": 2,
-										 "C": 3,
-										 "D": 4]
-	#expect(dictionary.keys.count == 4)
+	@Test("Test Dictionary Key Count")
+	func testDictionaryKeyCount() async {
+		var dictionary: RollingDictionary = ["A": 1,
+											 "B": 2,
+											 "C": 3,
+											 "D": 4]
+		#expect(dictionary.keys.count == 4)
 
-	dictionary.setLimit(2)
-	#expect(dictionary.keys.count == 2)
-	#expect(dictionary["C"] == 3)
-	#expect(dictionary["D"] == 4)
+		dictionary.setLimit(2)
+		#expect(dictionary.keys.count == 2)
+		#expect(dictionary["C"] == 3)
+		#expect(dictionary["D"] == 4)
 
-	dictionary["E"] = 5
-	dictionary["F"] = 6
-	dictionary.setLimit(2)
+		dictionary["E"] = 5
+		dictionary["F"] = 6
+		dictionary.setLimit(2)
 
-	#expect(dictionary.keys.count == 2)
-	#expect(dictionary["E"] == 5)
-	#expect(dictionary["F"] == 6)
+		#expect(dictionary.keys.count == 2)
+		#expect(dictionary["E"] == 5)
+		#expect(dictionary["F"] == 6)
+	}
+
 }
