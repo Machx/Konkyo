@@ -87,26 +87,25 @@ struct RollingDictionaryTests {
 	}
 }
 
+@Test("Test Dcitionary Keys")
+func testDictionaryKeys() async {
+	var dictionary: RollingDictionary = ["A": 1,
+										 "B": 2,
+										 "C": 3,
+										 "D": 4]
+	let keys = Array(dictionary.keys)
+
+	#expect(keys.count == 4)
+
+	dictionary.setLimit(2)
+	#expect(dictionary["A"] == nil)
+	#expect(dictionary["B"] == nil)
+	#expect(dictionary["C"] == 3)
+	#expect(dictionary["D"] == 4)
+}
+
 //final class RollingDictionaryTests: XCTestCase {
-	
-	func testDictionaryKeys() {
-		var dictionary: RollingDictionary = ["A": 1,
-											 "B": 2,
-											 "C": 3,
-											 "D": 4]
-		
-		let keys = Array(dictionary.keys)
-		
-		XCTAssertEqual(keys.count, 4)
-		
-		dictionary.setLimit(2)
-		
-		XCTAssertNil(dictionary["A"])
-		XCTAssertNil(dictionary["B"])
-		XCTAssertEqual(dictionary["C"], 3)
-		XCTAssertEqual(dictionary["D"], 4)
-	}
-	
+
 	func testDictionaryKeyCount() {
 		var dictionary: RollingDictionary = ["A": 1,
 											 "B": 2,
