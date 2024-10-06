@@ -104,29 +104,26 @@ func testDictionaryKeys() async {
 	#expect(dictionary["D"] == 4)
 }
 
-//final class RollingDictionaryTests: XCTestCase {
+func testDictionaryKeyCount() {
+	var dictionary: RollingDictionary = ["A": 1,
+										 "B": 2,
+										 "C": 3,
+										 "D": 4]
 
-	func testDictionaryKeyCount() {
-		var dictionary: RollingDictionary = ["A": 1,
-											 "B": 2,
-											 "C": 3,
-											 "D": 4]
-		
-		XCTAssertEqual(dictionary.keys.count, 4)
-		
-		dictionary.setLimit(2)
-		
-		XCTAssertEqual(dictionary.keys.count, 2)
-		XCTAssertEqual(dictionary["C"], 3)
-		XCTAssertEqual(dictionary["D"], 4)
-		
-		dictionary["E"] = 5
-		dictionary["F"] = 6
-		
-		dictionary.setLimit(2)
-		
-		XCTAssertEqual(dictionary.keys.count, 2)
-		XCTAssertEqual(dictionary["E"], 5)
-		XCTAssertEqual(dictionary["F"], 6)
-	}
-//}
+	XCTAssertEqual(dictionary.keys.count, 4)
+
+	dictionary.setLimit(2)
+
+	XCTAssertEqual(dictionary.keys.count, 2)
+	XCTAssertEqual(dictionary["C"], 3)
+	XCTAssertEqual(dictionary["D"], 4)
+
+	dictionary["E"] = 5
+	dictionary["F"] = 6
+
+	dictionary.setLimit(2)
+
+	XCTAssertEqual(dictionary.keys.count, 2)
+	XCTAssertEqual(dictionary["E"], 5)
+	XCTAssertEqual(dictionary["F"], 6)
+}
