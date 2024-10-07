@@ -20,15 +20,17 @@ import Testing
 
 @Suite("URL Extension Tests")
 struct URLExtensionTests {
-	
+
+	@Test("Test URL Extension Valid URL")
+	func testURLExtensionValidURL() {
+		let valid = "https://www.apple.com"
+		#expect(valid.isValidURL)
+	}
 }
 
 final class URLExtensionTests: XCTestCase {
 
-	func testURLExtensionValidURL() {
-		let valid = "https://www.apple.com"
-		XCTAssertTrue(valid.isValidURL)
-	}
+
 
 	func testURLExtensionInvalidURL() {
 		let invalid = "quizzyjimbo"
