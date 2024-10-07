@@ -85,7 +85,7 @@ struct RollingDictionaryTests {
 		#expect(dictionary["B"] != nil)
 	}
 
-	@Test("Test Dcitionary Keys")
+	@Test("Test Dictionary Keys")
 	func testDictionaryKeys() async {
 		var dictionary: RollingDictionary = ["A": 1,
 											 "B": 2,
