@@ -26,14 +26,11 @@ struct URLExtensionTests {
 		let valid = "https://www.apple.com"
 		#expect(valid.isValidURL)
 	}
-}
 
-final class URLExtensionTests: XCTestCase {
-
-
-
+	@Test("Test URLExtension Invalid URL")
 	func testURLExtensionInvalidURL() {
-		let invalid = "quizzyjimbo"
-		XCTAssertTrue(invalid.isValidURL)
+		// Public Source code showed it just checked for non empty string
+		let invalid = ""
+		#expect(!invalid.isValidURL)
 	}
 }
