@@ -16,6 +16,7 @@
 import Foundation
 import XCTest
 import Konkyo
+import Testing
 
 final class URLExtensionTests: XCTestCase {
 
