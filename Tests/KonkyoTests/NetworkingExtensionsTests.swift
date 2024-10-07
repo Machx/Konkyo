@@ -18,6 +18,11 @@ import XCTest
 import Konkyo
 import Testing
 
+@Suite("URL Extension Tests")
+struct URLExtensionTests {
+	
+}
+
 final class URLExtensionTests: XCTestCase {
 
 	func testURLExtensionValidURL() {
