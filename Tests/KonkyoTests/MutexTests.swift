@@ -34,22 +34,19 @@ func testMutex() {
 	#expect(total == expected)
 }
 
-final class MutexTests: XCTestCase {
-	
-	func testRecursiveMutex() {
+@Test("Test Recursive Mutex")
+func testRecursiveMutex() async {
+	await confirmation(expectedCount: 1) { confirm in
 		let mutex = Mutex(type: .recursive)
-		let expectation = XCTestExpectation()
-		
-		DispatchQueue.global(qos: .background).async {
+
+		DispatchQueue.global(qos: .background).sync {
 			mutex.lock()
 			mutex.lock()
 
-			expectation.fulfill()
-			
+			confirm()
+
 			mutex.unlock()
 			mutex.unlock()
 		}
-		
-		wait(for: [expectation], timeout: 2.0)
 	}
 }
