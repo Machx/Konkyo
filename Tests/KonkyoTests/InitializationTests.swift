@@ -16,6 +16,7 @@
 import Foundation
 import XCTest
 @testable import Konkyo
+import Testing
 
 class MyTestClass {
 	var myNum = 0
@@ -25,13 +26,10 @@ class MyTestClass {
 	}
 }
 
-final class InitializationTests: XCTestCase {
-	
-	func testCreationOperator() {
-		let thing = MyTestClass() <- {
-			$0.myNum = 5
-		}
-		
-		XCTAssertEqual(thing.myNum, 5)
+@Test("Test Creation initialization operator")
+func testCreationInitializationOperator() async throws {
+	let thing = MyTestClass() <- {
+		$0.myNum = 5
 	}
+	#expect(thing.myNum == 5)
 }
