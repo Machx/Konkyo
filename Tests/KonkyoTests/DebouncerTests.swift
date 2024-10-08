@@ -52,7 +52,7 @@ struct DebouncerTests {
 
 	@Test("Test Debouncer with multiple cancels")
 	func testMultipleCancels() async throws {
-		try await confirmation(expectedCount: 3) { confirm in
+		await confirmation(expectedCount: 3) { confirm in
 			let bouncer = Debouncer(delay: 0.5) {
 				print("Hello")
 			} cancelAction: {
