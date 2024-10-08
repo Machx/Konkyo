@@ -17,23 +17,24 @@
 import XCTest
 import Foundation
 import Konkyo
+import Testing
+
+@Test("Test Mutex")
+func testMutex() {
+	let mutex = Mutex()
+	var total = 0
+	let iterations = Int.random(in: 15_000...20000)
+	DispatchQueue.concurrentPerform(iterations: iterations) { (index) in
+		mutex.lock()
+		total += index + 1 // Adjust because indexes start at 0.
+		mutex.unlock()
+	}
+
+	let expected = (iterations * (iterations + 1)) / 2
+	#expect(total == expected)
+}
 
 final class MutexTests: XCTestCase {
-	
-	func testMutex() {
-		let mutex = Mutex()
-		var total = 0
-		let iterations = Int.random(in: 15_000...20000)
-		DispatchQueue.concurrentPerform(iterations: iterations) { (index) in
-			mutex.lock()
-			total += index + 1 // Adjust because indexes start at 0.
-			mutex.unlock()
-		}
-		
-		let expected = (iterations * (iterations + 1)) / 2
-		
-		XCTAssertEqual(total, expected, "Failed with Iterations: \(iterations)")
-	}
 	
 	func testRecursiveMutex() {
 		let mutex = Mutex(type: .recursive)
