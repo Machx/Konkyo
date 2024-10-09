@@ -36,19 +36,6 @@ struct CWConditionTests {
 		// FIXME: need to find better way to update this test for async & swift test
 	}
 
-	@Test("Test Negative Condition")
-	func testNegativeCondition() async throws {
-		let condition = Condition()
-
-		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.10) {
-			condition.wait()
-			//expectation.fulfill()
-		}
-
-		// FIXME: re-evaluate this test and better way to implement it
-		//wait(for: [expectation], timeout: 2.0)
-	}
-
 	@Test("Test wait until date")
 	func testWaitUntilDate() async throws {
 		let condition = Condition()
