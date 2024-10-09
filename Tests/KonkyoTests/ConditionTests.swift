@@ -22,22 +22,13 @@ import Testing
 struct CWConditionTests {
 	
 	@Test("Test Condition")
-	func testCWCondition() async throws {
-		let condition = Condition()
-
-		await withCheckedContinuation { continuation in
-			DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 3) {
-				condition.signal()
-				continuation.resume()
-			}
-		}
-
-		condition.wait()
-		// FIXME: need to find better way to update this test for async & swift test
-	}
-
-	@Test("Test Condition more Swift Test Friendly")
-	func testCWCondition2() async throws {
+	func testCWCondition() async {
+		/// This isn't ideal, but within the context of Swift Tests this is as good as
+		/// can reasonably be expected. PThread API's don't seem to play well with the
+		/// async await contexts, so in lieu of trying hacks upon hacks trying to make
+		/// it all work I have this test which really isn't a test, but if this unit
+		/// test gets hung not running properly its the only way to really know if its
+		/// not working.
 		let condition = Condition()
 
 		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1) {
