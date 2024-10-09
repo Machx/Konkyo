@@ -36,6 +36,21 @@ struct CWConditionTests {
 		// FIXME: need to find better way to update this test for async & swift test
 	}
 
+	@Test("Test Condition more Swift Test Friendly")
+	func testCWCondition2() async throws {
+		let condition = Condition()
+
+		await withCheckedContinuation { continuation in
+			DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 3) {
+				condition.signal()
+				continuation.resume()
+			}
+		}
+
+		condition.wait()
+		// FIXME: need to find better way to update this test for async & swift test
+	}
+
 	@Test("Test wait until date")
 	func testWaitUntilDate() async throws {
 		let condition = Condition()
