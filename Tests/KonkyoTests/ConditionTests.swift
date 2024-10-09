@@ -38,16 +38,13 @@ struct CWConditionTests {
 
 	@Test("Test Condition more Swift Test Friendly")
 	func testCWCondition2() async throws {
-		await confirmation(expectedCount: 1) { confirmation in
-			let condition = Condition()
+		let condition = Condition()
 
-			DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1) {
-				condition.signal()
-			}
-
-			condition.wait()
+		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1) {
+			condition.signal()
 		}
-		// FIXME: need to find better way to update this test for async & swift test
+
+		condition.wait()
 	}
 
 	@Test("Test wait until date")
