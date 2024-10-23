@@ -1,4 +1,4 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
     name: "Konkyo",
 	platforms: [
-		.macOS(.v14),
-		.iOS(.v17),
+		.macOS(.v15),
+		.iOS(.v18),
 	],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
@@ -32,5 +32,5 @@ let package = Package(
             name: "KonkyoTests",
             dependencies: ["Konkyo"]),
     ],
-	swiftLanguageVersions: [.v5]
+	swiftLanguageModes: [.v5, .v6]
 )
