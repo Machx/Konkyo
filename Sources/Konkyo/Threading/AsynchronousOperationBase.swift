@@ -23,7 +23,7 @@ import Foundation
 /// didChangeValue(for:) notifications
 ///
 /// 1.0.0
-open class AsynchronousOperationBase: Operation {
+open class AsynchronousOperationBase: Operation, @unchecked Sendable {
 	
 	open override var isAsynchronous: Bool {
 		return true
