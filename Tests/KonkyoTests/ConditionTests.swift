@@ -29,7 +29,7 @@ struct CWConditionTests {
 		/// it all work I have this test which really isn't a test, but if this unit
 		/// test gets hung not running properly its the only way to really know if its
 		/// not working.
-		let condition = Condition()
+		nonisolated(unsafe) let condition = Condition()
 
 		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1) {
 			condition.signal()
@@ -40,7 +40,7 @@ struct CWConditionTests {
 
 	@Test("Test wait until date")
 	func testWaitUntilDate() async throws {
-		let condition = Condition()
+		nonisolated(unsafe) let condition = Condition()
 
 		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1.0) {
 			condition.signal()
@@ -52,7 +52,7 @@ struct CWConditionTests {
 
 	@Test("Test Wait Until with Negative Date")
 	func testWaitUntilDateNegative() throws {
-		let condition = Condition()
+		nonisolated(unsafe) let condition = Condition()
 
 		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1.0) {
 			condition.signal()
@@ -65,7 +65,7 @@ struct CWConditionTests {
 
 	@Test("Test wait until now")
 	func testWaitUntilDateNegative2() throws {
-		let condition = Condition()
+		nonisolated(unsafe) let condition = Condition()
 
 		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 2.0) {
 			condition.signal()
