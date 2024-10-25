@@ -17,7 +17,7 @@ import Foundation
 import XCTest
 @testable import Konkyo
 
-public class IncrementOp: AsynchronousOperationBase {
+public class IncrementOp: AsynchronousOperationBase, @unchecked Sendable {
 	let queue = DispatchQueue(label: "com.thing")
 	
 	var value: Int = 0
