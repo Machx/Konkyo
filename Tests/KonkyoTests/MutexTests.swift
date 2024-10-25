@@ -22,7 +22,7 @@ import Testing
 @Test("Test Mutex")
 func testMutex() {
 	let mutex = Mutex()
-	var total = 0
+	nonisolated(unsafe) var total = 0
 	let iterations = Int.random(in: 15_000...20_000)
 	DispatchQueue.concurrentPerform(iterations: iterations) { (index) in
 		mutex.lock()
