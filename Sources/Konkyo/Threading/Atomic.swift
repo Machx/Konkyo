@@ -18,7 +18,7 @@ import Foundation
 /// Provides Thread Safe Atomic access to a variable
 ///
 /// 1.0.0
-public final class Atomic<Value> {
+public final class Atomic<Value>: @unchecked Sendable {
 	private var _value: Value
 	private let queue = DispatchQueue(label: "com.Konkyo.Atomic.\(String(describing: Value.self))")
 	
