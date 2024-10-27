@@ -16,7 +16,7 @@
 import Darwin.POSIX.pthread
 
 /// Simple wrapper around the pthread_mutex_t c api.
-public final class Mutex {
+public final class Mutex: @unchecked Sendable {
 	/// Type used to initialize the underlying mutex.
 	public enum MutexType {
 		// Initializes the Mutex to a normal mutex. This is the default.
