@@ -39,14 +39,20 @@ struct CWConditionTests {
 
 	@Test("Test wait until date")
 	func testWaitUntilDate() async throws {
-		nonisolated(unsafe) let condition = Condition()
+		await Task { @MainActor in
+			nonisolated(unsafe) let condition = Condition()
 
-		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1.0) {
-			condition.signal()
+			DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1.0) {
+				condition.signal()
+			}
+
+			let result = condition.wait(until: Date(timeIntervalSinceNow: 3.0))
+			await withCheckedContinuation { continuation in
+				RunLoop.main.run(mode: .default, before: .now + 1.0)
+				continuation.resume()
+			}
+			#expect(result == true)
 		}
-
-		let result = condition.wait(until: Date(timeIntervalSinceNow: 3.0))
-		#expect(result == true)
 	}
 
 	@Test("Test Wait Until with Negative Date")
