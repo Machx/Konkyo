@@ -15,6 +15,7 @@
 
 import Konkyo
 import Testing
+import Foundation
 
 /// Disable the Debouncer Tests for now until the RunLoop issues
 /// can be resolved, and the tests pass more consistently.
