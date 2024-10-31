@@ -14,8 +14,8 @@
 /// limitations under the License.
 
 import Foundation
-import XCTest
 @testable import Konkyo
+import Testing
 
 public class IncrementOp: AsynchronousOperationBase, @unchecked Sendable {
 	let queue = DispatchQueue(label: "com.thing")
@@ -37,17 +37,14 @@ public class IncrementOp: AsynchronousOperationBase, @unchecked Sendable {
 	}
 }
 
-final class OperationTests: XCTestCase {
-	
-	/// Test Operation Access on isExecuting isFinished in AsyncOperationBase
-	func testOperation() {
-		let queue = OperationQueue()
-		queue.maxConcurrentOperationCount = 1
-		
-		let op = IncrementOp(value: 1)
-		queue.addOperation(op)
-		
-		queue.waitUntilAllOperationsAreFinished()
-		XCTAssertEqual(op.value, 2)
-	}
+@Test
+func testOperation() {
+	let queue = OperationQueue()
+	queue.maxConcurrentOperationCount = 1
+
+	let op = IncrementOp(value: 1)
+	queue.addOperation(op)
+
+	queue.waitUntilAllOperationsAreFinished()
+	#expect(op.value == 2)
 }
