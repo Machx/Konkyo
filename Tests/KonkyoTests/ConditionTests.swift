@@ -18,24 +18,26 @@ import Konkyo
 import Testing
 
 // Disabling due to intermitent unit test issue
-@Suite("CWCondition Tests", .disabled(if: true))
+@Suite("CWCondition Tests")
 struct CWConditionTests {
 	
 	@Test("Test Condition")
 	func testCWCondition() async {
-		/// This isn't ideal, but within the context of Swift Tests this is as good as
-		/// can reasonably be expected. PThread API's don't seem to play well with the
-		/// async await contexts, so in lieu of trying hacks upon hacks trying to make
-		/// it all work I have this test which really isn't a test, but if this unit
-		/// test gets hung not running properly its the only way to really know if its
-		/// not working.
-		nonisolated(unsafe) let condition = Condition()
+		await MainActor.run {
+			/// This isn't ideal, but within the context of Swift Tests this is as good as
+			/// can reasonably be expected. PThread API's don't seem to play well with the
+			/// async await contexts, so in lieu of trying hacks upon hacks trying to make
+			/// it all work I have this test which really isn't a test, but if this unit
+			/// test gets hung not running properly its the only way to really know if its
+			/// not working.
+			nonisolated(unsafe) let condition = Condition()
 
-		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1) {
-			condition.signal()
+			DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1) {
+				condition.signal()
+			}
+
+			condition.wait()
 		}
-
-		condition.wait()
 	}
 
 	@Test("Test wait until date")
