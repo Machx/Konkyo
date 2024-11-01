@@ -24,7 +24,12 @@ public extension NSLock {
 		block()
 		self.unlock()
 	}
-
+	
+	/// Convenience for trying to unlock the lock and executing completion if its available for locking.
+	///
+	/// If the lock is available to be locked, then it is and the block is executed, otherwise nothing happens.
+	///
+	/// - Parameter withLock: Block to be executed if the lock is available for locking.
 	func tryLock(_ withLock: ()->Void) {
 		if self.try() {
 			withLock()
