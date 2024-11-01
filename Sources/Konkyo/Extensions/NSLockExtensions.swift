@@ -24,4 +24,11 @@ public extension NSLock {
 		block()
 		self.unlock()
 	}
+
+	func tryLock(_ withLock: ()->Void) {
+		if self.try() {
+			withLock()
+			self.unlock()
+		}
+	}
 }
