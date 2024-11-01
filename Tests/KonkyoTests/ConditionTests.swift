@@ -50,10 +50,7 @@ struct CWConditionTests {
 			}
 
 			let result = condition.wait(until: Date(timeIntervalSinceNow: 3.0))
-			await withCheckedContinuation { continuation in
-				RunLoop.main.run(mode: .default, before: .now + 1.0)
-				continuation.resume()
-			}
+			await MainActor.run { RunLoop.main.run(mode: .default, before: .now + 1.0) }
 			#expect(result == true)
 		}
 	}
