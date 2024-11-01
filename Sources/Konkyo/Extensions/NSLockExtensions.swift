@@ -31,9 +31,8 @@ public extension NSLock {
 	///
 	/// - Parameter withLock: Block to be executed if the lock is available for locking.
 	func tryLock(_ withLock: ()->Void) {
-		if self.try() {
-			withLock()
-			self.unlock()
-		}
+		guard self.try() else { return }
+		withLock()
+		self.unlock()
 	}
 }
