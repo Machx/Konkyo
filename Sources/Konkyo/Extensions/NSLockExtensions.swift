@@ -16,15 +16,6 @@
 import Foundation
 
 public extension NSLock {
-	
-	/// Convenience for locking the lock, performing action(s) and then unlocking the lock
-	/// - Parameter block: Captured actions to perform while lock is locked
-	func withLock(_ block: ()->Void) {
-		self.lock()
-		block()
-		self.unlock()
-	}
-	
 	/// Convenience for trying to unlock the lock and executing completion if its available for locking.
 	///
 	/// If the lock is available to be locked, then it is and the block is executed, otherwise nothing happens.
