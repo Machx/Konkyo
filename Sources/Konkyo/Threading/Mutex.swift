@@ -78,4 +78,11 @@ public final class Mutex: @unchecked Sendable {
 		block()
 		pthread_mutex_unlock(mutex)
 	}
+
+	public func tryLock(_ block: ()->Void) {
+		guard tryLock() else { return }
+		pthread_mutex_lock(mutex)
+		block()
+		pthread_mutex_unlock(mutex)
+	}
 }
