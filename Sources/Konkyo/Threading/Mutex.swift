@@ -85,7 +85,6 @@ public final class Mutex: @unchecked Sendable {
 	/// - Parameter block: The block to execute if the lock is lockable.
 	public func tryLock(_ block: ()->Void) {
 		guard tryLock() else { return }
-		pthread_mutex_lock(mutex)
 		block()
 		pthread_mutex_unlock(mutex)
 	}
