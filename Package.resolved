@@ -1,0 +1,15 @@
+{
+  "originHash" : "5e1a8ddc018c3f05bd6d108144c7a09248a20ecc57fe559345d40457c00eae5a",
+  "pins" : [
+    {
+      "identity" : "loggingkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Machx/LoggingKit.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "00cd0f3c828527e0f36dd9225bc6f174bad7fb2f"
+      }
+    }
+  ],
+  "version" : 3
+}
