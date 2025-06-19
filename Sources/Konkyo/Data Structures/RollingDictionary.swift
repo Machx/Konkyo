@@ -14,6 +14,8 @@
 /// limitations under the License.
 
 import Foundation
+import LoggingKit
+import os.log
 
 /// Rolling Dictionary is a Dictionary intended to only hold a rolling buffer of the last n keys set.
 ///
