@@ -17,20 +17,22 @@ import Foundation
 @testable import Konkyo
 import Testing
 
-@Test("Test Atomic API")
-func testAtomic() {
-	let numbers = Atomic<[Int]>([])
+@Suite("Atomic API Tests")
+struct AtomicTests {
+	@Test("Test Atomic API")
+	func testAtomic() {
+		let numbers = Atomic<[Int]>([])
 
-	let iterations = Int.random(in: 15_000...20_000)
-	DispatchQueue.concurrentPerform(iterations: iterations) { (index) in
-		numbers.mutate { (numbers) in
-			numbers.append(index + 1)
+		let iterations = Int.random(in: 15_000...20_000)
+		DispatchQueue.concurrentPerform(iterations: iterations) { (index) in
+			numbers.mutate { (numbers) in
+				numbers.append(index + 1)
+			}
 		}
+		#expect(numbers.value.count == iterations)
+
+		let totalValue = numbers.value.reduce(0, +)
+		let expected = (iterations * (iterations + 1)) / 2
+		#expect(totalValue == expected)
 	}
-	#expect(numbers.value.count == iterations)
-
-	let totalValue = numbers.value.reduce(0, +)
-	let expected = (iterations * (iterations + 1)) / 2
-	#expect(totalValue == expected)
 }
-
