@@ -42,4 +42,19 @@ struct AtomicTests {
 		value.mutate { _ in }
 		#expect(value.value == 42)
 	}
+
+	@Test("Concurrent read/write stress")
+	func testReadWriteStress() {
+		let counter = Atomic(0)
+
+		DispatchQueue.concurrentPerform(iterations: 10_000) { i in
+			if i % 2 == 0 {
+				counter.mutate { $0 += 1 }
+			} else {
+				_ = counter.value
+			}
+		}
+
+		#expect(counter.value <= 10_000)
+	}
 }
