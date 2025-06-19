@@ -102,7 +102,7 @@ public struct RollingDictionary<Key:Hashable,Value>:ExpressibleByDictionaryLiter
 		while _keys.count > _limit {
 			let firstKey: Dictionary<Key,Value>.Key = _keys[0]
 			if let value = _dictionary.removeValue(forKey: firstKey) {
-				Log.konkyo.debug("Removing value \(String(describing: value)) \(logLocation())")
+				Log.general.debug("Removing value \(String(describing: value)) \(logLocation())")
 				_keys.remove(at: 0)
 			}
 		}
