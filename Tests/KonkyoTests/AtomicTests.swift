@@ -35,4 +35,11 @@ struct AtomicTests {
 		let expected = (iterations * (iterations + 1)) / 2
 		#expect(totalValue == expected)
 	}
+
+	@Test("Empty mutate block")
+	func testEmptyMutateBlock() {
+		let value = Atomic(42)
+		value.mutate { _ in }
+		#expect(value.value == 42)
+	}
 }
