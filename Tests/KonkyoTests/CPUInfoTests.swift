@@ -33,4 +33,9 @@ final class CPUInfoTests: XCTestCase {
 		let cpuInfo = CPUInfo(sysctlProvider: mockProvider)
 		XCTAssertEqual(cpuInfo.cpuCoreCount(), 42)
 	}
+
+	func testRealNumber() {
+		let cpuInfo = CPUInfo()
+		XCTAssertGreaterThan(cpuInfo.cpuCoreCount(), 0)
+	}
 }
