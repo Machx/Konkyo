@@ -34,14 +34,13 @@ public struct RealSysctlProvider: SysctlProviding {
 }
 
 public final class CPUInfo {
-	/// Returns the number of CPU Cores on Device
-	///
-	/// - returns: Number of CPU Cores on Device
-	public class func cpuCoreCount() -> Int {
-		var size:Int = 0
-		sysctlbyname("hw.ncpu", nil, &size, nil, 0)
-		var ncpu:Int = 0
-		sysctlbyname("hw.ncpu", &ncpu, &size, nil, 0)
-		return ncpu
+	private let sysctlProvider: SysctlProviding
+
+	public init(sysctlProvider: SysctlProviding = RealSysctlProvider()) {
+		self.sysctlProvider = sysctlProvider
+	}
+
+	public func cpuCoreCount() -> Int {
+		return sysctlProvider.sysctlInt(for: "hw.ncpu")
 	}
 }
