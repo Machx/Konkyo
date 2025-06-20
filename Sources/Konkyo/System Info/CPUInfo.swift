@@ -16,6 +16,23 @@
 import Foundation
 import Darwin.sys.sysctl
 
+public protocol SysctlProviding {
+	func sysctlInt(for name: String) -> Int
+}
+
+public struct RealSysctlProvider: SysctlProviding {
+	public init() {
+		
+	}
+
+	public func sysctlInt(for name: String) -> Int {
+		var size = MemoryLayout<Int>.size
+		var value: Int = 0
+		sysctlbyname(name, &value, &size, nil, 0)
+		return value
+	}
+}
+
 public final class CPUInfo {
 	/// Returns the number of CPU Cores on Device
 	///
