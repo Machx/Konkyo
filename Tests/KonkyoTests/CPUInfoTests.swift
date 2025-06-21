@@ -27,15 +27,17 @@ final class MockSysctlProvider: SysctlProviding {
 	}
 }
 
-final class CPUInfoTests: XCTestCase {
+@Suite
+struct CPUInfoTests {
+
 	func testCpuCoreCountReturnsMockValue() {
 		let mockProvider = MockSysctlProvider(returnValue: 42)
 		let cpuInfo = CPUInfo(sysctlProvider: mockProvider)
-		XCTAssertEqual(cpuInfo.cpuCoreCount(), 42)
+		#expect(cpuInfo.cpuCoreCount() == 42)
 	}
 
-	func testRealNumber() {
+	func testCpuCoreCountReturnsRealValue() {
 		let cpuInfo = CPUInfo()
-		XCTAssertGreaterThan(cpuInfo.cpuCoreCount(), 0)
+		#expect(cpuInfo.cpuCoreCount() > 0)
 	}
 }
