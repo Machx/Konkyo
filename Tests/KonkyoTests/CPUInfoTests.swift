@@ -15,7 +15,7 @@
 
 import Testing
 import Konkyo
-import XCTest
+import Testing
 
 final class MockSysctlProvider: SysctlProviding {
 	let returnValue: Int
