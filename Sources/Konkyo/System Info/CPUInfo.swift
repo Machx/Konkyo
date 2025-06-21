@@ -16,6 +16,8 @@
 import Foundation
 import Darwin.sys.sysctl
 
+/// Protocol for making this easier to abstract away and
+/// do better unit testing.
 public protocol SysctlProviding {
 	func sysctlInt(for name: String) -> Int
 }
