@@ -21,9 +21,7 @@ public protocol SysctlProviding {
 }
 
 public struct RealSysctlProvider: SysctlProviding {
-	public init() {
-		
-	}
+	public init() {}
 
 	public func sysctlInt(for name: String) -> Int {
 		var size = MemoryLayout<Int>.size
