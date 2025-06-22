@@ -17,34 +17,38 @@ import Foundation
 import Konkyo
 import Testing
 
-@Test("Test Mutex")
-func testMutex() {
-	let mutex = Mutex()
-	nonisolated(unsafe) var total = 0
-	let iterations = Int.random(in: 15_000...20_000)
-	DispatchQueue.concurrentPerform(iterations: iterations) { (index) in
-		mutex.lock()
-		total += index + 1 // Adjust because indexes start at 0.
-		mutex.unlock()
+@Suite
+struct MutexTests {
+	@Test("Test Mutex")
+	func testMutex() {
+		let mutex = Mutex()
+		nonisolated(unsafe) var total = 0
+		let iterations = Int.random(in: 15_000...20_000)
+		DispatchQueue.concurrentPerform(iterations: iterations) { (index) in
+			mutex.lock()
+			total += index + 1 // Adjust because indexes start at 0.
+			mutex.unlock()
+		}
+
+		let expected = (iterations * (iterations + 1)) / 2
+		#expect(total == expected)
 	}
 
-	let expected = (iterations * (iterations + 1)) / 2
-	#expect(total == expected)
-}
+	@Test("Test Recursive Mutex")
+	func testRecursiveMutex() async {
+		await confirmation(expectedCount: 1) { confirm in
+			let mutex = Mutex(type: .recursive)
 
-@Test("Test Recursive Mutex")
-func testRecursiveMutex() async {
-	await confirmation(expectedCount: 1) { confirm in
-		let mutex = Mutex(type: .recursive)
+			DispatchQueue.global(qos: .background).sync {
+				mutex.lock()
+				mutex.lock()
 
-		DispatchQueue.global(qos: .background).sync {
-			mutex.lock()
-			mutex.lock()
+				confirm()
 
-			confirm()
-
-			mutex.unlock()
-			mutex.unlock()
+				mutex.unlock()
+				mutex.unlock()
+			}
 		}
 	}
 }
+
