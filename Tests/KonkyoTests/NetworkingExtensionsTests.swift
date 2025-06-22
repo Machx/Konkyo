@@ -17,7 +17,7 @@ import Foundation
 import Konkyo
 import Testing
 
-@Suite("URL Extension Tests")
+@Suite
 struct URLExtensionTests {
 
 	@Test("Test URL Extension Valid URL")
