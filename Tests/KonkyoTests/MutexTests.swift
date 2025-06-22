@@ -50,5 +50,13 @@ struct MutexTests {
 			}
 		}
 	}
+
+	@Test
+	func tryLockTest() {
+		let mutex = Mutex()
+		#expect(mutex.tryLock() == true)
+		#expect(mutex.tryLock() == false)
+		mutex.unlock()
+	}
 }
 
