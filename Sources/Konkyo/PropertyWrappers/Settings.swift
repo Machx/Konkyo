@@ -26,10 +26,12 @@ extension UserDefaults: UserDefaultsProtocol {}
 @propertyWrapper public struct Preferences<Value: Codable> {
 	public let key: String
 	public let defaultValue: Value
+	private let userDefaults: UserDefaultsProtocol
 
-	public init(key: String, defaultValue: Value) {
+	public init(key: String, defaultValue: Value, userDefaults: UserDefaultsProtocol = UserDefaults.standard) {
 		self.key = key
 		self.defaultValue = defaultValue
+		self.userDefaults = userDefaults
 	}
 
 	public var wrappedValue: Value {
