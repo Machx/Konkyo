@@ -15,6 +15,7 @@
 
 import Foundation
 
+/// Property wrapper that focuses on Access to the UserDefaults values.
 @propertyWrapper public struct Preferences<Value: Codable> {
 	public let key: String
 	public let defaultValue: Value
