@@ -35,7 +35,7 @@ extension UserDefaults: UserDefaultsProtocol {}
 	}
 
 	public var wrappedValue: Value {
-		get { UserDefaults.standard.object(forKey: key) as? Value ?? defaultValue }
-		set { UserDefaults.standard.setValue(newValue, forKey: key) }
+		get { userDefaults.object(forKey: key) as? Value ?? defaultValue }
+		set { userDefaults.set(newValue, forKey: key) }
 	}
 }
