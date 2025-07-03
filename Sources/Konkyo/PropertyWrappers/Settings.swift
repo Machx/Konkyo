@@ -15,6 +15,13 @@
 
 import Foundation
 
+public protocol UserDefaultsProtocol {
+	func object(forKey defaultName: String) -> Any?
+	func set(_ value: Any?, forKey defaultName: String)
+}
+
+extension UserDefaults: UserDefaultsProtocol {}
+
 /// Property wrapper that focuses on Access to the UserDefaults values.
 @propertyWrapper public struct Preferences<Value: Codable> {
 	public let key: String
