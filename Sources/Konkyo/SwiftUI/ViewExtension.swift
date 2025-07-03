@@ -15,10 +15,10 @@
 
 import SwiftUI
 
-extension View {
+public extension View {
 
 	/// Returns a type erased version of the view.
-	public var typeErased: AnyView {
+	var typeErased: AnyView {
 		AnyView(self)
 	}
 }
