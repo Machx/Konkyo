@@ -26,5 +26,5 @@ public extension UIApplication {
 		return window
 	}
 }
-
 #endif
+
