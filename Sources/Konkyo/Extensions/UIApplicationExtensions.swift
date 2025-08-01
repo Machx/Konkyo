@@ -21,12 +21,11 @@ public extension UIApplication {
 	///
 	/// - Returns: The Key window for a UIKit Application or nil or one could not be found.
 	func getKeyWindow() -> UIWindow? {
-		connectedScenes
-			.filter({ $0.activationState == .foregroundActive })
-			.compactMap({ $0 as? UIWindowScene })
-			.first?.windows
-			.compactMap(\.keyWindow)
-			.first
+		guard let activeScenes = connectedScenes.filter({ $0.activationState == .foregroundActive }) as? Set<UIWindowScene> else {
+			return nil
+		}
+		guard let window = activeScenes.first?.windows.first as? UIWindow else { return nil }
+		return window
 	}
 }
 
