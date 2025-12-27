@@ -16,6 +16,10 @@
 import Foundation
 
 public extension String {
+
+	/// Returns if the string value is a valid URL
+	///
+	/// - returns: True if the string value is a valid URL.
 	var isValidURL: Bool {
 		guard let _ = URL(string: self) else { return false }
 		return true
