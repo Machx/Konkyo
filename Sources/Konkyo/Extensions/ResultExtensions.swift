@@ -14,3 +14,7 @@
 /// limitations under the License.
 
 import Foundation
+
+public extension Result {
+	
+}
