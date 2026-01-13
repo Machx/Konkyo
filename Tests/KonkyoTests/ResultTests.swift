@@ -14,11 +14,23 @@
 /// limitations under the License.
 
 import Testing
+import Foundation
 
-struct Test {
+struct ResultTests {
 
-    @Test func <#test function name#>() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+    @Test func testFailureError() async throws {
+        func getResult() -> Result<Int,Error> {
+			return .failure(NSError(domain: "Test", code: 1, userInfo: [:]))
+		}
+
+		let result = getResult()
+		guard case .success(let success) = result else {
+			let failureError = #require(result.failureError)
+			#expect((failureError as NSError).domain == "Test")
+			return
+		}
+		// If we got here there is an issue
+		Issue.record(NSError(domain: "com.Konkyo.ResultExtension", code: 1, userInfo: [:]))
     }
 
 }
