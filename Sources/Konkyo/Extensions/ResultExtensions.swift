@@ -16,5 +16,11 @@
 import Foundation
 
 public extension Result {
-	
+	var failureError: Failure? {
+		if case .failure(let error) = self {
+			return error
+		} else {
+			return nil
+		}
+	}
 }
