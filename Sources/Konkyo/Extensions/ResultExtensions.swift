@@ -16,6 +16,20 @@
 import Foundation
 
 public extension Result {
+
+	/// If the Result value is failure, then this returns the error associated with it, otherwise nil.
+	///
+	/// This is intended to be used in cases where you may be in certain scopes, such as the else clause
+	/// of a guard statement and need to directly access the error of the failure case.
+	/// ```swift
+	/// let result = await getResult()
+	/// guard case .success = result else {
+	///     if let error = result.failureError {
+	///         // report error
+	///     }
+	///     return
+	/// }
+	/// ```
 	var failureError: Failure? {
 		if case .failure(let error) = self {
 			return error
