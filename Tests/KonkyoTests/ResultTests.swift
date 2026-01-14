@@ -33,4 +33,13 @@ struct ResultTests {
 		Issue.record(NSError(domain: "com.Konkyo.ResultExtension", code: 1, userInfo: [:]))
     }
 
+	@Test func testSuccessReturnsNilForFailureError() async throws {
+		func getResult() -> Result<Int, Error> {
+			return .success(42)
+		}
+		
+		let result = getResult()
+		#expect(result.failureError == nil, "Success case should return nil for failureError")
+	}
+
 }
