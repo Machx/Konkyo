@@ -25,7 +25,7 @@ struct ResultTests {
 
 		let result = getResult()
 		guard case .success(let success) = result else {
-			let failureError = #require(result.failureError)
+			let failureError = try #require(result.failureError)
 			#expect((failureError as NSError).domain == "Test")
 			return
 		}
