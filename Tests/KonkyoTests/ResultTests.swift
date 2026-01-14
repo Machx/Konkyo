@@ -42,4 +42,19 @@ struct ResultTests {
 		#expect(result.failureError == nil, "Success case should return nil for failureError")
 	}
 
+	@Test func testFailureErrorWithCustomError() async throws {
+		enum CustomError: Error {
+			case notFound
+			case invalidInput
+		}
+		
+		func getResult() -> Result<String, CustomError> {
+			return .failure(.notFound)
+		}
+		
+		let result = getResult()
+		let error = try #require(result.failureError)
+		#expect(error == .notFound)
+	}
+
 }
