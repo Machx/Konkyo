@@ -57,4 +57,17 @@ struct ResultTests {
 		#expect(error == .notFound)
 	}
 
+	@Test func testFailureErrorPreservesErrorType() async throws {
+		struct DetailedError: Error, Equatable {
+			let code: Int
+			let message: String
+		}
+		
+		let expectedError = DetailedError(code: 404, message: "Not Found")
+		let result: Result<String, DetailedError> = .failure(expectedError)
+		
+		let error = try #require(result.failureError)
+		#expect(error == expectedError, "Error details should be preserved")
+	}
+
 }
