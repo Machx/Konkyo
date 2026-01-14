@@ -70,4 +70,13 @@ struct ResultTests {
 		#expect(error == expectedError, "Error details should be preserved")
 	}
 
+	@Test func testFailureErrorWithNever() async throws {
+		// Test Result<Success, Never> - this should always be success
+		let result: Result<Int, Never> = .success(100)
+		
+		// This demonstrates that Never type results can't have errors
+		// The failureError property exists but will always be nil
+		#expect(result.failureError == nil)
+	}
+
 }
