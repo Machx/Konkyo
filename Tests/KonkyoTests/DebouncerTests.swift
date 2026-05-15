@@ -20,6 +20,29 @@ import Foundation
 /// Disable the Debouncer Tests for now until the RunLoop issues
 /// can be resolved, and the tests pass more consistently.
 
+@Suite("Debouncer Queue Tests")
+struct DebouncerQueueTests {
+
+	/// Verifies that the action fires on the queue passed to init(), not .main.
+	@Test("init() dispatches action on the initialized queue")
+	func testInitUsesInitializedQueue() async throws {
+		let queueKey = DispatchSpecificKey<Bool>()
+		let customQueue = DispatchQueue(label: "com.konkyo.test.debouncer.init")
+		customQueue.setSpecific(key: queueKey, value: true)
+
+		nonisolated(unsafe) var actionRanOnCustomQueue = false
+
+		await confirmation("Action fires on the initialized queue") { fired in
+			let _ = Debouncer(delay: 0.05, queue: customQueue) {
+				actionRanOnCustomQueue = DispatchQueue.getSpecific(key: queueKey) == true
+				fired()
+			}
+			try? await Task.sleep(for: .milliseconds(300))
+		}
+
+		#expect(actionRanOnCustomQueue)
+	}
+
 @Suite("Debouncer Tests", .disabled(if: true))
 struct DebouncerTests {
 	@Test("Test basic debouncer API")
