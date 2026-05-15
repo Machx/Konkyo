@@ -89,7 +89,7 @@ public final class Debouncer {
 	/// timer is cancelled, this will call the cancel handler if that is set.
 	public func reset() {
 		timer.cancel()
-		timer = DispatchSource.makeTimerSource(flags: [], queue: .main)
+		timer = DispatchSource.makeTimerSource(flags: [], queue: queue)
 		timer.setEventHandler(handler: { [weak self] in
 			guard let self else { return }
 			action()
