@@ -43,6 +43,29 @@ struct DebouncerQueueTests {
 		#expect(actionRanOnCustomQueue)
 	}
 
+	/// Verifies that after reset(), the action still fires on the queue passed to init(),
+	/// not on .main (which was the bug before the fix).
+	@Test("reset() dispatches action on the initialized queue, not main")
+	func testResetUsesInitializedQueue() async throws {
+		let queueKey = DispatchSpecificKey<Bool>()
+		let customQueue = DispatchQueue(label: "com.konkyo.test.debouncer.reset")
+		customQueue.setSpecific(key: queueKey, value: true)
+
+		nonisolated(unsafe) var actionRanOnCustomQueue = false
+
+		await confirmation("Action fires on the initialized queue after reset") { fired in
+			let debouncer = Debouncer(delay: 0.05, queue: customQueue) {
+				actionRanOnCustomQueue = DispatchQueue.getSpecific(key: queueKey) == true
+				fired()
+			}
+			debouncer.reset()
+			try? await Task.sleep(for: .milliseconds(300))
+		}
+
+		#expect(actionRanOnCustomQueue)
+	}
+}
+
 @Suite("Debouncer Tests", .disabled(if: true))
 struct DebouncerTests {
 	@Test("Test basic debouncer API")
