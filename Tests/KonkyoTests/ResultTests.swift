@@ -96,4 +96,19 @@ struct ResultTests {
 		#expect(unwrapped1.code == unwrapped2.code)
 	}
 
+	@Test func testFailureErrorWithUserInfo() async throws {
+		let userInfo = [
+			NSLocalizedDescriptionKey: "Test error description",
+			"customKey": "customValue"
+		]
+		
+		let result: Result<Void, NSError> = .failure(
+			NSError(domain: "TestDomain", code: 123, userInfo: userInfo)
+		)
+		
+		let error = try #require(result.failureError)
+		#expect(error.userInfo[NSLocalizedDescriptionKey] as? String == "Test error description")
+		#expect(error.userInfo["customKey"] as? String == "customValue")
+	}
+
 }
