@@ -79,4 +79,21 @@ struct ResultTests {
 		#expect(result.failureError == nil)
 	}
 
+	@Test func testMultipleAccessesToFailureError() async throws {
+		let result: Result<Int, NSError> = .failure(
+			NSError(domain: "TestDomain", code: 999, userInfo: [:])
+		)
+		
+		// Verify multiple accesses return the same error
+		let error1 = result.failureError
+		let error2 = result.failureError
+		
+		let unwrapped1 = try #require(error1)
+		let unwrapped2 = try #require(error2)
+		
+		#expect(unwrapped1.domain == "TestDomain")
+		#expect(unwrapped2.domain == "TestDomain")
+		#expect(unwrapped1.code == unwrapped2.code)
+	}
+
 }
