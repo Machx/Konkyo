@@ -35,7 +35,13 @@ extension UserDefaults: UserDefaultsProtocol {}
 	}
 
 	public var wrappedValue: Value {
-		get { userDefaults.object(forKey: key) as? Value ?? defaultValue }
-		set { userDefaults.set(newValue, forKey: key) }
+		get {
+			guard let data = userDefaults.object(forKey: key) as? Data else { return defaultValue }
+			return (try? JSONDecoder().decode(Value.self, from: data)) ?? defaultValue
+		}
+		set {
+			guard let encoded = try? JSONEncoder().encode(newValue) else { return }
+			userDefaults.set(encoded, forKey: key)
+		}
 	}
 }
