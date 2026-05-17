@@ -1,0 +1,114 @@
+///
+/// Copyright 2026 Colin Wheeler
+///
+/// Licensed under the Apache License, Version 2.0 (the "License");
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at
+///
+///     http://www.apache.org/licenses/LICENSE-2.0
+///
+/// Unless required by applicable law or agreed to in writing, software
+/// distributed under the License is distributed on an "AS IS" BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/// See the License for the specific language governing permissions and
+/// limitations under the License.
+
+import Testing
+import Foundation
+
+struct ResultTests {
+
+    @Test func testFailureError() async throws {
+        func getResult() -> Result<Int,Error> {
+			return .failure(NSError(domain: "Test", code: 1, userInfo: [:]))
+		}
+
+		let result = getResult()
+		guard case .success(let success) = result else {
+			let failureError = try #require(result.failureError)
+			#expect((failureError as NSError).domain == "Test")
+			return
+		}
+		// If we got here there is an issue
+		Issue.record(NSError(domain: "com.Konkyo.ResultExtension", code: 1, userInfo: [:]))
+    }
+
+	@Test func testSuccessReturnsNilForFailureError() async throws {
+		func getResult() -> Result<Int, Error> {
+			return .success(42)
+		}
+		
+		let result = getResult()
+		#expect(result.failureError == nil, "Success case should return nil for failureError")
+	}
+
+	@Test func testFailureErrorWithCustomError() async throws {
+		enum CustomError: Error {
+			case notFound
+			case invalidInput
+		}
+		
+		func getResult() -> Result<String, CustomError> {
+			return .failure(.notFound)
+		}
+		
+		let result = getResult()
+		let error = try #require(result.failureError)
+		#expect(error == .notFound)
+	}
+
+	@Test func testFailureErrorPreservesErrorType() async throws {
+		struct DetailedError: Error, Equatable {
+			let code: Int
+			let message: String
+		}
+		
+		let expectedError = DetailedError(code: 404, message: "Not Found")
+		let result: Result<String, DetailedError> = .failure(expectedError)
+		
+		let error = try #require(result.failureError)
+		#expect(error == expectedError, "Error details should be preserved")
+	}
+
+	@Test func testFailureErrorWithNever() async throws {
+		// Test Result<Success, Never> - this should always be success
+		let result: Result<Int, Never> = .success(100)
+		
+		// This demonstrates that Never type results can't have errors
+		// The failureError property exists but will always be nil
+		#expect(result.failureError == nil)
+	}
+
+	@Test func testMultipleAccessesToFailureError() async throws {
+		let result: Result<Int, NSError> = .failure(
+			NSError(domain: "TestDomain", code: 999, userInfo: [:])
+		)
+		
+		// Verify multiple accesses return the same error
+		let error1 = result.failureError
+		let error2 = result.failureError
+		
+		let unwrapped1 = try #require(error1)
+		let unwrapped2 = try #require(error2)
+		
+		#expect(unwrapped1.domain == "TestDomain")
+		#expect(unwrapped2.domain == "TestDomain")
+		#expect(unwrapped1.code == unwrapped2.code)
+	}
+
+	@Test func testFailureErrorWithUserInfo() async throws {
+		let userInfo = [
+			NSLocalizedDescriptionKey: "Test error description",
+			"customKey": "customValue"
+		]
+		
+		let result: Result<Void, NSError> = .failure(
+			NSError(domain: "TestDomain", code: 123, userInfo: userInfo)
+		)
+		
+		let error = try #require(result.failureError)
+		#expect(error.userInfo[NSLocalizedDescriptionKey] as? String == "Test error description")
+		#expect(error.userInfo["customKey"] as? String == "customValue")
+	}
+
+}

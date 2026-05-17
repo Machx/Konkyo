@@ -1,5 +1,5 @@
 ///
-/// Copyright 2025 Colin Wheeler
+/// Copyright 2026 Colin Wheeler
 ///
 /// Licensed under the Apache License, Version 2.0 (the "License");
 /// you may not use this file except in compliance with the License.
@@ -13,31 +13,21 @@
 /// See the License for the specific language governing permissions and
 /// limitations under the License.
 
-import Testing
+#if canImport(UIKit)
+import UIKit
 import Konkyo
 import Testing
 
-final class MockSysctlProvider: SysctlProviding {
-	let returnValue: Int
-	init(returnValue: Int) {
-		self.returnValue = returnValue
-	}
-	func sysctlInt(for name: String) -> Int {
-		return returnValue
+@Suite("UIApplication Extension Tests")
+struct UIApplicationExtensionsTests {
+
+	/// In a headless test environment there are no active scenes, so getKeyWindow()
+	/// must return nil rather than crash.
+	@Test("getKeyWindow() returns nil when no foreground scene is active")
+	@MainActor
+	func testGetKeyWindowReturnsNilWithNoActiveScene() {
+		let window = UIApplication.shared.getKeyWindow()
+		#expect(window == nil)
 	}
 }
-
-@Suite
-struct CPUInfoTests {
-
-	func testCpuCoreCountReturnsMockValue() {
-		let mockProvider = MockSysctlProvider(returnValue: 42)
-		let cpuInfo = CPUInfo(sysctlProvider: mockProvider)
-		#expect(cpuInfo.cpuCoreCount() == 42)
-	}
-
-	func testCpuCoreCountReturnsRealValue() {
-		let cpuInfo = CPUInfo()
-		#expect(cpuInfo.cpuCoreCount() > 0)
-	}
-}
+#endif
