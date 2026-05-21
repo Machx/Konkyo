@@ -36,4 +36,8 @@ struct CPUInfoTests {
 		#expect(cpuInfo.cpuCoreCount() == 42)
 	}
 
+	func testCpuCoreCountReturnsRealValue() {
+		let cpuInfo = CPUInfo()
+		#expect(cpuInfo.cpuCoreCount() > 0)
+	}
 }
