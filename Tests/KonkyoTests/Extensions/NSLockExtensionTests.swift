@@ -17,11 +17,12 @@ import Testing
 import Konkyo
 import Foundation
 
-@Suite
+@Suite("NSLock Extension Tests")
 struct NSLockExtensionTest {
-    @Test
+
+	@Test("tryLock executes block when lock is available")
 	func nslockExtensionTest() async throws {
-        let lock = NSLock()
+		let lock = NSLock()
 		await confirmation(expectedCount: 1) { confirmation in
 			lock.tryLock {
 				confirmation.confirm()
