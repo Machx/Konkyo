@@ -125,6 +125,18 @@ struct RollingDictionaryTests {
 		#expect(dictionary.keys.count == 2)
 	}
 
+	@Test("Assigning nil removes the value from the dictionary")
+	func testSubscriptNilRemovesValue() {
+		var dictionary = RollingDictionary<String, Int>(limit: 3)
+		dictionary["A"] = 1
+		dictionary["B"] = 2
+		dictionary["A"] = nil
+
+		#expect(dictionary["A"] == nil)
+		#expect(dictionary["B"] == 2)
+		#expect(dictionary.keys.count == 1)
+	}
+
 	@Test("Test Dictionary Key Count")
 	func testDictionaryKeyCount() async {
 		var dictionary: RollingDictionary = ["A": 1,
