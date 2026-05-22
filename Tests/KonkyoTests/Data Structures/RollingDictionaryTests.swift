@@ -114,6 +114,17 @@ struct RollingDictionaryTests {
 		#expect(dictionary["missing"] == nil)
 	}
 
+	@Test("Updating an existing key changes its value without adding a duplicate key")
+	func testUpdateExistingKeyDoesNotDuplicateKey() {
+		var dictionary = RollingDictionary<String, Int>(limit: 3)
+		dictionary["A"] = 1
+		dictionary["B"] = 2
+		dictionary["A"] = 99
+
+		#expect(dictionary["A"] == 99)
+		#expect(dictionary.keys.count == 2)
+	}
+
 	@Test("Test Dictionary Key Count")
 	func testDictionaryKeyCount() async {
 		var dictionary: RollingDictionary = ["A": 1,
