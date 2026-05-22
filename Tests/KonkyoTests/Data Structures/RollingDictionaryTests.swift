@@ -102,6 +102,12 @@ struct RollingDictionaryTests {
 		#expect(dictionary["D"] == 4)
 	}
 
+	@Test("Default init has Int.max key limit")
+	func testDefaultLimitIsIntMax() {
+		let dictionary = RollingDictionary<String, Int>()
+		#expect(dictionary.getKeyLimit() == Int.max)
+	}
+
 	@Test("Test Dictionary Key Count")
 	func testDictionaryKeyCount() async {
 		var dictionary: RollingDictionary = ["A": 1,
