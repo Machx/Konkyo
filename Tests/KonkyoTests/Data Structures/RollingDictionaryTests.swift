@@ -108,6 +108,12 @@ struct RollingDictionaryTests {
 		#expect(dictionary.getKeyLimit() == Int.max)
 	}
 
+	@Test("Reading absent key returns nil")
+	func testReadNonExistentKeyReturnsNil() {
+		let dictionary = RollingDictionary<String, Int>()
+		#expect(dictionary["missing"] == nil)
+	}
+
 	@Test("Test Dictionary Key Count")
 	func testDictionaryKeyCount() async {
 		var dictionary: RollingDictionary = ["A": 1,
