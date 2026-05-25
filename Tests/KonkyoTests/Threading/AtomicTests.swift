@@ -43,11 +43,12 @@ struct AtomicTests {
 		#expect(value.value == 42)
 	}
 
-	@Test("Concurrent read/write stress")
+	@Test("Concurrent read/write stress produces exact write count")
 	func testReadWriteStress() {
 		let counter = Atomic(0)
+		let iterations = 10_000
 
-		DispatchQueue.concurrentPerform(iterations: 10_000) { i in
+		DispatchQueue.concurrentPerform(iterations: iterations) { i in
 			if i % 2 == 0 {
 				counter.mutate { $0 += 1 }
 			} else {
@@ -55,6 +56,22 @@ struct AtomicTests {
 			}
 		}
 
-		#expect(counter.value <= 10_000)
+		// Exactly half the iterations (even indices 0..<iterations) increment.
+		#expect(counter.value == iterations / 2)
+	}
+
+	@Test("Atomic works with non-integer types")
+	func testAtomicWithStringType() {
+		let text = Atomic("")
+		text.mutate { $0 += "hello" }
+		text.mutate { $0 += " world" }
+		#expect(text.value == "hello world")
+	}
+
+	@Test("mutate closure receives the current value")
+	func testMutateReceivesCurrentValue() {
+		let number = Atomic(10)
+		number.mutate { $0 *= 2 }
+		#expect(number.value == 20)
 	}
 }
