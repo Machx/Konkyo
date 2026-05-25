@@ -32,4 +32,24 @@ struct URLExtensionTests {
 		let invalid = ""
 		#expect(!invalid.isValidURL)
 	}
+
+	@Test("URL with query parameters is valid")
+	func testURLWithQueryParameters() {
+		#expect("https://example.com?q=swift&page=1".isValidURL)
+	}
+
+	@Test("URL with fragment is valid")
+	func testURLWithFragment() {
+		#expect("https://example.com#section".isValidURL)
+	}
+
+	@Test("URL with path components is valid")
+	func testURLWithPathComponents() {
+		#expect("https://example.com/path/to/resource".isValidURL)
+	}
+
+	@Test("HTTP URL is valid")
+	func testHTTPURL() {
+		#expect("http://example.com".isValidURL)
+	}
 }
