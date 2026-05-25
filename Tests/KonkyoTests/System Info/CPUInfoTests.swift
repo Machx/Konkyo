@@ -30,14 +30,34 @@ final class MockSysctlProvider: SysctlProviding {
 @Suite
 struct CPUInfoTests {
 
+	@Test("Mock provider returns injected value")
 	func testCpuCoreCountReturnsMockValue() {
 		let mockProvider = MockSysctlProvider(returnValue: 42)
 		let cpuInfo = CPUInfo(sysctlProvider: mockProvider)
 		#expect(cpuInfo.cpuCoreCount() == 42)
 	}
 
+	@Test("Real provider returns a positive core count")
 	func testCpuCoreCountReturnsRealValue() {
 		let cpuInfo = CPUInfo()
 		#expect(cpuInfo.cpuCoreCount() > 0)
+	}
+
+	@Test("Mock provider with single core returns 1")
+	func testMockWithSingleCore() {
+		let cpuInfo = CPUInfo(sysctlProvider: MockSysctlProvider(returnValue: 1))
+		#expect(cpuInfo.cpuCoreCount() == 1)
+	}
+
+	@Test("Mock provider with large core count returns that count")
+	func testMockWithLargeCoreCount() {
+		let cpuInfo = CPUInfo(sysctlProvider: MockSysctlProvider(returnValue: 128))
+		#expect(cpuInfo.cpuCoreCount() == 128)
+	}
+
+	@Test("Mock provider returning 0 passes through as-is")
+	func testMockReturningZeroPassesThrough() {
+		let cpuInfo = CPUInfo(sysctlProvider: MockSysctlProvider(returnValue: 0))
+		#expect(cpuInfo.cpuCoreCount() == 0)
 	}
 }
