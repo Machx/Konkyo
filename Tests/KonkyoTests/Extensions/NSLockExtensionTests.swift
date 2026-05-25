@@ -28,5 +28,35 @@ struct NSLockExtensionTest {
 				confirmation.confirm()
 			}
 		}
-    }
+	}
+
+	@Test("tryLock does not execute block when lock is already held")
+	func testTryLockDoesNotExecuteWhenAlreadyLocked() {
+		let lock = NSLock()
+		lock.lock()
+
+		nonisolated(unsafe) var blockExecuted = false
+		DispatchQueue.global().sync {
+			lock.tryLock {
+				blockExecuted = true
+			}
+		}
+
+		lock.unlock()
+		#expect(blockExecuted == false)
+	}
+
+	@Test("lock is released after tryLock so subsequent tryLock succeeds")
+	func testLockIsReleasedAfterTryLock() async {
+		let lock = NSLock()
+
+		await confirmation("First tryLock executes", expectedCount: 1) { first in
+			lock.tryLock { first() }
+		}
+
+		// Lock must have been released; a second attempt should also succeed.
+		await confirmation("Second tryLock executes", expectedCount: 1) { second in
+			lock.tryLock { second() }
+		}
+	}
 }
