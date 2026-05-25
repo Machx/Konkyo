@@ -32,3 +32,16 @@ func testCreationInitializationOperator() async throws {
 	}
 	#expect(thing.myNum == 5)
 }
+
+@Test("Operator returns the same instance it was given")
+func testOperatorReturnsSameInstance() {
+	let original = MyTestClass()
+	let result = original <- { $0.myNum = 99 }
+	#expect(result === original)
+}
+
+@Test("Operator works with a class that has no mutation")
+func testOperatorWithNoMutation() {
+	let thing = MyTestClass() <- { _ in }
+	#expect(thing.myNum == 0)
+}
