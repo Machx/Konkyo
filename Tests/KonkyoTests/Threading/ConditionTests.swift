@@ -79,5 +79,30 @@ struct CWConditionTests {
 		let result = condition.wait(until: Date())
 		#expect(result == false)
 	}
+
+	@Test("broadcast() wakes all waiting threads")
+	func testBroadcastWakesAllWaiters() async {
+		nonisolated(unsafe) let condition = Condition()
+		nonisolated(unsafe) var wakeCount = 0
+		let waiterCount = 3
+		let group = DispatchGroup()
+
+		for _ in 0..<waiterCount {
+			group.enter()
+			DispatchQueue.global(qos: .background).async {
+				// Each waiter uses a short deadline so the test doesn't hang if broadcast is broken.
+				let _ = condition.wait(until: Date(timeIntervalSinceNow: 5.0))
+				wakeCount += 1
+				group.leave()
+			}
+		}
+
+		// Give all waiters time to block before broadcasting.
+		try? await Task.sleep(for: .milliseconds(100))
+		condition.broadcast()
+
+		group.wait()
+		#expect(wakeCount == waiterCount)
+	}
 }
 
