@@ -80,9 +80,7 @@ struct ResultTests {
 	}
 
 	@Test func testMultipleAccessesToFailureError() async throws {
-		let result: Result<Int, NSError> = .failure(
-			NSError(domain: "TestDomain", code: 999, userInfo: [:])
-		)
+		let result: Result<Int, NSError> = .failure(NSError(domain: "TestDomain", code: 999, userInfo: [:]))
 		
 		// Verify multiple accesses return the same error
 		let error1 = result.failureError
