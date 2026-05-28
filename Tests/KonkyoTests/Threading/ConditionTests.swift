@@ -101,7 +101,9 @@ struct CWConditionTests {
 		try? await Task.sleep(for: .milliseconds(100))
 		condition.broadcast()
 
-		group.wait()
+		await withCheckedContinuation { continuation in
+			group.notify(queue: .global()) { continuation.resume() }
+		}
 		#expect(wakeCount == waiterCount)
 	}
 }
