@@ -100,9 +100,7 @@ struct ResultTests {
 			"customKey": "customValue"
 		]
 		
-		let result: Result<Void, NSError> = .failure(
-			NSError(domain: "TestDomain", code: 123, userInfo: userInfo)
-		)
+		let result: Result<Void, NSError> = .failure(NSError(domain: "TestDomain", code: 123, userInfo: userInfo))
 		
 		let error = try #require(result.failureError)
 		#expect(error.userInfo[NSLocalizedDescriptionKey] as? String == "Test error description")
