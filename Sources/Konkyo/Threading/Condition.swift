@@ -16,7 +16,7 @@
 import Foundation
 import Darwin
 
-public final class Condition {
+public final class Condition: @unchecked Sendable {
 	fileprivate var uuid = UUID()
 	
 	fileprivate var mutex: UnsafeMutablePointer<pthread_mutex_t>
@@ -50,12 +50,10 @@ public final class Condition {
 		pthread_cond_wait(cond, mutex)
 	}
 	
-	private func timeSpecFrom(date: Date) -> timespec? {
-		guard date.timeIntervalSinceNow > 0 else {
-			return nil
-		}
+	private func relativeTimeSpec(until date: Date) -> timespec? {
+		let interval = date.timeIntervalSinceNow
+		guard interval > 0 else { return nil }
 		let nsecPerSec: Int64 = 1_000_000_000
-		let interval = date.timeIntervalSince1970
 		let intervalNS = Int64(interval * Double(nsecPerSec))
 
 		return timespec(tv_sec: Int(intervalNS / nsecPerSec),
@@ -68,14 +66,17 @@ public final class Condition {
 	/// - Date is in the past.
 	/// - Date was unable to be converted to its timespec type equivalent.
 	///
+	/// The wait is measured against a relative interval from "now" so it is
+	/// unaffected by changes to the system wall clock.
+	///
 	/// 1.0.0
 	public func wait(until waitDate: Date = Date.distantFuture) -> Bool {
 		guard waitDate != .distantFuture else {
 			pthread_cond_wait(cond, mutex)
 			return true
 		}
-		guard var untilSpec = timeSpecFrom(date: waitDate) else { return false }
-		return pthread_cond_timedwait(cond, mutex, &untilSpec) == 0
+		guard var reltime = relativeTimeSpec(until: waitDate) else { return false }
+		return pthread_cond_timedwait_relative_np(cond, mutex, &reltime) == 0
 	}
 	
 	/// Signals the condition, unlocking the thread waiting on it.
@@ -108,9 +109,6 @@ extension Condition: Equatable, Hashable {
 	
 	public func hash(into hasher: inout Hasher) {
 		hasher.combine(uuid)
-		if let name = name {
-			hasher.combine(name)
-		}
 	}
 }
 
