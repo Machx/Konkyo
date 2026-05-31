@@ -69,20 +69,22 @@ struct DebouncerQueueTests {
 	}
 }
 
-@Suite("Debouncer Tests", .disabled(if: true))
+@Suite("Debouncer Tests")
 struct DebouncerTests {
 	@Test("Test basic debouncer API")
 	func testDebouncer() async throws {
 		await confirmation("Confirm debouncedSignal is never called",
 						   expectedCount: 0) { debouncedSignal in
-			let bouncer = Debouncer(delay: 1.0) {
-				print("Hello")
+			let bouncer = Debouncer(delay: 0.1) {
 				debouncedSignal()
 			}
 			for _ in 0...1000 {
 				bouncer.reset()
 			}
 			bouncer.cancel()
+			// Wait past the delay so any erroneous firing would be observed.
+			try? await Task.sleep(for: .milliseconds(300))
+			_ = bouncer
 		}
 	}
 
