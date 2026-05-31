@@ -34,6 +34,15 @@ public final class Condition {
 		pthread_mutex_init(mutex, nil)
 	}
 	
+	deinit {
+		pthread_cond_destroy(cond)
+		pthread_mutex_destroy(mutex)
+		cond.deinitialize(count: 1)
+		mutex.deinitialize(count: 1)
+		cond.deallocate()
+		mutex.deallocate()
+	}
+	
 	/// Begins waiting on the condition, blocking the thread.
 	///
 	/// 1.0.0
