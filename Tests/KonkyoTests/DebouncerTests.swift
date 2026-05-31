@@ -33,11 +33,14 @@ struct DebouncerQueueTests {
 		nonisolated(unsafe) var actionRanOnCustomQueue = false
 
 		await confirmation("Action fires on the initialized queue") { fired in
-			let _ = Debouncer(delay: 0.05, queue: customQueue) {
+			// Must retain the debouncer — its timer event handler captures self
+			// weakly, so `let _ = Debouncer(…)` would let it deinit before firing.
+			let debouncer = Debouncer(delay: 0.05, queue: customQueue) {
 				actionRanOnCustomQueue = DispatchQueue.getSpecific(key: queueKey) == true
 				fired()
 			}
 			try? await Task.sleep(for: .milliseconds(300))
+			_ = debouncer
 		}
 
 		#expect(actionRanOnCustomQueue)
