@@ -24,87 +24,96 @@ struct CWConditionTests {
 	@Test("Test Condition")
 	func testCWCondition() async {
 		await MainActor.run {
-			/// This isn't ideal, but within the context of Swift Tests this is as good as
-			/// can reasonably be expected. PThread API's don't seem to play well with the
-			/// async await contexts, so in lieu of trying hacks upon hacks trying to make
-			/// it all work I have this test which really isn't a test, but if this unit
-			/// test gets hung not running properly its the only way to really know if its
-			/// not working.
-			nonisolated(unsafe) let condition = Condition()
+			let condition = Condition()
 
-			DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1) {
+			// Hold the mutex before launching the signaller so the signal can't be
+			// lost: pthread_cond_wait atomically releases the mutex and begins waiting,
+			// which prevents the signaller from running before this thread is blocked.
+			condition.lock()
+
+			DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.1) {
+				condition.lock()
 				condition.signal()
+				condition.unlock()
 			}
 
-			condition.wait()
+			// Bounded wait so a regression can never hang the test indefinitely.
+			let signalled = condition.wait(until: Date(timeIntervalSinceNow: 2.0))
+			condition.unlock()
+
+			#expect(signalled)
 		}
 	}
 
 	@Test("Test wait until date")
 	func testWaitUntilDate() async throws {
-		await Task { @MainActor in
-			nonisolated(unsafe) let condition = Condition()
+		await MainActor.run {
+			let condition = Condition()
 
-			DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1.0) {
+			condition.lock()
+
+			DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.1) {
+				condition.lock()
 				condition.signal()
+				condition.unlock()
 			}
 
 			let result = condition.wait(until: Date(timeIntervalSinceNow: 3.0))
-			await MainActor.run { RunLoop.main.run(mode: .default, before: .now + 1.0) }
+			condition.unlock()
 			#expect(result == true)
 		}
 	}
 
 	@Test("Test Wait Until with Negative Date")
 	func testWaitUntilDateNegative() throws {
-		nonisolated(unsafe) let condition = Condition()
+		let condition = Condition()
 
-		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1.0) {
-			condition.signal()
-		}
-
+		condition.lock()
 		// Give it a date way in the past so it should reject it
 		let result = condition.wait(until: Date(timeIntervalSince1970: 6))
+		condition.unlock()
 		#expect(result == false)
 	}
 
 	@Test("Test wait until now")
 	func testWaitUntilDateNegative2() throws {
-		nonisolated(unsafe) let condition = Condition()
+		let condition = Condition()
 
-		DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 2.0) {
-			condition.signal()
-		}
-
+		condition.lock()
 		let result = condition.wait(until: Date())
+		condition.unlock()
 		#expect(result == false)
 	}
 
 	@Test("broadcast() wakes all waiting threads")
 	func testBroadcastWakesAllWaiters() async {
-		nonisolated(unsafe) let condition = Condition()
-		nonisolated(unsafe) var wakeCount = 0
+		let condition = Condition()
+		let wakeCount = Atomic(0)
 		let waiterCount = 3
 		let group = DispatchGroup()
 
 		for _ in 0..<waiterCount {
 			group.enter()
 			DispatchQueue.global(qos: .background).async {
-				// Each waiter uses a short deadline so the test doesn't hang if broadcast is broken.
+				condition.lock()
+				// Bounded deadline so the test doesn't hang if broadcast is broken.
 				let _ = condition.wait(until: Date(timeIntervalSinceNow: 5.0))
-				wakeCount += 1
+				condition.unlock()
+				wakeCount.mutate { $0 += 1 }
 				group.leave()
 			}
 		}
 
-		// Give all waiters time to block before broadcasting.
-		try? await Task.sleep(for: .milliseconds(100))
+		// Give all waiters time to acquire the mutex and block in wait before broadcasting.
+		try? await Task.sleep(for: .milliseconds(200))
+		condition.lock()
 		condition.broadcast()
+		condition.unlock()
 
 		await withCheckedContinuation { continuation in
 			group.notify(queue: .global()) { continuation.resume() }
 		}
-		#expect(wakeCount == waiterCount)
+		#expect(wakeCount.value == waiterCount)
 	}
 }
 
