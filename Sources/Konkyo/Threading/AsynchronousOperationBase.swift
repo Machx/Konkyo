@@ -29,10 +29,20 @@ open class AsynchronousOperationBase: Operation, @unchecked Sendable {
 		return true
 	}
 	
+	/// Guards `_isExecuting` and `_isFinished`. Recursive so a KVO observer
+	/// triggered under the lock can safely re-read the property.
+	private let stateMutex = Mutex(type: .recursive)
+	
 	private var _isExecuting: Bool = false
 	open override var isExecuting: Bool {
-		get { _isExecuting }
+		get {
+			stateMutex.lock()
+			defer { stateMutex.unlock() }
+			return _isExecuting
+		}
 		set {
+			stateMutex.lock()
+			defer { stateMutex.unlock() }
 			guard _isExecuting != newValue else { return }
 			willChangeValue(for: \.isExecuting)
 			_isExecuting = newValue
@@ -42,8 +52,14 @@ open class AsynchronousOperationBase: Operation, @unchecked Sendable {
 	
 	private var _isFinished: Bool = false
 	open override var isFinished: Bool {
-		get { _isFinished }
+		get {
+			stateMutex.lock()
+			defer { stateMutex.unlock() }
+			return _isFinished
+		}
 		set {
+			stateMutex.lock()
+			defer { stateMutex.unlock() }
 			guard _isFinished != newValue else { return }
 			willChangeValue(for: \.isFinished)
 			_isFinished = newValue
