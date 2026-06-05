@@ -68,14 +68,17 @@ public final class Debouncer {
 		self.cancelAction = cancelAction
 		self.queue = queue
 		self.timer = DispatchSource.makeTimerSource(flags: [], queue: queue)
+		let didFireEvent = Atomic(false)
 		self.timer.setEventHandler(handler: { [weak self] in
 			guard let self else { return }
+			didFireEvent.mutate { $0 = true }
 			action()
 			timer.cancel()
 		})
 		if let cancelAction {
 			self.timer.setCancelHandler(handler: { [weak self] in
 				guard self != nil else { return }
+				guard !didFireEvent.value else { return }
 				cancelAction()
 			})
 		}
@@ -90,14 +93,17 @@ public final class Debouncer {
 	public func reset() {
 		timer.cancel()
 		timer = DispatchSource.makeTimerSource(flags: [], queue: queue)
+		let didFireEvent = Atomic(false)
 		timer.setEventHandler(handler: { [weak self] in
 			guard let self else { return }
+			didFireEvent.mutate { $0 = true }
 			action()
 			timer.cancel()
 		})
 		if let cancelAction {
 			self.timer.setCancelHandler(handler: { [weak self] in
 				guard self != nil else { return }
+				guard !didFireEvent.value else { return }
 				cancelAction()
 			})
 		}
