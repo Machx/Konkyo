@@ -41,3 +41,33 @@ func testAsyncOperation() {
 
 	#expect(operation.num == 152)
 }
+/// Plain subclass with no extra state — used to exercise the base class's
+/// isExecuting / isFinished synchronization under concurrent access.
+final class BareOp: AsynchronousOperationBase, @unchecked Sendable {}
+
+@Test("isExecuting and isFinished are safe under concurrent reads and writes")
+func testConcurrentStateAccess() async {
+	let op = BareOp()
+
+	await withTaskGroup(of: Void.self) { group in
+		// Many concurrent readers — would race the writer without the mutex.
+		for _ in 0..<8 {
+			group.addTask {
+				for _ in 0..<10_000 {
+					_ = op.isExecuting
+					_ = op.isFinished
+				}
+			}
+		}
+		// Writer transitions state through the standard Operation lifecycle.
+		group.addTask {
+			op.isExecuting = true
+			op.isExecuting = false
+			op.isFinished = true
+		}
+	}
+
+	#expect(op.isExecuting == false)
+	#expect(op.isFinished == true)
+}
+
