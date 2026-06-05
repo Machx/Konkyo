@@ -122,6 +122,23 @@ struct DebouncerTests {
 		}
 	}
 
+	@Test("cancelAction does not fire when event completes normally")
+	func testCancelActionNotFiredOnNormalCompletion() async throws {
+		let eventFired = Atomic(false)
+		let cancelFired = Atomic(false)
+		let bouncer = Debouncer(delay: 0.05) {
+			eventFired.mutate { $0 = true }
+		} cancelAction: {
+			cancelFired.mutate { $0 = true }
+		}
+		// Wait well past the delay so the event handler runs and its
+		// internal timer.cancel() completes.
+		try? await Task.sleep(for: .milliseconds(300))
+		#expect(eventFired.value == true)
+		#expect(cancelFired.value == false)
+		_ = bouncer
+	}
+
 	@Test("Test Reset after Cancel")
 	func testResetAfterCancel() async {
 		let bounceActionCompleted = Atomic(false)
