@@ -104,12 +104,18 @@ public struct RollingDictionary<Key:Hashable,Value>:ExpressibleByDictionaryLiter
 	}
 	
 	private mutating func filterExcessEntries() {
-		while _keys.count > _limit {
-			let firstKey: Dictionary<Key,Value>.Key = _keys[0]
-			if let value = _dictionary.removeValue(forKey: firstKey) {
+		guard _keys.count > _limit else { return }
+		let excess = _keys.count - _limit
+		// Drop the oldest keys from the dictionary. Key removal must not be
+		// gated on the value being present, otherwise a missing value would
+		// stall progress and spin this loop forever.
+		for key in _keys.prefix(excess) {
+			if let value = _dictionary.removeValue(forKey: key) {
 				Log.general.debug("Removing value \(String(describing: value)) \(logLocation())")
-				_keys.remove(at: 0)
 			}
 		}
+		// Remove the oldest keys in a single O(n) shift rather than repeated
+		// O(n) front removals.
+		_keys.removeFirst(excess)
 	}
 }
