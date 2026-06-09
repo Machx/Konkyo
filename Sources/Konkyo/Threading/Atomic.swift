@@ -49,6 +49,8 @@ public final class Atomic<Value>: @unchecked Sendable {
 	/// - Parameter transform: a block in which the value is passed to you for safe mutation.
 	/// 1.0.0
 	public func mutate(_ transform: (inout Value) -> Void) {
-		queue.sync { transform(&self._value) }
+		mutex.lock()
+		defer { mutex.unlock() }
+		transform(&_value)
 	}
 }
