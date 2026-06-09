@@ -67,7 +67,12 @@ public struct RollingDictionary<Key:Hashable,Value>:ExpressibleByDictionaryLiter
 		}
 		set {
 			guard let newValue = newValue else {
-				self._dictionary.removeValue(forKey: key)
+				// Removing a value must also drop the key from the ordering,
+				// otherwise `_keys` grows unbounded and can desync from
+				// `_dictionary`, breaking the limit check and purging logic.
+				if self._dictionary.removeValue(forKey: key) != nil {
+					self._keys.removeAll { $0 == key }
+				}
 				return
 			}
 			let oldValue = self._dictionary.updateValue(newValue, forKey: key)
