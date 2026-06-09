@@ -20,8 +20,11 @@ import Foundation
 /// 1.0.0
 public final class Atomic<Value>: @unchecked Sendable {
 	private var _value: Value
-	private let queue = DispatchQueue(label: "com.Konkyo.Atomic.\(String(describing: Value.self))")
-	
+	// Backed by this package's pthread-based `Mutex` rather than a per-instance
+	// DispatchQueue: it avoids allocating a serial queue per instance and has far
+	// lower per-access overhead than `queue.sync`.
+	private let mutex = Mutex()
+
 	public init(_ value: Value) {
 		self._value = value
 	}
