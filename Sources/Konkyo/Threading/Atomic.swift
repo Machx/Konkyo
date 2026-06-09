@@ -28,15 +28,17 @@ public final class Atomic<Value>: @unchecked Sendable {
 	public init(_ value: Value) {
 		self._value = value
 	}
-	
+
 	/// Safely Reads the value and returns the value in a thread safe manner.
 	///
 	/// - returns: The wrapped value in a thread safe manner.
 	/// 1.0.0
 	public var value: Value {
-		get { return queue.sync { self._value } }
+		mutex.lock()
+		defer { mutex.unlock() }
+		return _value
 	}
-	
+
 	/// Passes the value to you and allows you to safely mutate the value.
 	///
 	/// It is not recommended that you call this right after reading in the value.
