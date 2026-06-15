@@ -68,22 +68,7 @@ public final class Debouncer {
 		self.cancelAction = cancelAction
 		self.queue = queue
 		self.timer = DispatchSource.makeTimerSource(flags: [], queue: queue)
-		let didFireEvent = Atomic(false)
-		self.timer.setEventHandler(handler: { [weak self] in
-			guard let self else { return }
-			didFireEvent.mutate { $0 = true }
-			action()
-			timer.cancel()
-		})
-		if let cancelAction {
-			self.timer.setCancelHandler(handler: { [weak self] in
-				guard self != nil else { return }
-				guard !didFireEvent.value else { return }
-				cancelAction()
-			})
-		}
-		self.timer.schedule(deadline: .now() + delay, repeating: 0.0)
-		self.timer.resume()
+		self.timer = makeScheduledTimer()
 	}
 	
 	/// Resets the Debouncer by cancelling the previous timer & starting a new one.
@@ -92,23 +77,28 @@ public final class Debouncer {
 	/// timer is cancelled, this will call the cancel handler if that is set.
 	public func reset() {
 		timer.cancel()
-		timer = DispatchSource.makeTimerSource(flags: [], queue: queue)
+		timer = makeScheduledTimer()
+	}
+	
+	private func makeScheduledTimer() -> DispatchSourceTimer {
+		let newTimer = DispatchSource.makeTimerSource(flags: [], queue: queue)
 		let didFireEvent = Atomic(false)
-		timer.setEventHandler(handler: { [weak self] in
+		newTimer.setEventHandler(handler: { [weak self] in
 			guard let self else { return }
 			didFireEvent.mutate { $0 = true }
 			action()
 			timer.cancel()
 		})
 		if let cancelAction {
-			self.timer.setCancelHandler(handler: { [weak self] in
+			newTimer.setCancelHandler(handler: { [weak self] in
 				guard self != nil else { return }
 				guard !didFireEvent.value else { return }
 				cancelAction()
 			})
 		}
-		timer.schedule(deadline: .now() + delay, repeating: 0.0)
-		timer.resume()
+		newTimer.schedule(deadline: .now() + delay, repeating: 0.0)
+		newTimer.resume()
+		return newTimer
 	}
 	
 	/// Only cancels the timer, but does not reset it or start a new timer.
