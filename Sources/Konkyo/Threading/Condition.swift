@@ -15,7 +15,6 @@
 
 import Foundation
 import Darwin
-import Synchronization
 
 public final class Condition: @unchecked Sendable {
 	fileprivate var uuid = UUID()
