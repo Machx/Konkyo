@@ -25,9 +25,10 @@ public final class Condition: @unchecked Sendable {
 	/// Name describing the condition. Used in debug logs.
 	///
 	/// 1.0.0
-	public var name: String? = nil
+	public let name: String?
 	
-	public init() {
+	public init(name: String? = nil) {
+		self.name = name
 		cond = UnsafeMutablePointer<pthread_cond_t>.allocate(capacity: 1)
 		mutex = UnsafeMutablePointer<pthread_mutex_t>.allocate(capacity: 1)
 		pthread_cond_init(cond, nil)
