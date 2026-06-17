@@ -34,5 +34,5 @@ let package = Package(
             name: "KonkyoTests",
             dependencies: ["Konkyo"]),
     ],
-	swiftLanguageModes: [.v5, .v6]
+	swiftLanguageModes: [.v6]
 )
