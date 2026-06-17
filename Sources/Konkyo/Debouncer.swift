@@ -22,9 +22,11 @@ import Foundation
 /// executed once and only once. Anytime the timer is reset, the cancel block will be executed.
 /// Unlike the event handler, the cancel handler will be executed anytime the debouncer is reset.
 ///
-/// The Debouncer must be initialized on a serial queue. If the queue the Debouncer is set to
-/// execute the event/cancel handlers on is not a serial queue, it may lead to unpredictable
-/// behavior as to how many times the event and/or cancel handlers are executed.
+/// The queue used to dispatch the event/cancel handlers **must be serial**. Passing a
+/// concurrent queue (e.g. any `DispatchQueue.global(qos:)`) results in undefined behavior
+/// — the event and cancel handlers may fire more than once or in an unexpected order.
+/// `DispatchQueue.main` and any queue created without `.concurrent` attributes are valid.
+/// If no queue is supplied, the Debouncer creates its own private serial queue.
 public final class Debouncer {
 	public typealias DebouncerAction = () -> Void
 	
@@ -56,11 +58,12 @@ public final class Debouncer {
 	/// Initializes the one time use Debouncer.
 	/// - Parameters:
 	///   - delay: The delay in seconds that the event handler will be executed after.
-	///   - queue: The Queue that the event and cancel handlers will be dispatched onto.
+	///   - queue: A **serial** queue that the event and cancel handlers will be dispatched onto.
+	///     Defaults to a private serial queue created for this Debouncer instance.
 	///   - eventHandler: The action that will take place after `delay` unless reset or cancelled.
 	///   - cancelAction: When a debouncer is cancelled this will be called in response to that event.
 	public init(delay: Double,
-				queue: DispatchQueue = .global(qos: .background),
+				queue: DispatchQueue = DispatchQueue(label: "Konkyo.Debouncer", qos: .background),
 				_ eventHandler: @escaping DebouncerAction,
 				cancelAction: DebouncerAction? = nil) {
 		self.delay = delay
@@ -68,7 +71,7 @@ public final class Debouncer {
 		self.cancelAction = cancelAction
 		self.queue = queue
 		self.timer = DispatchSource.makeTimerSource(flags: [], queue: queue)
-		self.timer = makeScheduledTimer()
+		scheduleTimer(self.timer)
 	}
 	
 	/// Resets the Debouncer by cancelling the previous timer & starting a new one.
@@ -77,28 +80,27 @@ public final class Debouncer {
 	/// timer is cancelled, this will call the cancel handler if that is set.
 	public func reset() {
 		timer.cancel()
-		timer = makeScheduledTimer()
+		timer = DispatchSource.makeTimerSource(flags: [], queue: queue)
+		scheduleTimer(timer)
 	}
 	
-	private func makeScheduledTimer() -> DispatchSourceTimer {
-		let newTimer = DispatchSource.makeTimerSource(flags: [], queue: queue)
+	private func scheduleTimer(_ source: DispatchSourceTimer) {
 		let didFireEvent = Atomic(false)
-		newTimer.setEventHandler(handler: { [weak self] in
+		source.setEventHandler(handler: { [weak self] in
 			guard let self else { return }
 			didFireEvent.mutate { $0 = true }
 			action()
-			timer.cancel()
+			self.timer.cancel()
 		})
 		if let cancelAction {
-			newTimer.setCancelHandler(handler: { [weak self] in
+			source.setCancelHandler(handler: { [weak self] in
 				guard self != nil else { return }
 				guard !didFireEvent.value else { return }
 				cancelAction()
 			})
 		}
-		newTimer.schedule(deadline: .now() + delay, repeating: 0.0)
-		newTimer.resume()
-		return newTimer
+		source.schedule(deadline: .now() + delay, repeating: 0.0)
+		source.resume()
 	}
 	
 	/// Only cancels the timer, but does not reset it or start a new timer.
