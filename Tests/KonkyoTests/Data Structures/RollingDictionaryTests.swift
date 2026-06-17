@@ -170,4 +170,12 @@ struct RollingDictionaryTests {
 		#expect(dictionary["C"] == nil)
 	}
 
+	@Test("Inserting with limit 0 never stores values")
+	func testInsertingWithLimitZero() {
+		var dictionary = RollingDictionary<String, Int>(limit: 0)
+		dictionary["A"] = 1
+		#expect(dictionary["A"] == nil)
+		#expect(dictionary.keys.count == 0)
+	}
+
 }
