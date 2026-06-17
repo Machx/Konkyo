@@ -159,4 +159,15 @@ struct RollingDictionaryTests {
 		#expect(dictionary["F"] == 6)
 	}
 
+	@Test("Setting limit to 0 purges all entries")
+	func testLimitZeroPurgesAllEntries() {
+		var dictionary: RollingDictionary = ["A": 1, "B": 2, "C": 3]
+		dictionary.setLimit(0)
+		#expect(dictionary.getKeyLimit() == 0)
+		#expect(dictionary.keys.count == 0)
+		#expect(dictionary["A"] == nil)
+		#expect(dictionary["B"] == nil)
+		#expect(dictionary["C"] == nil)
+	}
+
 }
