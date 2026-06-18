@@ -196,4 +196,76 @@ struct RollingDictionaryTests {
 		#expect(dictionary.keys.count == 2)
 	}
 
+	@Test("Increasing the limit does not remove entries")
+	func testIncreasingLimitKeepsAllEntries() {
+		var dictionary = RollingDictionary<String, Int>(limit: 2)
+		dictionary["A"] = 1
+		dictionary["B"] = 2
+		dictionary.setLimit(5)
+
+		#expect(dictionary.getKeyLimit() == 5)
+		#expect(dictionary["A"] == 1)
+		#expect(dictionary["B"] == 2)
+		#expect(dictionary.keys.count == 2)
+	}
+
+	@Test("Setting limit equal to current count keeps all entries")
+	func testLimitEqualToCount() {
+		var dictionary: RollingDictionary = ["A": 1, "B": 2, "C": 3]
+		dictionary.setLimit(3)
+		#expect(dictionary.keys.count == 3)
+		#expect(dictionary["A"] == 1)
+		#expect(dictionary["B"] == 2)
+		#expect(dictionary["C"] == 3)
+	}
+
+	@Test("Updating an existing key does not reset its insertion ordering")
+	func testUpdatingDoesNotChangeInsertionOrder() {
+		var dictionary = RollingDictionary<String, Int>(limit: 3)
+		dictionary["A"] = 1
+		dictionary["B"] = 2
+		dictionary["C"] = 3
+		// Updating A's value should not move A to the back of the queue.
+		dictionary["A"] = 99
+		dictionary["D"] = 4
+
+		#expect(dictionary["A"] == nil, "A should be purged since it was the oldest key when D was added")
+		#expect(dictionary["B"] == 2)
+		#expect(dictionary["C"] == 3)
+		#expect(dictionary["D"] == 4)
+	}
+
+	@Test("Inserting many entries beyond the limit retains only the most recent")
+	func testBulkInsertionBeyondLimit() {
+		var dictionary = RollingDictionary<Int, String>(limit: 3)
+		for i in 0..<100 {
+			dictionary[i] = "value-\(i)"
+		}
+		#expect(dictionary.keys.count == 3)
+		#expect(dictionary[97] == "value-97")
+		#expect(dictionary[98] == "value-98")
+		#expect(dictionary[99] == "value-99")
+		#expect(dictionary[0] == nil)
+		#expect(dictionary[50] == nil)
+	}
+
+	@Test("Removing all entries via nil leaves the dictionary empty and reusable")
+	func testRemovingAllEntries() {
+		var dictionary = RollingDictionary<String, Int>(limit: 3)
+		dictionary["A"] = 1
+		dictionary["B"] = 2
+		dictionary["C"] = 3
+		dictionary["A"] = nil
+		dictionary["B"] = nil
+		dictionary["C"] = nil
+		#expect(dictionary.keys.count == 0)
+
+		// New inserts should still respect the limit after a full drain.
+		dictionary["X"] = 10
+		dictionary["Y"] = 20
+		dictionary["Z"] = 30
+		dictionary["W"] = 40
+		#expect(dictionary.keys.count == 3)
+		#expect(dictionary["X"] == nil)
+	}
 }
