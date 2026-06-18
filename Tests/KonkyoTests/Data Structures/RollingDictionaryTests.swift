@@ -178,4 +178,22 @@ struct RollingDictionaryTests {
 		#expect(dictionary.keys.count == 0)
 	}
 
+	@Test("Assigning nil to non-existent key is a no-op and does not desync state")
+	func testAssigningNilToMissingKeyIsNoOp() {
+		var dictionary = RollingDictionary<String, Int>(limit: 2)
+		dictionary["A"] = 1
+		dictionary["Ghost"] = nil
+		#expect(dictionary["A"] == 1)
+		#expect(dictionary.keys.count == 1)
+
+		// Filling the dictionary then adding a new key must still purge the
+		// oldest real key — a desynced internal _keys array would break this.
+		dictionary["B"] = 2
+		dictionary["C"] = 3
+		#expect(dictionary["A"] == nil)
+		#expect(dictionary["B"] == 2)
+		#expect(dictionary["C"] == 3)
+		#expect(dictionary.keys.count == 2)
+	}
+
 }
