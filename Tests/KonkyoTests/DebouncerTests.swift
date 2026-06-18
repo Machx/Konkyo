@@ -159,4 +159,28 @@ struct DebouncerTests {
 		#expect(bounceActionCompleted.value == true)
 		_ = bouncer
 	}
+
+	@Test("Event action fires exactly once after the delay elapses without reset")
+	func testEventFiresOnceWhenLeftAlone() async throws {
+		await confirmation("Action fires exactly once after the delay", expectedCount: 1) { fired in
+			let bouncer = Debouncer(delay: 0.05) {
+				fired()
+			}
+			try? await Task.sleep(for: .milliseconds(400))
+			_ = bouncer
+		}
+	}
+
+	@Test("Default queue (none provided) still fires the action")
+	func testDefaultQueueFiresAction() async throws {
+		let actionFired = Atomic(false)
+		// Use the default-queue init to exercise that code path.
+		let bouncer = Debouncer(delay: 0.05) {
+			actionFired.mutate { $0 = true }
+		}
+		try? await Task.sleep(for: .milliseconds(300))
+		#expect(actionFired.value == true)
+		_ = bouncer
+	}
+
 }
