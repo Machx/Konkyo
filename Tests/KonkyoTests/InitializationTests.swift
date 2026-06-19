@@ -62,3 +62,10 @@ func testOperatorWithArrayRead() {
 	#expect(observedCount == 3)
 }
 
+@Test("Operator forwards the exact instance to the closure")
+func testOperatorForwardsExactInstance() {
+	let instance = MyTestClass()
+	nonisolated(unsafe) var captured: MyTestClass? = nil
+	let _ = instance <- { captured = $0 }
+	#expect(captured === instance)
+}
