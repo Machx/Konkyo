@@ -183,4 +183,43 @@ struct DebouncerTests {
 		_ = bouncer
 	}
 
+	@Test("reset() after the event has already fired does not re-fire the event")
+	func testResetAfterFireDoesNotReFire() async throws {
+		let fireCount = Atomic(0)
+		let bouncer = Debouncer(delay: 0.05) {
+			fireCount.mutate { $0 += 1 }
+		}
+		// Wait for the first firing.
+		try? await Task.sleep(for: .milliseconds(200))
+		#expect(fireCount.value == 1)
+
+		// Reset schedules a new timer; expect the action to fire again.
+		bouncer.reset()
+		try? await Task.sleep(for: .milliseconds(200))
+		#expect(fireCount.value == 2)
+		_ = bouncer
+	}
+
+	@Test("cancel() without a configured cancel action does not crash")
+	func testCancelWithoutCancelAction() async throws {
+		let bouncer = Debouncer(delay: 0.5) { }
+		bouncer.cancel()
+		try? await Task.sleep(for: .milliseconds(100))
+		_ = bouncer
+	}
+
+	@Test("Rapidly alternating reset and cancel does not invoke the event handler")
+	func testRapidResetCancelDoesNotFire() async throws {
+		await confirmation("Event never fires", expectedCount: 0) { fired in
+			let bouncer = Debouncer(delay: 0.05) {
+				fired()
+			}
+			for _ in 0..<50 {
+				bouncer.reset()
+				bouncer.cancel()
+			}
+			try? await Task.sleep(for: .milliseconds(300))
+			_ = bouncer
+		}
+	}
 }
