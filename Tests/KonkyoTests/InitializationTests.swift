@@ -54,3 +54,11 @@ func testOperatorChaining() {
 	#expect(thing.myNum == 10)
 }
 
+@Test("Operator works with array types where the closure inspects the value")
+func testOperatorWithArrayRead() {
+	nonisolated(unsafe) var observedCount = -1
+	let array = [1, 2, 3] <- { observedCount = $0.count }
+	#expect(array == [1, 2, 3])
+	#expect(observedCount == 3)
+}
+
