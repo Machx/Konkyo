@@ -45,3 +45,12 @@ func testOperatorWithNoMutation() {
 	let thing = MyTestClass() <- { _ in }
 	#expect(thing.myNum == 0)
 }
+
+@Test("Operator supports chaining configuration blocks via explicit parentheses")
+func testOperatorChaining() {
+	// The `<-` operator is in the default precedence group with no
+	// associativity, so adjacent uses must be parenthesised.
+	let thing = (MyTestClass() <- { $0.myNum = 5 }) <- { $0.myNum *= 2 }
+	#expect(thing.myNum == 10)
+}
+
