@@ -52,4 +52,19 @@ struct URLExtensionTests {
 	func testHTTPURL() {
 		#expect("http://example.com".isValidURL)
 	}
+
+	@Test("file:// URL is valid")
+	func testFileURL() {
+		#expect("file:///Users/test/file.txt".isValidURL)
+	}
+
+	@Test("mailto URL is valid")
+	func testMailtoURL() {
+		#expect("mailto:user@example.com".isValidURL)
+	}
+
+	@Test("ftp URL is valid")
+	func testFTPURL() {
+		#expect("ftp://files.example.com/some/path".isValidURL)
+	}
 }
