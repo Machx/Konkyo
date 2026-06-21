@@ -78,4 +78,16 @@ struct URLExtensionTests {
 		#expect("https://user:password@example.com".isValidURL)
 	}
 
+	@Test("Relative path is treated as a valid URL by URL(string:)")
+	func testRelativePathIsValid() {
+		// URL(string:) accepts relative URLs, so the helper considers them valid.
+		#expect("path/to/resource".isValidURL)
+	}
+
+	@Test("Simple identifier is treated as a valid URL by URL(string:)")
+	func testSimpleIdentifierIsValid() {
+		// Documents permissive URL(string:) semantics: a bare token like "hello"
+		// is accepted as a relative URL.
+		#expect("hello".isValidURL)
+	}
 }
