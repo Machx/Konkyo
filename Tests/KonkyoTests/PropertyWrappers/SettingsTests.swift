@@ -152,4 +152,23 @@ struct SettingsTests {
 		#expect(prefs.wrappedValue == 99)
 	}
 
+	@Test("Data encoded for a different type falls back to default")
+	func testWrongTypeDataFallsBackToDefault() throws {
+		let mock = MockUserDefaults()
+		let encoded = try JSONEncoder().encode(["a", "b", "c"])
+		mock.set(encoded, forKey: "mismatched")
+		let prefs = Preferences(key: "mismatched", defaultValue: 0, userDefaults: mock)
+		#expect(prefs.wrappedValue == 0)
+	}
+
+	@Test("Updating wrappedValue overwrites the previous value")
+	func testWrappedValueOverwrites() {
+		let mock = MockUserDefaults()
+		var prefs = Preferences(key: "counter", defaultValue: 0, userDefaults: mock)
+		prefs.wrappedValue = 1
+		prefs.wrappedValue = 2
+		prefs.wrappedValue = 3
+		#expect(prefs.wrappedValue == 3)
+	}
+
 }
