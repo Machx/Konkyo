@@ -67,4 +67,15 @@ struct URLExtensionTests {
 	func testFTPURL() {
 		#expect("ftp://files.example.com/some/path".isValidURL)
 	}
+
+	@Test("URL with port number is valid")
+	func testURLWithPort() {
+		#expect("https://example.com:8080/api".isValidURL)
+	}
+
+	@Test("URL with user info is valid")
+	func testURLWithUserInfo() {
+		#expect("https://user:password@example.com".isValidURL)
+	}
+
 }
