@@ -131,4 +131,25 @@ struct SettingsTests {
 		prefs.wrappedValue = 7
 		#expect(mock.object(forKey: "value") is Data)
 	}
+
+	// MARK: - Edge cases
+
+	@Test("Non-Data value in storage falls back to default")
+	func testNonDataStoredValueFallsBackToDefault() {
+		let mock = MockUserDefaults()
+		// Simulate a legacy entry that was written as a String (not Data).
+		mock.set("not-encoded", forKey: "legacy")
+		let prefs = Preferences(key: "legacy", defaultValue: 42, userDefaults: mock)
+		#expect(prefs.wrappedValue == 42)
+	}
+
+	@Test("Corrupt Data in storage falls back to default")
+	func testCorruptDataFallsBackToDefault() {
+		let mock = MockUserDefaults()
+		// Random bytes that cannot decode as an Int.
+		mock.set(Data([0xFF, 0x00, 0x42, 0xAB]), forKey: "corrupt")
+		let prefs = Preferences(key: "corrupt", defaultValue: 99, userDefaults: mock)
+		#expect(prefs.wrappedValue == 99)
+	}
+
 }
