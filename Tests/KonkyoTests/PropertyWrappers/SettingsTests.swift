@@ -171,4 +171,25 @@ struct SettingsTests {
 		#expect(prefs.wrappedValue == 3)
 	}
 
+	@Test("Multiple Preferences instances over the same key share storage")
+	func testMultipleInstancesShareStorage() {
+		let mock = MockUserDefaults()
+		var writer = Preferences(key: "shared", defaultValue: 0, userDefaults: mock)
+		writer.wrappedValue = 7
+
+		let reader = Preferences(key: "shared", defaultValue: -1, userDefaults: mock)
+		#expect(reader.wrappedValue == 7)
+	}
+
+	@Test("Preferences for unrelated keys do not interfere")
+	func testKeysAreNotShared() {
+		let mock = MockUserDefaults()
+		var a = Preferences(key: "A", defaultValue: 0, userDefaults: mock)
+		var b = Preferences(key: "B", defaultValue: 0, userDefaults: mock)
+		a.wrappedValue = 11
+		b.wrappedValue = 22
+		#expect(a.wrappedValue == 11)
+		#expect(b.wrappedValue == 22)
+	}
+
 }
