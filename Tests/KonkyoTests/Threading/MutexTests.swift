@@ -59,6 +59,24 @@ struct MutexTests {
 		mutex.unlock()
 	}
 
-	
+	@Test("withLock executes the block")
+	func testWithLockExecutesBlock() async {
+		let mutex = Mutex()
+		await confirmation(expectedCount: 1) { confirm in
+			mutex.withLock {
+				confirm()
+			}
+		}
+	}
+
+	@Test("withLock releases the lock after the block completes")
+	func testWithLockReleasesLockAfterBlock() {
+		let mutex = Mutex()
+		mutex.withLock { }
+		// If the lock was not released, this tryLock would fail.
+		#expect(mutex.tryLock() == true)
+		mutex.unlock()
+	}
+
 }
 
