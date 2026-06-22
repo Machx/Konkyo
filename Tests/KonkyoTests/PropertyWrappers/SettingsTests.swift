@@ -218,4 +218,31 @@ struct SettingsTests {
 		#expect(prefs.wrappedValue == items)
 	}
 
+	@Test("Stores and retrieves a nested Codable structure")
+	func testNestedCodableRoundTrip() {
+		struct Address: Codable, Equatable {
+			let city: String
+			let zip: String
+		}
+		struct Person: Codable, Equatable {
+			let name: String
+			let address: Address
+		}
+
+		let mock = MockUserDefaults()
+		let defaultPerson = Person(name: "Default", address: Address(city: "", zip: ""))
+		var prefs = Preferences(key: "person", defaultValue: defaultPerson, userDefaults: mock)
+		let person = Person(name: "Alice", address: Address(city: "Cupertino", zip: "95014"))
+		prefs.wrappedValue = person
+		#expect(prefs.wrappedValue == person)
+	}
+
+	@Test("Empty string value is stored and retrieved correctly")
+	func testEmptyStringRoundTrip() {
+		let mock = MockUserDefaults()
+		var prefs = Preferences(key: "empty", defaultValue: "default", userDefaults: mock)
+		prefs.wrappedValue = ""
+		#expect(prefs.wrappedValue == "")
+	}
+
 }
