@@ -78,5 +78,15 @@ struct MutexTests {
 		mutex.unlock()
 	}
 
+	@Test("tryLock(block:) executes block when lock is available")
+	func testTryLockBlockExecutesWhenAvailable() async {
+		let mutex = Mutex()
+		await confirmation(expectedCount: 1) { confirm in
+			mutex.tryLock {
+				confirm()
+			}
+		}
+	}
+
 }
 
