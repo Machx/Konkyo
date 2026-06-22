@@ -192,4 +192,30 @@ struct SettingsTests {
 		#expect(b.wrappedValue == 22)
 	}
 
+	@Test("Optional Codable type round-trips a nil value")
+	func testOptionalCodableRoundTripsNil() {
+		let mock = MockUserDefaults()
+		var prefs = Preferences<Int?>(key: "maybe", defaultValue: 5, userDefaults: mock)
+		prefs.wrappedValue = nil
+		#expect(prefs.wrappedValue == nil)
+	}
+
+	@Test("Stores and retrieves an array of Codable structs")
+	func testArrayOfCodableStructsRoundTrip() {
+		struct Item: Codable, Equatable {
+			let id: Int
+			let label: String
+		}
+
+		let mock = MockUserDefaults()
+		var prefs = Preferences(key: "items", defaultValue: [Item](), userDefaults: mock)
+		let items = [
+			Item(id: 1, label: "first"),
+			Item(id: 2, label: "second"),
+			Item(id: 3, label: "third"),
+		]
+		prefs.wrappedValue = items
+		#expect(prefs.wrappedValue == items)
+	}
+
 }
