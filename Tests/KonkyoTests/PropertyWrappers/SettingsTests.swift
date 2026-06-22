@@ -245,4 +245,11 @@ struct SettingsTests {
 		#expect(prefs.wrappedValue == "")
 	}
 
+	@Test("Empty array value is stored and retrieved correctly")
+	func testEmptyArrayRoundTrip() {
+		let mock = MockUserDefaults()
+		var prefs = Preferences(key: "empty-array", defaultValue: ["fallback"], userDefaults: mock)
+		prefs.wrappedValue = []
+		#expect(prefs.wrappedValue == [])
+	}
 }
