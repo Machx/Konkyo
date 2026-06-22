@@ -88,5 +88,20 @@ struct MutexTests {
 		}
 	}
 
+	@Test("tryLock(block:) does not execute block when already locked")
+	func testTryLockBlockSkipsWhenAlreadyLocked() {
+		let mutex = Mutex()
+		mutex.lock()
+
+		nonisolated(unsafe) var executed = false
+		DispatchQueue.global().sync {
+			mutex.tryLock {
+				executed = true
+			}
+		}
+		mutex.unlock()
+		#expect(executed == false)
+	}
+
 }
 
