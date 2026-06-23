@@ -74,4 +74,30 @@ struct AtomicTests {
 		number.mutate { $0 *= 2 }
 		#expect(number.value == 20)
 	}
+
+	@Test("Initial value is preserved without mutation")
+	func testInitialValueWithoutMutation() {
+		let atomic = Atomic(123)
+		#expect(atomic.value == 123)
+	}
+
+	@Test("Atomic value returns an independent copy for value types")
+	func testValueReturnsCopyForValueTypes() {
+		let atomic = Atomic([1, 2, 3])
+		var copy = atomic.value
+		copy.append(99)
+		// Mutating the local copy must not affect the underlying value.
+		#expect(atomic.value == [1, 2, 3])
+	}
+
+	@Test("Atomic works with optional value types")
+	func testAtomicWithOptionalType() {
+		let atomic = Atomic<Int?>(nil)
+		#expect(atomic.value == nil)
+		atomic.mutate { $0 = 42 }
+		#expect(atomic.value == 42)
+		atomic.mutate { $0 = nil }
+		#expect(atomic.value == nil)
+	}
+
 }
