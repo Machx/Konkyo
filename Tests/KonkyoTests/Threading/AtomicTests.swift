@@ -100,4 +100,27 @@ struct AtomicTests {
 		#expect(atomic.value == nil)
 	}
 
+	@Test("Concurrent dictionary mutation produces correct count")
+	func testConcurrentDictionaryMutation() {
+		let dict = Atomic<[Int: Int]>([:])
+		let iterations = 5_000
+
+		DispatchQueue.concurrentPerform(iterations: iterations) { i in
+			dict.mutate { $0[i] = i * 2 }
+		}
+
+		#expect(dict.value.count == iterations)
+		// Spot-check a few entries to confirm no torn writes.
+		#expect(dict.value[0] == 0)
+		#expect(dict.value[iterations - 1] == (iterations - 1) * 2)
+	}
+
+	@Test("Multiple successive mutations apply in order")
+	func testSuccessiveMutations() {
+		let atomic = Atomic(1)
+		atomic.mutate { $0 += 1 }
+		atomic.mutate { $0 *= 3 }
+		atomic.mutate { $0 -= 2 }
+		#expect(atomic.value == 4) // ((1+1)*3)-2
+	}
 }
