@@ -103,5 +103,31 @@ struct MutexTests {
 		#expect(executed == false)
 	}
 
+	@Test("tryLock(block:) releases the lock after execution so a subsequent tryLock succeeds")
+	func testTryLockBlockReleasesLock() {
+		let mutex = Mutex()
+		mutex.tryLock { }
+		#expect(mutex.tryLock() == true)
+		mutex.unlock()
+	}
+
+	@Test("Recursive mutex can be locked multiple times on the same thread without deadlock")
+	func testRecursiveMutexAllowsMultipleLocksFromSameThread() {
+		let mutex = Mutex(type: .recursive)
+		mutex.lock()
+		// A non-recursive mutex would fail here.
+		#expect(mutex.tryLock() == true)
+		mutex.unlock()
+		mutex.unlock()
+	}
+
+	@Test("tryLock succeeds after unlock")
+	func testTryLockAvailableAfterUnlock() {
+		let mutex = Mutex()
+		mutex.lock()
+		mutex.unlock()
+		#expect(mutex.tryLock() == true)
+		mutex.unlock()
+	}
 }
 
