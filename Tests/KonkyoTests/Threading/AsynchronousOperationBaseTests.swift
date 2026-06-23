@@ -71,3 +71,21 @@ func testConcurrentStateAccess() async {
 	#expect(op.isFinished == true)
 }
 
+/// Observer that records every KVO callback it receives.
+private final class StateChangeObserver: NSObject, @unchecked Sendable {
+	var count = 0
+	override func observeValue(forKeyPath keyPath: String?,
+							   of object: Any?,
+							   change: [NSKeyValueChangeKey : Any]?,
+							   context: UnsafeMutableRawPointer?) {
+		count += 1
+	}
+}
+
+@Test("Initial isExecuting and isFinished are both false")
+func testInitialStateIsFalse() {
+	let op = BareOp()
+	#expect(op.isExecuting == false)
+	#expect(op.isFinished == false)
+}
+
