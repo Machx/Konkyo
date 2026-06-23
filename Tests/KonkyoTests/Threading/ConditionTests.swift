@@ -115,5 +115,78 @@ struct CWConditionTests {
 		}
 		#expect(wakeCount.value == waiterCount)
 	}
+
+	@Test("signal() with no waiters does not crash")
+	func testSignalWithNoWaiters() {
+		let condition = Condition()
+		condition.lock()
+		// pthread_cond_signal is documented as safe to call with no waiters.
+		condition.signal()
+		condition.unlock()
+	}
+
+	@Test("broadcast() with no waiters does not crash")
+	func testBroadcastWithNoWaiters() {
+		let condition = Condition()
+		condition.lock()
+		condition.broadcast()
+		condition.unlock()
+	}
+
+	@Test("Condition without an explicit name still produces a debug description")
+	func testDebugDescriptionWithoutName() {
+		let condition = Condition()
+		#expect(condition.debugDescription.contains("Condition("))
+	}
+
+	@Test("Condition with explicit name includes the name in debug description")
+	func testDebugDescriptionWithName() {
+		let condition = Condition(name: "MyConditionName")
+		#expect(condition.debugDescription.contains("MyConditionName"))
+	}
+
+	@Test("Two Conditions with the same name are not equal")
+	func testTwoConditionsWithSameNameAreNotEqual() {
+		let a = Condition(name: "shared")
+		let b = Condition(name: "shared")
+		#expect(a != b, "Equality is identity-based via UUID, not name-based")
+	}
+
+	@Test("Condition is equal to itself")
+	func testConditionEqualToItself() {
+		let condition = Condition()
+		#expect(condition == condition)
+	}
+
+	@Test("Condition hash is consistent across multiple calls")
+	func testConditionHashIsConsistent() {
+		let condition = Condition()
+		var hasher1 = Hasher()
+		var hasher2 = Hasher()
+		condition.hash(into: &hasher1)
+		condition.hash(into: &hasher2)
+		#expect(hasher1.finalize() == hasher2.finalize())
+	}
+
+	@Test("Conditions can be inserted in a Set as distinct entries")
+	func testConditionsInSet() {
+		let a = Condition()
+		let b = Condition()
+		let set: Set<Condition> = [a, b, a]
+		#expect(set.count == 2)
+	}
+
+	@Test("wait(until:) returns false immediately for past date without blocking")
+	func testWaitUntilPastDateReturnsImmediately() {
+		let condition = Condition()
+		condition.lock()
+		let start = Date()
+		let result = condition.wait(until: Date(timeIntervalSinceNow: -10))
+		let elapsed = Date().timeIntervalSince(start)
+		condition.unlock()
+		#expect(result == false)
+		// Should return quickly without sleeping.
+		#expect(elapsed < 0.5)
+	}
 }
 
