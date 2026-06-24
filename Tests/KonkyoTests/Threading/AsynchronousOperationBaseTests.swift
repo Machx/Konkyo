@@ -129,3 +129,14 @@ func testIsExecutingFiresKVO() {
 	#expect(observer.count == 1)
 }
 
+@Test("Transitioning isFinished fires KVO exactly once")
+func testIsFinishedFiresKVO() {
+	let op = BareOp()
+
+	let observer = StateChangeObserver()
+	op.addObserver(observer, forKeyPath: "isFinished", options: [.new], context: nil)
+	op.isFinished = true
+	op.removeObserver(observer, forKeyPath: "isFinished")
+	#expect(observer.count == 1)
+}
+
