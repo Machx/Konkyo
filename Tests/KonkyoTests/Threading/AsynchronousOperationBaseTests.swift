@@ -107,3 +107,14 @@ func testIsExecutingIdempotentDoesNotFireKVO() {
 	#expect(observer.count == 0)
 }
 
+@Test("Setting isFinished to its current value does not fire KVO")
+func testIsFinishedIdempotentDoesNotFireKVO() {
+	let op = BareOp()
+
+	let observer = StateChangeObserver()
+	op.addObserver(observer, forKeyPath: "isFinished", options: [.new], context: nil)
+	op.isFinished = false // Same as the initial value — must not fire KVO.
+	op.removeObserver(observer, forKeyPath: "isFinished")
+	#expect(observer.count == 0)
+}
+
