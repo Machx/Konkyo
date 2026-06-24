@@ -89,3 +89,9 @@ func testInitialStateIsFalse() {
 	#expect(op.isFinished == false)
 }
 
+@Test("isAsynchronous returns true")
+func testIsAsynchronousReturnsTrue() {
+	let op = BareOp()
+	#expect(op.isAsynchronous == true)
+}
+
