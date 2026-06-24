@@ -95,3 +95,15 @@ func testIsAsynchronousReturnsTrue() {
 	#expect(op.isAsynchronous == true)
 }
 
+@Test("Setting isExecuting to its current value does not fire KVO")
+func testIsExecutingIdempotentDoesNotFireKVO() {
+	let op = BareOp()
+	op.isExecuting = true
+
+	let observer = StateChangeObserver()
+	op.addObserver(observer, forKeyPath: "isExecuting", options: [.new], context: nil)
+	op.isExecuting = true // Same value — must not fire KVO.
+	op.removeObserver(observer, forKeyPath: "isExecuting")
+	#expect(observer.count == 0)
+}
+
