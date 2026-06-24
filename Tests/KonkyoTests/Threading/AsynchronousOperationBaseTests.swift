@@ -118,3 +118,14 @@ func testIsFinishedIdempotentDoesNotFireKVO() {
 	#expect(observer.count == 0)
 }
 
+@Test("Transitioning isExecuting fires KVO exactly once")
+func testIsExecutingFiresKVO() {
+	let op = BareOp()
+
+	let observer = StateChangeObserver()
+	op.addObserver(observer, forKeyPath: "isExecuting", options: [.new], context: nil)
+	op.isExecuting = true
+	op.removeObserver(observer, forKeyPath: "isExecuting")
+	#expect(observer.count == 1)
+}
+
