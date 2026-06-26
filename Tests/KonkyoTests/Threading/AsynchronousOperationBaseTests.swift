@@ -140,3 +140,14 @@ func testIsFinishedFiresKVO() {
 	#expect(observer.count == 1)
 }
 
+@Test("Toggling isExecuting on and off fires KVO twice")
+func testIsExecutingToggleFiresKVOTwice() {
+	let op = BareOp()
+
+	let observer = StateChangeObserver()
+	op.addObserver(observer, forKeyPath: "isExecuting", options: [.new], context: nil)
+	op.isExecuting = true
+	op.isExecuting = false
+	op.removeObserver(observer, forKeyPath: "isExecuting")
+	#expect(observer.count == 2)
+}
