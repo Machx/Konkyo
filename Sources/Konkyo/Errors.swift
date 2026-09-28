@@ -16,17 +16,30 @@
 import Foundation
 
 /// TraceableError is a protocol that allows developers to see  the path an error takes
-/// Exmple:
-///
 /// AppError - loadingError
 /// └─ ProfileError - noSavedProfileError
 ///    └─ DatabaseError - noRecordFound
-///    
+///
 public protocol TraceableError: Error {
     var containedError: Error { get }
 }
 
 public extension Error {
+    /// Builds a formatted, recursive description of an error chain.
+    ///
+    /// If `self` conforms to `TraceableError`, its `containedError` is unwrapped
+    /// and appended on the next line, indented and prefixed with `└─`, repeating
+    /// until an error is reached that does not conform to `TraceableError`. Each
+    /// line takes the form `TypeName - caseName`.
+    ///
+    /// For example, an `AppError.loadingError` wrapping a
+    /// `ProfileError.noSavedProfileError` wrapping a `DatabaseError.noRecordFound`
+    /// produces:
+    /// ```
+    /// AppError - loadingError
+    /// └─ ProfileError - noSavedProfileError
+    ///    └─ DatabaseError - noRecordFound
+    /// ```
     func traceableErrorDescription() -> String {
         var lines: [String] = []
         var current: Error = self
