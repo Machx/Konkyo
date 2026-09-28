@@ -40,25 +40,44 @@ public extension Error {
     /// └─ ProfileError - noSavedProfileError
     ///    └─ DatabaseError - noRecordFound
     /// ```
+    ///
+    /// `NSError` instances (and subclasses) are also unwrapped even though they
+    /// don't conform to `TraceableError`: their line is formatted as
+    /// `TypeName - domain (code)`, and the chain continues into their
+    /// `underlyingErrors`/`NSUnderlyingErrorKey` error, if one is present.
     func traceableErrorDescription() -> String {
         var lines: [String] = []
         var current: Error = self
         var depth = 0
 
         while true {
-            let typeName = String(describing: type(of: current))
-            let caseDescription = Self.caseName(of: current)
             let prefix = depth == 0 ? "" : String(repeating: "   ", count: depth - 1) + "└─ "
-            lines.append("\(prefix)\(typeName) - \(caseDescription)")
+            lines.append(prefix + Self.describe(current))
 
-            guard let traceable = current as? TraceableError else {
+            if let traceable = current as? TraceableError {
+                current = traceable.containedError
+            } else if let underlying = Self.underlyingNSError(of: current) {
+                current = underlying
+            } else {
                 break
             }
-            current = traceable.containedError
             depth += 1
         }
 
         return lines.joined(separator: "\n")
+    }
+
+    /// Formats a single error's line as `TypeName - caseName`, or, for an
+    /// `NSError` (or subclass), `TypeName - domain (code)`.
+    private static func describe(_ error: Error) -> String {
+        let typeName = String(describing: type(of: error))
+
+        guard type(of: error) is NSError.Type else {
+            return "\(typeName) - \(caseName(of: error))"
+        }
+
+        let nsError = error as NSError
+        return "\(typeName) - \(nsError.domain) (\(nsError.code))"
     }
 
     /// Returns just the enum case name for `error`, without any associated values,
@@ -69,5 +88,18 @@ public extension Error {
             return label
         }
         return String(describing: error)
+    }
+
+    /// Returns the error's wrapped `underlyingErrors`/`NSUnderlyingErrorKey`
+    /// error, if `error` is truly an `NSError` (or subclass) instance and one
+    /// is present. Every Swift error bridges to `NSError` on demand, so this
+    /// checks the error's dynamic type rather than attempting an `as?` cast.
+    private static func underlyingNSError(of error: Error) -> Error? {
+        guard type(of: error) is NSError.Type else {
+            return nil
+        }
+
+        let nsError = error as NSError
+        return nsError.underlyingErrors.first ?? nsError.userInfo[NSUnderlyingErrorKey] as? Error
     }
 }
