@@ -28,9 +28,33 @@ public protocol TraceableError: Error {
 
 public extension Error {
     func traceableErrorDescription() -> String {
-        func prettyDescription(error: Error, indent: String = "") -> String {
-            ""
+        var lines: [String] = []
+        var current: Error = self
+        var depth = 0
+
+        while true {
+            let typeName = String(describing: type(of: current))
+            let caseDescription = Self.caseName(of: current)
+            let prefix = depth == 0 ? "" : String(repeating: "   ", count: depth - 1) + "└─ "
+            lines.append("\(prefix)\(typeName) - \(caseDescription)")
+
+            guard let traceable = current as? TraceableError else {
+                break
+            }
+            current = traceable.containedError
+            depth += 1
         }
-        return prettyDescription(error: self, indent: "")
+
+        return lines.joined(separator: "\n")
+    }
+
+    /// Returns just the enum case name for `error`, without any associated values,
+    /// falling back to the full description for non-enum errors.
+    private static func caseName(of error: Error) -> String {
+        let mirror = Mirror(reflecting: error)
+        if mirror.displayStyle == .enum, let label = mirror.children.first?.label {
+            return label
+        }
+        return String(describing: error)
     }
 }
