@@ -227,4 +227,15 @@ struct ErrorsTests {
 		#expect(error.traceableErrorDescription() == expected)
 	}
 
+	@Test("TraceableError chain transitions into NSError formatting for its contained error")
+	func testTraceableErrorWrappingNSError() async throws {
+		let underlying = NSError(domain: "com.konkyo.test.network", code: 500, userInfo: [:])
+		let error = NetworkError(containedError: underlying)
+		let expected = """
+		NetworkError - \(String(describing: error))
+		└─ NSError - com.konkyo.test.network (500)
+		"""
+		#expect(error.traceableErrorDescription() == expected)
+	}
+
 }
