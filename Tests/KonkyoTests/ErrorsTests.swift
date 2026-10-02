@@ -204,4 +204,17 @@ struct ErrorsTests {
 		let error = CustomNSError(domain: "com.konkyo.test.custom", code: 99, userInfo: [:])
 		#expect(error.traceableErrorDescription() == "CustomNSError - com.konkyo.test.custom (99)")
 	}
+
+	@Test("Four level chain indents each additional level correctly")
+	func testFourLevelChain() async throws {
+		let error = RootError.wrapping(.loadingError(.noSavedProfileError(.noRecordFound)))
+		let expected = """
+		RootError - wrapping
+		└─ AppError - loadingError
+		   └─ ProfileError - noSavedProfileError
+		      └─ DatabaseError - noRecordFound
+		"""
+		#expect(error.traceableErrorDescription() == expected)
+	}
+
 }
