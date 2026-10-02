@@ -135,4 +135,25 @@ struct ErrorsTests {
 		#expect(error.traceableErrorDescription() == expected)
 	}
 
+	@Test("NSError recurses through multiple underlyingErrors levels")
+	func testNSErrorMultipleUnderlyingErrorsLevels() async throws {
+		let root = NSError(domain: "com.konkyo.test.root", code: 1, userInfo: [:])
+		let middle = NSError(
+			domain: "com.konkyo.test.middle",
+			code: 2,
+			userInfo: [NSUnderlyingErrorKey: root]
+		)
+		let top = NSError(
+			domain: "com.konkyo.test.top",
+			code: 3,
+			userInfo: [NSUnderlyingErrorKey: middle]
+		)
+		let expected = """
+		NSError - com.konkyo.test.top (3)
+		└─ NSError - com.konkyo.test.middle (2)
+		   └─ NSError - com.konkyo.test.root (1)
+		"""
+		#expect(top.traceableErrorDescription() == expected)
+	}
+
 }
