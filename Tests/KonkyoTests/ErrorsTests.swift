@@ -120,4 +120,19 @@ struct ErrorsTests {
 		#expect(error.traceableErrorDescription() == "NSError - com.konkyo.test (42)")
 	}
 
+	@Test("NSError recurses into its NSUnderlyingErrorKey error")
+	func testNSErrorUnderlyingErrorKey() async throws {
+		let underlying = NSError(domain: "com.konkyo.test.underlying", code: 7, userInfo: [:])
+		let error = NSError(
+			domain: "com.konkyo.test",
+			code: 42,
+			userInfo: [NSUnderlyingErrorKey: underlying]
+		)
+		let expected = """
+		NSError - com.konkyo.test (42)
+		└─ NSError - com.konkyo.test.underlying (7)
+		"""
+		#expect(error.traceableErrorDescription() == expected)
+	}
+
 }
