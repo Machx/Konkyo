@@ -52,6 +52,32 @@ private struct PlainStructError: Error {
 	let reason: String
 }
 
+private struct NetworkError: Error, TraceableError {
+	let containedError: Error
+}
+
+private enum RootError: Error, TraceableError {
+	case wrapping(AppError)
+
+	var containedError: Error {
+		switch self {
+		case .wrapping(let error):
+			return error
+		}
+	}
+}
+
+private enum TupleError: Error, TraceableError {
+	case failed(reason: String, code: Int, underlying: DatabaseError)
+
+	var containedError: Error {
+		switch self {
+		case .failed(_, _, let error):
+			return error
+		}
+	}
+}
+
 @Suite("TraceableError Tests")
 struct ErrorsTests {
 
