@@ -238,4 +238,20 @@ struct ErrorsTests {
 		#expect(error.traceableErrorDescription() == expected)
 	}
 
+	@Test("NSMultipleUnderlyingErrorsKey is followed, taking only the first error and ignoring the rest")
+	func testNSErrorMultipleUnderlyingErrorsKey() async throws {
+		let first = NSError(domain: "com.konkyo.test.first", code: 1, userInfo: [:])
+		let second = NSError(domain: "com.konkyo.test.second", code: 2, userInfo: [:])
+		let error = NSError(
+			domain: "com.konkyo.test",
+			code: 42,
+			userInfo: [NSMultipleUnderlyingErrorsKey: [first, second]]
+		)
+		let expected = """
+		NSError - com.konkyo.test (42)
+		└─ NSError - com.konkyo.test.first (1)
+		"""
+		#expect(error.traceableErrorDescription() == expected)
+	}
+
 }
