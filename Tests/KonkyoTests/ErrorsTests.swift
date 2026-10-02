@@ -156,4 +156,20 @@ struct ErrorsTests {
 		#expect(top.traceableErrorDescription() == expected)
 	}
 
+	@Test("NSError chain ends when a TraceableError is reached")
+	func testNSErrorWrappingTraceableError() async throws {
+		let traceable = ProfileError.noSavedProfileError(.noRecordFound)
+		let error = NSError(
+			domain: "com.konkyo.test",
+			code: 42,
+			userInfo: [NSUnderlyingErrorKey: traceable]
+		)
+		let expected = """
+		NSError - com.konkyo.test (42)
+		└─ ProfileError - noSavedProfileError
+		   └─ DatabaseError - noRecordFound
+		"""
+		#expect(error.traceableErrorDescription() == expected)
+	}
+
 }
