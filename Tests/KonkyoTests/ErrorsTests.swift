@@ -217,4 +217,14 @@ struct ErrorsTests {
 		#expect(error.traceableErrorDescription() == expected)
 	}
 
+	@Test("Enum case with multiple associated values only reports the case name")
+	func testEnumCaseWithMultipleAssociatedValues() async throws {
+		let error = TupleError.failed(reason: "disk full", code: 13, underlying: .connectionLost)
+		let expected = """
+		TupleError - failed
+		└─ DatabaseError - connectionLost
+		"""
+		#expect(error.traceableErrorDescription() == expected)
+	}
+
 }
