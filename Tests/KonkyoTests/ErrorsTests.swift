@@ -172,4 +172,10 @@ struct ErrorsTests {
 		#expect(error.traceableErrorDescription() == expected)
 	}
 
+	@Test("Custom NSError subclass reports its own type name")
+	func testCustomNSErrorSubclass() async throws {
+		final class CustomNSError: NSError, @unchecked Sendable {}
+		let error = CustomNSError(domain: "com.konkyo.test.custom", code: 99, userInfo: [:])
+		#expect(error.traceableErrorDescription() == "CustomNSError - com.konkyo.test.custom (99)")
+	}
 }
