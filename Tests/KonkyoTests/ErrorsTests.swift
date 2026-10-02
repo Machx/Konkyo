@@ -254,4 +254,13 @@ struct ErrorsTests {
 		#expect(error.traceableErrorDescription() == expected)
 	}
 
+	@Test("NSError chain stops when NSUnderlyingErrorKey holds a non-Error value")
+	func testNSErrorUnderlyingErrorKeyNotAnError() async throws {
+		let error = NSError(
+			domain: "com.konkyo.test",
+			code: 42,
+			userInfo: [NSUnderlyingErrorKey: "not an error"]
+		)
+		#expect(error.traceableErrorDescription() == "NSError - com.konkyo.test (42)")
+	}
 }
