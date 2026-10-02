@@ -113,4 +113,11 @@ struct ErrorsTests {
 		#expect(description.hasPrefix("PlainStructError - "))
 		#expect(description.contains("disk full"))
 	}
+
+	@Test("Plain NSError with no underlying error is a single line")
+	func testPlainNSErrorSingleLine() async throws {
+		let error = NSError(domain: "com.konkyo.test", code: 42, userInfo: [:])
+		#expect(error.traceableErrorDescription() == "NSError - com.konkyo.test (42)")
+	}
+
 }
