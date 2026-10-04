@@ -72,20 +72,27 @@ public final class Mutex: @unchecked Sendable {
 		return pthread_mutex_trylock(mutex) == 0
 	}
 
-	/// Tries to lock the mutex, execute the block, and then unlock the mutex.
-	public func withLock(_ block: ()->Void) {
-		pthread_mutex_lock(mutex)
-		block()
-		pthread_mutex_unlock(mutex)
+	/// Locks the mutex, executes the body, and unlocks the mutex.
+	///
+	/// The mutex is unlocked even if the body throws.
+	/// - Parameter body: The closure to execute while the lock is held.
+	/// - Returns: The value returned by `body`.
+	public func withLock<R>(_ body: () throws -> R) rethrows -> R {
+		lock()
+		defer { unlock() }
+		return try body()
 	}
 	
-	/// Tries to unlock the lock, and if it does executes the bloc
+	/// Tries to lock the mutex, and if it succeeds executes the body and unlocks the mutex.
 	///
-	/// If the lock is unlocked the block will execute, otherwise nothing will happen.
-	/// - Parameter block: The block to execute if the lock is lockable.
-	public func tryLock(_ block: ()->Void) {
-		guard tryLock() else { return }
-		block()
-		pthread_mutex_unlock(mutex)
+	/// If the lock is unavailable the body will not execute and `nil` is returned.
+	/// The mutex is unlocked even if the body throws.
+	/// - Parameter body: The closure to execute if the lock is acquired.
+	/// - Returns: The value returned by `body`, or `nil` if the lock could not be acquired.
+	@discardableResult
+	public func tryLock<R>(_ body: () throws -> R) rethrows -> R? {
+		guard tryLock() else { return nil }
+		defer { unlock() }
+		return try body()
 	}
 }
