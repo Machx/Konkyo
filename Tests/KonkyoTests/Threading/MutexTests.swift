@@ -129,5 +129,42 @@ struct MutexTests {
 		#expect(mutex.tryLock() == true)
 		mutex.unlock()
 	}
+	
+	private struct TestError: Error {}
+	
+	@Test("withLock returns the body's value")
+	func testWithLockReturnsValue() {
+		let mutex = Mutex()
+		#expect(mutex.withLock { 42 } == 42)
+	}
+	
+	@Test("withLock releases the lock when the body throws")
+	func testWithLockReleasesLockOnThrow() {
+		let mutex = Mutex()
+		#expect(throws: TestError.self) {
+			try mutex.withLock { throw TestError() }
+		}
+		#expect(mutex.tryLock() == true)
+		mutex.unlock()
+	}
+	
+	@Test("tryLock returns the body's value when acquired and nil when not")
+	func testTryLockBlockReturnValue() {
+		let mutex = Mutex()
+		#expect(mutex.tryLock { "ok" } == "ok")
+		mutex.lock()
+		let result: String? = mutex.tryLock { "ok" }
+		#expect(result == nil)
+		mutex.unlock()
+	}
+	
+	@Test("tryLock releases the lock when the body throws")
+	func testTryLockReleasesLockOnThrow() {
+		let mutex = Mutex()
+		#expect(throws: TestError.self) {
+			try mutex.tryLock { throw TestError() }
+		}
+		#expect(mutex.tryLock() == true)
+		mutex.unlock()
+	}
 }
-
