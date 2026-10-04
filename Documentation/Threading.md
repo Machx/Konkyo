@@ -36,9 +36,11 @@ let recursive = Mutex(type: .recursive)
 mutex.lock()
 defer { mutex.unlock() }
 
-// Convenience with closure
-mutex.withLock {
+// Convenience with closure; returns the closure's value and
+// unlocks even if the closure throws
+let value = mutex.withLock {
     // critical section
+    return 42
 }
 
 // Non-blocking attempt
@@ -47,9 +49,10 @@ if mutex.tryLock() {
     // ...
 }
 
-// Attempt + closure shorthand
-mutex.tryLock {
+// Attempt + closure shorthand; returns nil if the lock was not acquired
+let result = mutex.tryLock {
     // only runs if the lock was acquired
+    return 42
 }
 ```
 
