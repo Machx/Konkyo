@@ -97,7 +97,6 @@ public final class Condition: @unchecked Sendable {
 
 extension Condition: CustomDebugStringConvertible {
 	public var debugDescription: String {
-		let customName = uuid.uuidString
 		let description = "Condition(\(name ?? uuid.uuidString))"
 		return description
 	}
