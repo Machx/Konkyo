@@ -34,9 +34,7 @@ public final class Atomic<Value>: @unchecked Sendable {
 	/// - returns: The wrapped value in a thread safe manner.
 	/// 1.0.0
 	public var value: Value {
-		mutex.lock()
-		defer { mutex.unlock() }
-		return _value
+		mutex.withLock { _value }
 	}
 
 	/// Passes the value to you and allows you to safely mutate the value.
@@ -49,8 +47,6 @@ public final class Atomic<Value>: @unchecked Sendable {
 	/// - Parameter transform: a block in which the value is passed to you for safe mutation.
 	/// 1.0.0
 	public func mutate(_ transform: (inout Value) -> Void) {
-		mutex.lock()
-		defer { mutex.unlock() }
-		transform(&_value)
+		mutex.withLock { transform(&_value) }
 	}
 }
