@@ -27,8 +27,8 @@ struct ViewModelTests {
 
 	@Test("ViewModel conformance implies ObservableObject")
 	func testViewModelIsObservableObject() {
-		let vm = CounterViewModel()
-		#expect(vm is any ObservableObject)
+		func requiresObservableObject<T: ObservableObject>(_ value: T) {}
+		requiresObservableObject(CounterViewModel())
 	}
 
 	@Test("@Published property on ViewModel triggers objectWillChange")
