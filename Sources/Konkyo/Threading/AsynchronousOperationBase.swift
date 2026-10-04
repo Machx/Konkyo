@@ -36,34 +36,30 @@ open class AsynchronousOperationBase: Operation, @unchecked Sendable {
 	private var _isExecuting: Bool = false
 	open override var isExecuting: Bool {
 		get {
-			stateMutex.lock()
-			defer { stateMutex.unlock() }
-			return _isExecuting
+			stateMutex.withLock { _isExecuting }
 		}
 		set {
-			stateMutex.lock()
-			defer { stateMutex.unlock() }
-			guard _isExecuting != newValue else { return }
-			willChangeValue(for: \.isExecuting)
-			_isExecuting = newValue
-			didChangeValue(for: \.isExecuting)
+			stateMutex.withLock {
+				guard _isExecuting != newValue else { return }
+				willChangeValue(for: \.isExecuting)
+				_isExecuting = newValue
+				didChangeValue(for: \.isExecuting)
+			}
 		}
 	}
 	
 	private var _isFinished: Bool = false
 	open override var isFinished: Bool {
 		get {
-			stateMutex.lock()
-			defer { stateMutex.unlock() }
-			return _isFinished
+			stateMutex.withLock { _isFinished }
 		}
 		set {
-			stateMutex.lock()
-			defer { stateMutex.unlock() }
-			guard _isFinished != newValue else { return }
-			willChangeValue(for: \.isFinished)
-			_isFinished = newValue
-			didChangeValue(for: \.isFinished)
+			stateMutex.withLock {
+				guard _isFinished != newValue else { return }
+				willChangeValue(for: \.isFinished)
+				_isFinished = newValue
+				didChangeValue(for: \.isFinished)
+			}
 		}
 	}
 }
