@@ -1,5 +1,5 @@
 {
-  "originHash" : "b3c792f51ea80c0f379767ec8f0a8f9a76bfc7622e5c5f8e4d71f82bcc971701",
+  "originHash" : "8895c9695babedb431ef6c4654398389714f27bdcddeab8637ecf377d79ae8b6",
   "pins" : [
     {
       "identity" : "loggingkit",
@@ -7,7 +7,7 @@
       "location" : "https://github.com/Machx/LoggingKit.git",
       "state" : {
         "branch" : "main",
-        "revision" : "1b072b0a7d7023e6dc7d76a9b2aa69726c2ebe39"
+        "revision" : "294ac48dafe3b687612bcdecc039dca5df8cbb0a"
       }
     }
   ],
