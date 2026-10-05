@@ -25,51 +25,47 @@ public final class Mutex: @unchecked Sendable {
 		case recursive
 	}
 	
-	private typealias _MutexPointer = UnsafeMutablePointer<pthread_mutex_t>
-	private typealias _MutexAttributesPointer = UnsafeMutablePointer<pthread_mutexattr_t>
-	
-	private var mutex = _MutexPointer.allocate(capacity: 1)
-	private var mutexAttr = _MutexAttributesPointer.allocate(capacity: 1)
+	/// The underlying pthread mutex. Internal so `Condition` can pass it to `pthread_cond_wait`.
+	let pointer = UnsafeMutablePointer<pthread_mutex_t>.allocate(capacity: 1)
 	
 	/// Initializes the Mutex. If desired the type can be set to allow for creating a recursive mutex.
 	/// - Parameter type: The type of mutex. The default is normal, but .recursive can be set to allow a recursive mutex.
 	public init(type: MutexType = .normal) {
-		pthread_mutexattr_init(mutexAttr)
+		var attributes = pthread_mutexattr_t()
+		pthread_mutexattr_init(&attributes)
+		defer { pthread_mutexattr_destroy(&attributes) }
 		switch type {
 		case .normal:
-			pthread_mutexattr_settype(mutexAttr, PTHREAD_MUTEX_NORMAL)
+			pthread_mutexattr_settype(&attributes, PTHREAD_MUTEX_NORMAL)
 		case .recursive:
-			pthread_mutexattr_settype(mutexAttr, PTHREAD_MUTEX_RECURSIVE)
+			pthread_mutexattr_settype(&attributes, PTHREAD_MUTEX_RECURSIVE)
 		}
-		pthread_mutex_init(mutex, mutexAttr)
-		pthread_mutexattr_destroy(mutexAttr)
-		mutexAttr.deinitialize(count: 1)
-		mutexAttr.deallocate()
+		pthread_mutex_init(pointer, &attributes)
 	}
 	
 	deinit {
-		pthread_mutex_destroy(mutex)
-		mutex.deinitialize(count: 1)
-		mutex.deallocate()
+		pthread_mutex_destroy(pointer)
+		pointer.deinitialize(count: 1)
+		pointer.deallocate()
 	}
 	
 	/// Locks the mutex if it is unlocked. If it is locked then it blocks until unlocked.
 	public func lock() {
-		pthread_mutex_lock(mutex)
+		pthread_mutex_lock(pointer)
 	}
 	
 	/// Unlocks the mutex. If you try to unlock the mutex from a thread that didn't lock it, it is undefined behavior.
 	///
 	/// See `pthread_mutex_t` for more information on the undefined behavior aspect of this api.
 	public func unlock() {
-		pthread_mutex_unlock(mutex)
+		pthread_mutex_unlock(pointer)
 	}
 	
 	/// Tries to lock the mutex while not blocking the current thread until the lock is acquired.
 	///
 	/// - returns: True if the lock was acquired, false if the lock could not be acquired.
 	public func tryLock() -> Bool {
-		return pthread_mutex_trylock(mutex) == 0
+		return pthread_mutex_trylock(pointer) == 0
 	}
 
 	/// Locks the mutex, executes the body, and unlocks the mutex.
