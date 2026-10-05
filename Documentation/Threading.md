@@ -69,7 +69,7 @@ let result = mutex.tryLock {
 
 ```swift
 let condition = Condition()
-condition.name = "myCondition"  // optional, used in debug output
+let named = Condition(name: "myCondition")  // optional name, used in debug output
 
 // On the waiting thread — must hold the mutex first
 condition.lock()
@@ -81,14 +81,19 @@ condition.lock()
 let signalled = condition.wait(until: Date().addingTimeInterval(5))
 condition.unlock()
 
+// Predicate waits guard against spurious wakeups; withLock handles locking
+condition.withLock {
+    condition.wait(while: { !isReady })
+}
+
 // On the signalling thread
 condition.signal()     // wake one waiter
 condition.broadcast()  // wake all waiters
 ```
 
 **Notes:**
-- Each `Condition` instance has a stable `UUID` used for identity (`Equatable`) and hashing.
-- If a `name` is set it is included in the hash.
+- Identity (`Equatable`) and hashing are based on the instance itself (`ObjectIdentifier`); `name` is only used in debug output.
+- Intervals of roughly 31 years or more are treated as an indefinite wait.
 
 ---
 
