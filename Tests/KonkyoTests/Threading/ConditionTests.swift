@@ -188,5 +188,55 @@ struct CWConditionTests {
 		// Should return quickly without sleeping.
 		#expect(elapsed < 0.5)
 	}
+	
+	@Test("wait(until:) with a very distant date does not overflow and wakes on signal")
+	func testWaitUntilVeryDistantDate() async {
+		let condition = Condition()
+		let result = Atomic<Bool?>(nil)
+		Thread.detachNewThread {
+			condition.withLock {
+				result.mutate { $0 = condition.wait(until: Date(timeIntervalSinceNow: 1e12)) }
+			}
+		}
+		try? await Task.sleep(for: .milliseconds(200))
+		condition.withLock { condition.signal() }
+		try? await Task.sleep(for: .milliseconds(200))
+		#expect(result.value == true)
+	}
+	
+	@Test("withLock releases the lock after the body")
+	func testWithLockReleases() {
+		let condition = Condition()
+		#expect(condition.withLock { 7 } == 7)
+		condition.withLock { }
+	}
+	
+	@Test("wait(until:while:) returns false when the predicate stays true past the date")
+	func testWaitWhileTimesOut() {
+		let condition = Condition()
+		let result = condition.withLock {
+			condition.wait(until: Date(timeIntervalSinceNow: 0.1), while: { true })
+		}
+		#expect(result == false)
+	}
+	
+	@Test("wait(while:) returns once the predicate becomes false")
+	func testWaitWhilePredicate() async {
+		let condition = Condition()
+		let ready = Atomic(false)
+		let done = Atomic(false)
+		Thread.detachNewThread {
+			condition.withLock {
+				condition.wait(while: { !ready.value })
+			}
+			done.mutate { $0 = true }
+		}
+		try? await Task.sleep(for: .milliseconds(100))
+		condition.withLock {
+			ready.mutate { $0 = true }
+			condition.signal()
+		}
+		try? await Task.sleep(for: .milliseconds(200))
+		#expect(done.value == true)
+	}
 }
-
