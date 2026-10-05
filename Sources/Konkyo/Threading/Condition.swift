@@ -19,7 +19,7 @@ import Darwin
 public final class Condition: @unchecked Sendable {
 	fileprivate var uuid = UUID()
 	
-	fileprivate var mutex: UnsafeMutablePointer<pthread_mutex_t>
+	fileprivate let mutex = Mutex()
 	fileprivate var cond: UnsafeMutablePointer<pthread_cond_t>
 	
 	/// Name describing the condition. Used in debug logs.
@@ -30,25 +30,20 @@ public final class Condition: @unchecked Sendable {
 	public init(name: String? = nil) {
 		self.name = name
 		cond = UnsafeMutablePointer<pthread_cond_t>.allocate(capacity: 1)
-		mutex = UnsafeMutablePointer<pthread_mutex_t>.allocate(capacity: 1)
 		pthread_cond_init(cond, nil)
-		pthread_mutex_init(mutex, nil)
 	}
 	
 	deinit {
 		pthread_cond_destroy(cond)
-		pthread_mutex_destroy(mutex)
 		cond.deinitialize(count: 1)
-		mutex.deinitialize(count: 1)
 		cond.deallocate()
-		mutex.deallocate()
 	}
 	
 	/// Begins waiting on the condition, blocking the thread.
 	///
 	/// 1.0.0
 	public func wait() {
-		pthread_cond_wait(cond, mutex)
+		pthread_cond_wait(cond, mutex.pointer)
 	}
 	
 	private func relativeTimeSpec(until date: Date) -> timespec? {
@@ -73,11 +68,11 @@ public final class Condition: @unchecked Sendable {
 	/// 1.0.0
 	public func wait(until waitDate: Date = Date.distantFuture) -> Bool {
 		guard waitDate != .distantFuture else {
-			pthread_cond_wait(cond, mutex)
+			pthread_cond_wait(cond, mutex.pointer)
 			return true
 		}
 		guard var reltime = relativeTimeSpec(until: waitDate) else { return false }
-		return pthread_cond_timedwait_relative_np(cond, mutex, &reltime) == 0
+		return pthread_cond_timedwait_relative_np(cond, mutex.pointer, &reltime) == 0
 	}
 	
 	/// Signals the condition, unlocking the thread waiting on it.
@@ -114,10 +109,10 @@ extension Condition: Equatable, Hashable {
 
 extension Condition: NSLocking {
 	public func unlock() {
-		pthread_mutex_unlock(mutex)
+		mutex.unlock()
 	}
 	
 	public func lock() {
-		pthread_mutex_lock(mutex)
+		mutex.lock()
 	}
 }
