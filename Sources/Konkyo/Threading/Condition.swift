@@ -17,8 +17,6 @@ import Foundation
 import Darwin
 
 public final class Condition: @unchecked Sendable {
-	fileprivate var uuid = UUID()
-	
 	fileprivate let mutex = Mutex()
 	fileprivate var cond: UnsafeMutablePointer<pthread_cond_t>
 	
@@ -46,14 +44,14 @@ public final class Condition: @unchecked Sendable {
 		pthread_cond_wait(cond, mutex.pointer)
 	}
 	
-	private func relativeTimeSpec(until date: Date) -> timespec? {
-		let interval = date.timeIntervalSinceNow
-		guard interval > 0 else { return nil }
-		let nsecPerSec: Int64 = 1_000_000_000
-		let intervalNS = Int64(interval * Double(nsecPerSec))
-
-		return timespec(tv_sec: Int(intervalNS / nsecPerSec),
-						tv_nsec: Int(intervalNS % nsecPerSec))
+	/// Intervals at or beyond this many seconds (about 31 years) are treated as "wait forever",
+	/// which also keeps the nanosecond conversion in `relativeTimeSpec` from overflowing.
+	private static let maxTimedWaitInterval: TimeInterval = 1_000_000_000
+	
+	private func relativeTimeSpec(forInterval interval: TimeInterval) -> timespec {
+		let seconds = interval.rounded(.down)
+		let nanoseconds = (interval - seconds) * 1_000_000_000
+		return timespec(tv_sec: Int(seconds), tv_nsec: Int(nanoseconds))
 	}
 	
 	/// Waits until the given date, blocking the thread, returns if the condition was unlocked.
@@ -67,12 +65,46 @@ public final class Condition: @unchecked Sendable {
 	///
 	/// 1.0.0
 	public func wait(until waitDate: Date = Date.distantFuture) -> Bool {
-		guard waitDate != .distantFuture else {
+		let interval = waitDate.timeIntervalSinceNow
+		guard interval > 0 else { return false }
+		guard interval < Self.maxTimedWaitInterval else {
 			pthread_cond_wait(cond, mutex.pointer)
 			return true
 		}
-		guard var reltime = relativeTimeSpec(until: waitDate) else { return false }
+		var reltime = relativeTimeSpec(forInterval: interval)
 		return pthread_cond_timedwait_relative_np(cond, mutex.pointer, &reltime) == 0
+	}
+	
+	/// Runs `body` while holding the condition's lock, unlocking afterwards even if `body` throws.
+	///
+	/// - Parameter body: The closure to execute while the lock is held.
+	/// - Returns: The value returned by `body`.
+	public func withLock<R>(_ body: () throws -> R) rethrows -> R {
+		lock()
+		defer { unlock() }
+		return try body()
+	}
+	
+	/// Waits until `predicate` returns false, guarding against spurious wakeups.
+	///
+	/// The lock must be held by the calling thread, as with `wait()`. The predicate is
+	/// evaluated with the lock held.
+	/// - Parameter predicate: Returns true while the caller should keep waiting.
+	public func wait(while predicate: () -> Bool) {
+		while predicate() {
+			wait()
+		}
+	}
+	
+	/// Waits until `predicate` returns false or the date passes, guarding against spurious wakeups.
+	///
+	/// The lock must be held by the calling thread, as with `wait(until:)`.
+	/// - Returns: True if the predicate became false, false if the date passed first.
+	public func wait(until waitDate: Date, while predicate: () -> Bool) -> Bool {
+		while predicate() {
+			guard wait(until: waitDate) else { return !predicate() }
+		}
+		return true
 	}
 	
 	/// Signals the condition, unlocking the thread waiting on it.
@@ -92,18 +124,18 @@ public final class Condition: @unchecked Sendable {
 
 extension Condition: CustomDebugStringConvertible {
 	public var debugDescription: String {
-		let description = "Condition(\(name ?? uuid.uuidString))"
+		let description = "Condition(\(name ?? String(describing: ObjectIdentifier(self))))"
 		return description
 	}
 }
 
 extension Condition: Equatable, Hashable {
 	public static func == (lhs: Condition, rhs: Condition) -> Bool {
-		lhs.uuid == rhs.uuid
+		lhs === rhs
 	}
 	
 	public func hash(into hasher: inout Hasher) {
-		hasher.combine(uuid)
+		hasher.combine(ObjectIdentifier(self))
 	}
 }
 
