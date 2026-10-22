@@ -35,31 +35,29 @@ open class AsynchronousOperationBase: Operation, @unchecked Sendable {
 	
 	private var _isExecuting: Bool = false
 	open override var isExecuting: Bool {
-		get {
-			stateMutex.withLock { _isExecuting }
-		}
-		set {
-			stateMutex.withLock {
-				guard _isExecuting != newValue else { return }
-				willChangeValue(for: \.isExecuting)
-				_isExecuting = newValue
-				didChangeValue(for: \.isExecuting)
-			}
-		}
+		get { stateMutex.withLock { _isExecuting } }
+		set { setState(newValue, storage: \._isExecuting, notifying: \.isExecuting) }
 	}
 	
 	private var _isFinished: Bool = false
 	open override var isFinished: Bool {
-		get {
-			stateMutex.withLock { _isFinished }
-		}
-		set {
-			stateMutex.withLock {
-				guard _isFinished != newValue else { return }
-				willChangeValue(for: \.isFinished)
-				_isFinished = newValue
-				didChangeValue(for: \.isFinished)
-			}
+		get { stateMutex.withLock { _isFinished } }
+		set { setState(newValue, storage: \._isFinished, notifying: \.isFinished) }
+	}
+	
+	/// Updates a state flag, wrapping the change in KVO notifications for the matching
+	/// public property. Does nothing if the value is unchanged.
+	///
+	/// Notifications are sent while holding `stateMutex` so concurrent setters can't interleave
+	/// their will/did pairs; this is why the mutex is recursive.
+	private func setState(_ newValue: Bool,
+						  storage: ReferenceWritableKeyPath<AsynchronousOperationBase, Bool>,
+						  notifying property: KeyPath<AsynchronousOperationBase, Bool>) {
+		stateMutex.withLock {
+			guard self[keyPath: storage] != newValue else { return }
+			willChangeValue(for: property)
+			self[keyPath: storage] = newValue
+			didChangeValue(for: property)
 		}
 	}
 }
