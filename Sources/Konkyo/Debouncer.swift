@@ -47,10 +47,13 @@ public final class Debouncer {
 	///
 	/// This is a delay in seconds before the action is triggered. The Debouncer
 	/// can be reset or cancelled before the action is triggered.
-	public let delay: Double
+	public let delay: TimeInterval
 
 	/// The object responsible for scheduling the action to take place after a delay.
+	///
+	/// Access is guarded by `timerMutex`, since `reset()` and `cancel()` can be called from any thread.
 	private var timer: DispatchSourceTimer
+	private let timerMutex = Mutex()
 
 	/// The Queue that the event and cancel handlers will be dispatched on.
 	private let queue: DispatchQueue
@@ -62,7 +65,7 @@ public final class Debouncer {
 	///     Defaults to a private serial queue created for this Debouncer instance.
 	///   - eventHandler: The action that will take place after `delay` unless reset or cancelled.
 	///   - cancelAction: When a debouncer is cancelled this will be called in response to that event.
-	public init(delay: Double,
+	public init(delay: TimeInterval,
 				queue: DispatchQueue = DispatchQueue(label: "Konkyo.Debouncer", qos: .background),
 				_ eventHandler: @escaping DebouncerAction,
 				cancelAction: DebouncerAction? = nil) {
@@ -79,18 +82,22 @@ public final class Debouncer {
 	/// This cancels the previous timer source, and sets up a new one. When the previous
 	/// timer is cancelled, this will call the cancel handler if that is set.
 	public func reset() {
-		timer.cancel()
-		timer = DispatchSource.makeTimerSource(flags: [], queue: queue)
-		scheduleTimer(timer)
+		timerMutex.withLock {
+			timer.cancel()
+			timer = DispatchSource.makeTimerSource(flags: [], queue: queue)
+			scheduleTimer(timer)
+		}
 	}
 	
 	private func scheduleTimer(_ source: DispatchSourceTimer) {
 		let didFireEvent = Atomic(false)
-		source.setEventHandler(handler: { [weak self] in
+		source.setEventHandler(handler: { [weak self, weak source] in
 			guard let self else { return }
 			didFireEvent.mutate { $0 = true }
 			action()
-			self.timer.cancel()
+			// Cancel the source that fired, not `self.timer`, which a concurrent
+			// `reset()` may already have replaced with a fresh timer.
+			source?.cancel()
 		})
 		if let cancelAction {
 			source.setCancelHandler(handler: { [weak self] in
@@ -108,6 +115,6 @@ public final class Debouncer {
 	/// Unlike reset, this only cancels the timer, but does not reset it. Making it
 	/// possible to start it again in the future.
 	public func cancel() {
-		timer.cancel()
+		timerMutex.withLock { timer.cancel() }
 	}
 }
