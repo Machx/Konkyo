@@ -24,8 +24,8 @@ textField.onTextChange { _ in
 
 ```swift
 init(
-    delay: Double,
-    queue: DispatchQueue = .global(qos: .background),
+    delay: TimeInterval,
+    queue: DispatchQueue = DispatchQueue(label: "Konkyo.Debouncer", qos: .background),
     _ eventHandler: @escaping DebouncerAction,
     cancelAction: DebouncerAction? = nil
 )
@@ -48,6 +48,7 @@ init(
 ### Notes
 
 - The queue **must** be serial. Using a concurrent queue can cause the event and cancel handlers to fire more than once.
+- `reset()` and `cancel()` are safe to call from any thread.
 - The timer starts immediately on `init`; call `reset()` to restart the delay window.
 
 ---
