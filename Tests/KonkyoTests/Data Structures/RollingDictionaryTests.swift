@@ -102,6 +102,31 @@ struct RollingDictionaryTests {
 		#expect(dictionary["D"] == 4)
 	}
 
+	@Test("keys are returned in insertion order, oldest first")
+	func testKeysInsertionOrder() {
+		var dictionary = RollingDictionary<Int, Int>(limit: 100)
+		let inserted = [42, 7, 99, 3, 58, 21, 64, 10, 85, 1]
+		for key in inserted {
+			dictionary[key] = key
+		}
+		#expect(dictionary.keys == inserted)
+
+		// Updating a value keeps its position; removing drops it from the order.
+		dictionary[99] = 0
+		dictionary[7] = nil
+		#expect(dictionary.keys == inserted.filter { $0 != 7 })
+
+		// Eviction removes from the front.
+		dictionary.setLimit(3)
+		#expect(dictionary.keys == [10, 85, 1])
+	}
+
+	@Test("keys from a dictionary literal preserve literal order")
+	func testKeysLiteralOrder() {
+		let dictionary: RollingDictionary = ["Z": 1, "A": 2, "M": 3, "B": 4]
+		#expect(dictionary.keys == ["Z", "A", "M", "B"])
+	}
+
 	@Test("Default init has Int.max key limit")
 	func testDefaultLimitIsIntMax() {
 		let dictionary = RollingDictionary<String, Int>()
