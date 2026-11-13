@@ -41,10 +41,11 @@ public struct RollingDictionary<Key:Hashable,Value>:ExpressibleByDictionaryLiter
 	
 	/// Initializes a Rolling Dictionary with a specified Key limit.
 	/// - Parameter keyLimit: The maximum number of key/value pairs to configure the rolling dictionary with.
+	///   Negative values are treated as `0`.
 	public init(limit keyLimit: Int) {
 		_keys = [Key]()
 		_dictionary = [Key: Value]()
-		_limit = keyLimit
+		_limit = max(0, keyLimit)
 	}
 	
 	/// Initializes a Rolling Dictionary with a dictionary literal and Int.max Maximum number of key/value pairs.
@@ -98,8 +99,9 @@ public struct RollingDictionary<Key:Hashable,Value>:ExpressibleByDictionaryLiter
 	/// key/value pairs and then purges excess key/value pairs if the count is
 	/// greater than the given maximum.
 	/// - Parameter maxKeysCount: The intended maximum allowed number of key value pairs for the dictionary.
+	///   Negative values are treated as `0`, which purges every entry.
 	public mutating func setLimit(_ maxKeysCount: Int) {
-		_limit = maxKeysCount
+		_limit = max(0, maxKeysCount)
 		filterExcessEntries()
 	}
 	
