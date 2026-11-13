@@ -178,6 +178,29 @@ struct RollingDictionaryTests {
 		#expect(dictionary.keys.count == 0)
 	}
 
+	@Test("Negative limit in init is clamped to 0 and does not crash")
+	func testNegativeLimitInit() {
+		var dictionary = RollingDictionary<String, Int>(limit: -1)
+		#expect(dictionary.getKeyLimit() == 0)
+		dictionary["A"] = 1
+		dictionary["B"] = 2
+		#expect(dictionary.keys.count == 0)
+		#expect(dictionary["A"] == nil)
+	}
+
+	@Test("Setting a negative limit is clamped to 0 and purges all entries without crashing")
+	func testNegativeSetLimit() {
+		var dictionary = RollingDictionary<String, Int>(limit: 3)
+		dictionary["A"] = 1
+		dictionary["B"] = 2
+		dictionary.setLimit(-5)
+		#expect(dictionary.getKeyLimit() == 0)
+		#expect(dictionary.keys.count == 0)
+		dictionary.setLimit(2)
+		dictionary["C"] = 3
+		#expect(dictionary["C"] == 3)
+	}
+
 	@Test("Assigning nil to non-existent key is a no-op and does not desync state")
 	func testAssigningNilToMissingKeyIsNoOp() {
 		var dictionary = RollingDictionary<String, Int>(limit: 2)
