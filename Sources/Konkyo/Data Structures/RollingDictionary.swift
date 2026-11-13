@@ -84,8 +84,11 @@ public struct RollingDictionary<Key:Hashable,Value>:ExpressibleByDictionaryLiter
 		}
 	}
 	
-	/// Returns a collection of just the keys in the dictionary
-	public var keys: Dictionary<Key, Value>.Keys { _dictionary.keys }
+	/// Returns the keys in the dictionary, ordered from oldest to youngest insertion.
+	///
+	/// The first element is the next key that will be evicted when the limit is exceeded.
+	/// Updating the value of an existing key does not change its position.
+	public var keys: [Key] { _keys }
 	
 	/// Returns the maximum number of keys allowed in the Rolling Dictionary
 	///
