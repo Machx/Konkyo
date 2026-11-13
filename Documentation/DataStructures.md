@@ -27,7 +27,7 @@ print(recent["fourth"])  // Optional("four")
 | `init(limit:)`             | Bounded dictionary with the given key limit             |
 | `init(dictionaryLiteral:)` | Dictionary literal support (unlimited)                  |
 | `subscript(key:)`          | Get or set values; setting `nil` removes the key        |
-| `keys`                     | Returns the underlying dictionary's `Keys` collection   |
+| `keys`                     | Returns the keys as an array, oldest insertion first   |
 | `getKeyLimit() -> Int`     | Returns the current limit                               |
 | `setLimit(_:)`             | Updates the limit and immediately evicts excess entries |
 
