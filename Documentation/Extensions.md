@@ -59,11 +59,20 @@ extension String {
 }
 ```
 
-Returns `true` when the string can be parsed as a `URL` by `Foundation`.
+Returns `true` when the string is an absolute URL. `URL(string:)` alone is very
+permissive (it accepts relative paths and percent-encodes free text), so this also requires:
+
+- a non-empty scheme
+- a non-empty host when the URL has an authority (`scheme://…`), except for `file` URLs
 
 ```swift
-"https://example.com".isValidURL  // true
-"not a url $$".isValidURL         // false
+"https://example.com".isValidURL      // true
+"mailto:user@example.com".isValidURL  // true
+"file:///Users/me/file.txt".isValidURL // true
+"example.com".isValidURL              // false (no scheme)
+"path/to/resource".isValidURL         // false (relative)
+"https://".isValidURL                 // false (no host)
+"not a url $$".isValidURL             // false
 ```
 
 ---
