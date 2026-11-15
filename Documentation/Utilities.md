@@ -35,8 +35,8 @@ init(
 | -------------- | -------------------------------------------------------- |
 | `delay`        | Seconds to wait before firing the action                 |
 | `queue`        | Serial `DispatchQueue` for handler execution             |
-| `eventHandler` | Called once after the delay elapses without interruption |
-| `cancelAction` | Called every time the debouncer is reset or cancelled    |
+| `eventHandler` | Called once per armed timer after the delay elapses without interruption |
+| `cancelAction` | Called every time a pending timer is reset or cancelled  |
 
 ### Methods
 
@@ -50,6 +50,7 @@ init(
 - The queue **must** be serial. Using a concurrent queue can cause the event and cancel handlers to fire more than once.
 - `reset()` and `cancel()` are safe to call from any thread.
 - The timer starts immediately on `init`; call `reset()` to restart the delay window.
+- A debouncer is reusable: after the event handler has fired, calling `reset()` arms a new timer and the handler will fire again. The cancel action is not called for a timer that has already fired.
 
 ---
 
