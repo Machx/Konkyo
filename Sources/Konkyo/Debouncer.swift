@@ -18,9 +18,12 @@ import Foundation
 /// Debouncer is a wrapper for functionality around a timer event handler with reset functionality.
 ///
 /// Debouncer wraps a dispatch source timer with reset functionality. That is that it can be reset
-/// over and over, until the event actually triggers. Once triggered the event function will be
-/// executed once and only once. Anytime the timer is reset, the cancel block will be executed.
-/// Unlike the event handler, the cancel handler will be executed anytime the debouncer is reset.
+/// over and over, until the event actually triggers. Each armed timer executes the event function
+/// at most once: after it fires, the debouncer is idle and the action will not run again on its own.
+/// Calling `reset()` after the action has fired arms a new timer, so the action will fire again.
+/// Anytime a pending timer is reset or cancelled before it fires, the cancel block will be executed.
+/// Unlike the event handler, the cancel handler will be executed anytime a pending timer is reset.
+/// The cancel handler is not executed for a timer whose action has already fired.
 ///
 /// The queue used to dispatch the event/cancel handlers **must be serial**. Passing a
 /// concurrent queue (e.g. any `DispatchQueue.global(qos:)`) results in undefined behavior
@@ -34,7 +37,8 @@ public final class Debouncer {
 	///
 	/// This action is executed when the Debouncer has been uninterrupted by
 	/// reset requests for the amount of time specified in the `delay` variable.
-	/// This will be executed once and only once.
+	/// This will be executed at most once per armed timer. It fires again only if
+	/// `reset()` is called after it has fired, which arms a new timer.
 	public let action: DebouncerAction
 
 	/// The Action that will be executed if the Debouncer is cancelled before the specified delay
@@ -58,7 +62,7 @@ public final class Debouncer {
 	/// The Queue that the event and cancel handlers will be dispatched on.
 	private let queue: DispatchQueue
 	
-	/// Initializes the one time use Debouncer.
+	/// Initializes the Debouncer and arms its first timer.
 	/// - Parameters:
 	///   - delay: The delay in seconds that the event handler will be executed after.
 	///   - queue: A **serial** queue that the event and cancel handlers will be dispatched onto.
