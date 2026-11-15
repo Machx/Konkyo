@@ -28,7 +28,6 @@ struct URLExtensionTests {
 
 	@Test("Test URLExtension Invalid URL")
 	func testURLExtensionInvalidURL() {
-		// Public Source code showed it just checked for non empty string
 		let invalid = ""
 		#expect(!invalid.isValidURL)
 	}
@@ -78,16 +77,47 @@ struct URLExtensionTests {
 		#expect("https://user:password@example.com".isValidURL)
 	}
 
-	@Test("Relative path is treated as a valid URL by URL(string:)")
-	func testRelativePathIsValid() {
-		// URL(string:) accepts relative URLs, so the helper considers them valid.
-		#expect("path/to/resource".isValidURL)
+	@Test("Relative path is not a valid URL")
+	func testRelativePathIsInvalid() {
+		// URL(string:) accepts relative URLs, but they have no scheme.
+		#expect(!"path/to/resource".isValidURL)
 	}
 
-	@Test("Simple identifier is treated as a valid URL by URL(string:)")
-	func testSimpleIdentifierIsValid() {
-		// Documents permissive URL(string:) semantics: a bare token like "hello"
-		// is accepted as a relative URL.
-		#expect("hello".isValidURL)
+	@Test("Simple identifier is not a valid URL")
+	func testSimpleIdentifierIsInvalid() {
+		#expect(!"hello".isValidURL)
+	}
+
+	@Test("Scheme-less host is not a valid URL")
+	func testSchemelessHostIsInvalid() {
+		#expect(!"example.com".isValidURL)
+		#expect(!"www.apple.com/path".isValidURL)
+	}
+
+	@Test("Free text with spaces is not a valid URL")
+	func testFreeTextIsInvalid() {
+		#expect(!"not a url".isValidURL)
+		#expect(!"hello world".isValidURL)
+		#expect(!"not a url $$".isValidURL)
+		#expect(!"http://exa mple.com".isValidURL)
+	}
+
+	@Test("Scheme with an empty host is not a valid URL")
+	func testEmptyHostIsInvalid() {
+		#expect(!"http://".isValidURL)
+		#expect(!"https:///path".isValidURL)
+		#expect(!"://".isValidURL)
+		#expect(!"://example.com".isValidURL)
+	}
+
+	@Test("Scheme-only authority-less URLs are valid")
+	func testAuthorityLessURLs() {
+		#expect("tel:+15551234567".isValidURL)
+		#expect("mailto:user@example.com".isValidURL)
+	}
+
+	@Test("Scheme is matched case-insensitively for file URLs")
+	func testFileSchemeCase() {
+		#expect("FILE:///Users/test/file.txt".isValidURL)
 	}
 }
