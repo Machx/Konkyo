@@ -33,7 +33,8 @@ public struct RollingDictionary<Key:Hashable,Value>:ExpressibleByDictionaryLiter
 	// The max amount of Keys that an instance should store.
 	private var _limit: Int
 	
-	init() {
+	/// Initializes an empty Rolling Dictionary with no key limit (the limit is `Int.max`).
+	public init() {
 		_keys = [Key]()
 		_dictionary = [Key: Value]()
 		_limit = Int.max
