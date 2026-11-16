@@ -45,13 +45,31 @@ public extension Error {
     /// don't conform to `TraceableError`: their line is formatted as
     /// `TypeName - domain (code)`, and the chain continues into their
     /// `underlyingErrors`/`NSUnderlyingErrorKey` error, if one is present.
+    ///
+    /// The walk is guarded against malformed chains: if a reference-type error
+    /// appears twice in the chain (a cycle), or the chain is deeper than
+    /// `maxTraceableErrorDepth` levels, it stops and ends with a `…` marker line
+    /// instead of looping forever.
     func traceableErrorDescription() -> String {
         var lines: [String] = []
         var current: Error = self
         var depth = 0
+        var visited = Set<ObjectIdentifier>()
 
         while true {
             let prefix = depth == 0 ? "" : String(repeating: "   ", count: depth - 1) + "└─ "
+
+            // Value types can't form an identity cycle, but a reference-type error
+            // that contains itself (directly or indirectly) would never terminate.
+            if type(of: current) is AnyClass, !visited.insert(ObjectIdentifier(current as AnyObject)).inserted {
+                lines.append(prefix + "… (cycle detected)")
+                break
+            }
+            if depth >= Self.maxTraceableErrorDepth {
+                lines.append(prefix + "… (truncated at \(Self.maxTraceableErrorDepth) levels)")
+                break
+            }
+
             lines.append(prefix + Self.describe(current))
 
             if let traceable = current as? TraceableError {
@@ -66,6 +84,9 @@ public extension Error {
 
         return lines.joined(separator: "\n")
     }
+
+    /// The most levels `traceableErrorDescription()` will walk before truncating.
+    private static var maxTraceableErrorDepth: Int { 100 }
 
     /// Formats a single error's line as `TypeName - caseName`, or, for an
     /// `NSError` (or subclass), `TypeName - domain (code)`.
