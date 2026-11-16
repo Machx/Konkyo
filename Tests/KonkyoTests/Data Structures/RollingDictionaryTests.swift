@@ -127,6 +127,26 @@ struct RollingDictionaryTests {
 		#expect(dictionary.keys == ["Z", "A", "M", "B"])
 	}
 
+	@Test("Literal with duplicate keys keeps the last value, first position, and no duplicate keys")
+	func testLiteralDuplicateKeys() {
+		// Call the initializer directly: the compiler warns about duplicate keys in a literal.
+		var dictionary = RollingDictionary<String, Int>(dictionaryLiteral: ("A", 1), ("B", 2), ("A", 3))
+		#expect(dictionary.keys == ["A", "B"])
+		#expect(dictionary["A"] == 3)
+		#expect(dictionary["B"] == 2)
+
+		// A duplicate must not desync the ordering from the stored values when evicting.
+		dictionary.setLimit(2)
+		#expect(dictionary.keys == ["A", "B"])
+		#expect(dictionary["A"] == 3)
+		#expect(dictionary["B"] == 2)
+
+		dictionary.setLimit(1)
+		#expect(dictionary.keys == ["B"])
+		#expect(dictionary["A"] == nil)
+		#expect(dictionary["B"] == 2)
+	}
+
 	@Test("Default init has Int.max key limit")
 	func testDefaultLimitIsIntMax() {
 		let dictionary = RollingDictionary<String, Int>()
