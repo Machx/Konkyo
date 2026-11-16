@@ -183,8 +183,8 @@ struct DebouncerTests {
 		_ = bouncer
 	}
 
-	@Test("reset() after the event has already fired does not re-fire the event")
-	func testResetAfterFireDoesNotReFire() async throws {
+	@Test("reset() after the event has already fired arms a new timer that fires the event again")
+	func testResetAfterFireFiresAgain() async throws {
 		let fireCount = Atomic(0)
 		let bouncer = Debouncer(delay: 0.05) {
 			fireCount.mutate { $0 += 1 }
