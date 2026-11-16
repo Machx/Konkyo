@@ -51,6 +51,9 @@ public struct RollingDictionary<Key:Hashable,Value>:ExpressibleByDictionaryLiter
 	
 	/// Initializes a Rolling Dictionary with a dictionary literal and Int.max Maximum number of key/value pairs.
 	///
+	/// If the literal repeats a key, the last value wins and the key keeps the position of its
+	/// first occurrence, matching how assigning to an existing key through the subscript behaves.
+	///
 	/// - Parameter elements: The Dictionary literal for key/value pairs to initialize the structure with.
 	public init(dictionaryLiteral elements: (Key, Value)...) {
 		_limit = Int.max
@@ -58,8 +61,11 @@ public struct RollingDictionary<Key:Hashable,Value>:ExpressibleByDictionaryLiter
 		_dictionary = Dictionary<Key,Value>()
 		_keys = [Key]()
 		for (key,value) in elements {
-			_dictionary[key] = value
-			_keys.append(key)
+			// Only record a key in the ordering the first time it is seen, otherwise
+			// `_keys` would hold duplicates and desync from `_dictionary`.
+			if _dictionary.updateValue(value, forKey: key) == nil {
+				_keys.append(key)
+			}
 		}
 	}
 	
