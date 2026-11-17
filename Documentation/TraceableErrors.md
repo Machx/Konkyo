@@ -127,6 +127,7 @@ Notes:
 - Only the **first** underlying error is followed. If there are several, the rest are not shown.
 - If `NSUnderlyingErrorKey` holds something that isn't an `Error`, it is ignored and the chain ends.
 - `NSError` and `TraceableError` can be mixed in either order. A `TraceableError` may wrap an `NSError`, and an `NSError` may wrap a `TraceableError`.
+- Foundation's `URLError` and `CocoaError` are stored in an `Error` as their backing `NSError`, so they are covered too. They appear as `NSError - NSURLErrorDomain (-1009)` rather than under their Swift struct names, and their underlying errors are followed.
 - Every Swift `Error` bridges to `NSError` on demand, so the code checks the error's *dynamic type* (`type(of: error) is NSError.Type`) rather than using `as? NSError`. Without this check, plain Swift errors would be misreported as `NSError` lines.
 
 ---
