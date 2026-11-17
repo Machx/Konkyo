@@ -19,14 +19,24 @@ import UIKit
 public extension UIApplication {
 	/// Returns the Key Window for a UIKit application or nil if one could not be found.
 	///
+	/// Scenes in the foreground-active state are searched first. If none of them has a key
+	/// window, scenes that are foreground-inactive are searched too, because a scene is briefly
+	/// inactive while the app switcher, Control Center or a system alert is showing, or while the
+	/// scene is transitioning to or from the foreground, and its key window is still the one you want.
+	/// Scenes in the background or that are unattached are never searched.
+	///
 	/// - Returns: The Key window for a UIKit Application or nil or one could not be found.
 	func getKeyWindow() -> UIWindow? {
-		return connectedScenes
-			.lazy
-			.compactMap { $0 as? UIWindowScene }
-			.filter { $0.activationState == .foregroundActive }
-			.flatMap { $0.windows }
-			.first(where: { $0.isKeyWindow })
+		let scenes = connectedScenes.compactMap { $0 as? UIWindowScene }
+		for state in [UIScene.ActivationState.foregroundActive, .foregroundInactive] {
+			let window = scenes
+				.lazy
+				.filter { $0.activationState == state }
+				.flatMap { $0.windows }
+				.first(where: { $0.isKeyWindow })
+			if let window { return window }
+		}
+		return nil
 	}
 }
 #endif
