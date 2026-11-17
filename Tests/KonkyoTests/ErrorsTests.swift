@@ -316,4 +316,46 @@ struct ErrorsTests {
 		#expect(!lines.contains { $0.contains("…") })
 		#expect(lines.last?.hasSuffix("DatabaseError - noRecordFound") == true)
 	}
+
+	// URLError and CocoaError are stored in an `Error` existential as their backing NSError,
+	// so they are described (and unwrapped) exactly like any other NSError.
+
+	@Test("URLError is described by domain and code and not by its full dump")
+	func testURLErrorDescription() async throws {
+		let error = URLError(.notConnectedToInternet)
+		#expect(error.traceableErrorDescription() == "NSError - NSURLErrorDomain (-1009)")
+	}
+
+	@Test("CocoaError is described by domain and code")
+	func testCocoaErrorDescription() async throws {
+		let error = CocoaError(.fileNoSuchFile)
+		#expect(error.traceableErrorDescription() == "NSError - NSCocoaErrorDomain (4)")
+	}
+
+	@Test("URLError follows its underlying error")
+	func testURLErrorFollowsUnderlyingError() async throws {
+		let posix = NSError(domain: NSPOSIXErrorDomain, code: 61, userInfo: [:])
+		let error = URLError(.cannotConnectToHost, userInfo: [NSUnderlyingErrorKey: posix])
+		let expected = """
+		NSError - NSURLErrorDomain (-1004)
+		└─ NSError - NSPOSIXErrorDomain (61)
+		"""
+		#expect(error.traceableErrorDescription() == expected)
+	}
+
+	@Test("TraceableError can wrap a URLError that wraps a CocoaError")
+	func testTraceableWrapsURLErrorWrapsCocoaError() async throws {
+		let cocoa = CocoaError(.fileReadNoSuchFile)
+		let url = URLError(.cannotOpenFile, userInfo: [NSUnderlyingErrorKey: cocoa])
+		let error = WrapperError(containedError: url)
+		let lines = error.traceableErrorDescription().split(separator: "\n")
+		#expect(lines.count == 3)
+		#expect(lines[1] == "└─ NSError - NSURLErrorDomain (-3001)")
+		#expect(lines[2] == "   └─ NSError - NSCocoaErrorDomain (260)")
+	}
+
+	@Test("Ordinary Swift errors are still not reported as NSError lines")
+	func testPlainSwiftErrorNotTreatedAsNSError() async throws {
+		#expect(DatabaseError.noRecordFound.traceableErrorDescription() == "DatabaseError - noRecordFound")
+	}
 }
