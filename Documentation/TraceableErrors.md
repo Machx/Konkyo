@@ -89,13 +89,17 @@ The first line has no prefix. Each deeper level adds `└─ `, and every level 
 
 The method is a loop over the chain:
 
-1. Format `current` (initially `self`) and append it to the output.
-2. If `current` is a `TraceableError`, set `current = containedError` and continue.
-3. Otherwise, if `current` is an `NSError` with an underlying error, continue with that.
-4. Otherwise stop.
-5. Join the lines with newlines.
+1. If `current` is a reference-type error already seen in this chain, append `… (cycle detected)` and stop.
+2. If the chain has reached 100 levels, append `… (truncated at 100 levels)` and stop.
+3. Format `current` (initially `self`) and append it to the output.
+4. If `current` is a `TraceableError`, set `current = containedError` and continue.
+5. Otherwise, if `current` is an `NSError` with an underlying error, continue with that.
+6. Otherwise stop.
+7. Join the lines with newlines.
 
-Because it is iterative, a long chain cannot overflow the stack.
+Because it is iterative, a long chain cannot overflow the stack. The cycle check and the 100-level cap
+keep a malformed chain (for example a class-based error whose `containedError` returns itself, or one
+that generates a new wrapper on every access) from looping forever.
 
 ---
 

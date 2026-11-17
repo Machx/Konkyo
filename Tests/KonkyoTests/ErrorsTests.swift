@@ -48,6 +48,16 @@ private struct WrapperError: Error, TraceableError {
 	let containedError: Error
 }
 
+private final class CyclicError: Error, TraceableError, @unchecked Sendable {
+	var next: Error?
+	var containedError: Error { next ?? self }
+}
+
+private struct EndlessError: Error, TraceableError {
+	let level: Int
+	var containedError: Error { EndlessError(level: level + 1) }
+}
+
 private struct PlainStructError: Error {
 	let reason: String
 }
@@ -262,5 +272,48 @@ struct ErrorsTests {
 			userInfo: [NSUnderlyingErrorKey: "not an error"]
 		)
 		#expect(error.traceableErrorDescription() == "NSError - com.konkyo.test (42)")
+	}
+
+	@Test("A reference-type error that contains itself stops instead of looping forever")
+	func testSelfReferentialErrorTerminates() async throws {
+		let error = CyclicError()
+		error.next = error
+		let lines = error.traceableErrorDescription().split(separator: "\n")
+		#expect(lines.count == 2)
+		#expect(lines[0].hasPrefix("CyclicError - "))
+		#expect(lines[1] == "└─ … (cycle detected)")
+	}
+
+	@Test("A cycle through multiple reference-type errors is detected")
+	func testMultiErrorCycleTerminates() async throws {
+		let first = CyclicError()
+		let second = CyclicError()
+		first.next = second
+		second.next = first
+		let lines = first.traceableErrorDescription().split(separator: "\n")
+		#expect(lines.count == 3)
+		#expect(lines[0].hasPrefix("CyclicError - "))
+		#expect(lines[1].hasPrefix("└─ CyclicError - "))
+		#expect(lines[2] == "   └─ … (cycle detected)")
+	}
+
+	@Test("An endlessly generated chain is truncated at the maximum depth")
+	func testEndlessChainIsTruncated() async throws {
+		let lines = EndlessError(level: 0).traceableErrorDescription().split(separator: "\n")
+		// 100 described levels followed by one truncation marker.
+		#expect(lines.count == 101)
+		#expect(lines.last?.hasSuffix("… (truncated at 100 levels)") == true)
+	}
+
+	@Test("A long chain below the maximum depth is not truncated")
+	func testLongChainBelowLimitIsComplete() async throws {
+		var error: Error = DatabaseError.noRecordFound
+		for _ in 0..<49 {
+			error = WrapperError(containedError: error)
+		}
+		let lines = error.traceableErrorDescription().split(separator: "\n")
+		#expect(lines.count == 50)
+		#expect(!lines.contains { $0.contains("…") })
+		#expect(lines.last?.hasSuffix("DatabaseError - noRecordFound") == true)
 	}
 }
