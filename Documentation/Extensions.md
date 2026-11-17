@@ -88,7 +88,7 @@ extension UIApplication {
 }
 ```
 
-Returns the first `UIWindow` in the foreground-active scene, or `nil` if none can be found. Avoids the deprecated `keyWindow` property.
+Returns the key `UIWindow` of the foreground-active scene, or `nil` if none can be found. If no active scene has a key window, foreground-inactive scenes (for example while the app switcher, Control Center or a system alert is showing) are searched next. Background scenes are never searched. Avoids the deprecated `keyWindow` property.
 
 ```swift
 let window = UIApplication.shared.getKeyWindow()

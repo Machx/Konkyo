@@ -23,7 +23,7 @@ struct UIApplicationExtensionsTests {
 
 	/// In a headless test environment there are no active scenes, so getKeyWindow()
 	/// must return nil rather than crash.
-	@Test("getKeyWindow() returns nil when no foreground scene is active")
+	@Test("getKeyWindow() returns nil when no foreground scene is available")
 	@MainActor
 	func testGetKeyWindowReturnsNilWithNoActiveScene() {
 		let window = UIApplication.shared.getKeyWindow()
