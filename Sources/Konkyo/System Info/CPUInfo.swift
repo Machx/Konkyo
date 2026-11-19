@@ -25,11 +25,32 @@ public protocol SysctlProviding {
 public struct RealSysctlProvider: SysctlProviding {
 	public init() {}
 
+	/// Reads an integer sysctl value by name.
+	///
+	/// sysctl integer values are either 32-bit (such as `hw.ncpu`) or 64-bit (such as `hw.memsize`).
+	/// The size of the value is queried first and the value is read into a buffer of exactly that
+	/// size, so both widths are read correctly without relying on byte order or on the kernel
+	/// only partially filling a larger buffer.
+	///
+	/// - Parameter name: The sysctl name, such as `"hw.ncpu"`.
+	/// - Returns: The value, or `0` if the name doesn't exist, the call fails, or the value is not
+	///   a 32-bit or 64-bit integer.
 	public func sysctlInt(for name: String) -> Int {
-		var size = MemoryLayout<Int>.size
-		var value: Int = 0
-		sysctlbyname(name, &value, &size, nil, 0)
-		return value
+		var size = 0
+		guard sysctlbyname(name, nil, &size, nil, 0) == 0 else { return 0 }
+
+		switch size {
+		case MemoryLayout<Int32>.size:
+			var value: Int32 = 0
+			guard sysctlbyname(name, &value, &size, nil, 0) == 0 else { return 0 }
+			return Int(value)
+		case MemoryLayout<Int64>.size:
+			var value: Int64 = 0
+			guard sysctlbyname(name, &value, &size, nil, 0) == 0 else { return 0 }
+			return Int(value)
+		default:
+			return 0
+		}
 	}
 }
 
