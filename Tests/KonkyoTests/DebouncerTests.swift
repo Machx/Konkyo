@@ -223,3 +223,60 @@ struct DebouncerTests {
 		}
 	}
 }
+
+@Suite("Debouncer Memory Tests")
+struct DebouncerMemoryTests {
+
+	private final class Owner {
+		var debouncer: Debouncer?
+		init(delay: TimeInterval, action: @escaping @Sendable () -> Void = {}, weakCapture: Bool) {
+			if weakCapture {
+				debouncer = Debouncer(delay: delay) { [weak self] in
+					_ = self
+					action()
+				}
+			} else {
+				debouncer = Debouncer(delay: delay) {
+					// Strongly captures `self`, forming a retain cycle with `debouncer`.
+					_ = self
+					action()
+				}
+			}
+		}
+	}
+
+	@Test("An owner captured weakly by the action is released, even after the action fired")
+	func testWeakCaptureReleasesOwner() async throws {
+		weak var weakOwner: Owner?
+		do {
+			let owner = Owner(delay: 0.02, weakCapture: true)
+			weakOwner = owner
+			try await Task.sleep(for: .milliseconds(150)) // let the action fire once
+		}
+		#expect(weakOwner == nil)
+	}
+
+	@Test("An owner captured strongly by the action is never released (documents the retain cycle)")
+	func testStrongCaptureLeaksOwner() async throws {
+		weak var weakOwner: Owner?
+		do {
+			let owner = Owner(delay: 0.02, weakCapture: false)
+			weakOwner = owner
+			try await Task.sleep(for: .milliseconds(150))
+		}
+		#expect(weakOwner != nil)
+		// Break the cycle so the test itself doesn't leak.
+		weakOwner?.debouncer = nil
+		#expect(weakOwner == nil)
+	}
+
+	@Test("Dropping the last reference to a Debouncer before it fires means the action never runs")
+	func testDroppedDebouncerNeverFires() async throws {
+		let fireCount = Atomic(0)
+		do {
+			_ = Debouncer(delay: 0.05) { fireCount.mutate { $0 += 1 } }
+		}
+		try await Task.sleep(for: .milliseconds(200))
+		#expect(fireCount.value == 0)
+	}
+}
