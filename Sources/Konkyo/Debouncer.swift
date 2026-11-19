@@ -30,6 +30,24 @@ import Foundation
 /// — the event and cancel handlers may fire more than once or in an unexpected order.
 /// `DispatchQueue.main` and any queue created without `.concurrent` attributes are valid.
 /// If no queue is supplied, the Debouncer creates its own private serial queue.
+///
+/// ## Memory management
+///
+/// The Debouncer holds on to `action` and `cancelAction` for its whole lifetime, because
+/// `reset()` can re-arm it and run them again; they are not released after the action fires.
+/// If the object that owns the Debouncer is also captured by those closures, the two keep
+/// each other alive forever (a retain cycle). Capture the owner weakly:
+/// ```swift
+/// final class SearchModel {
+///     private lazy var debouncer = Debouncer(delay: 0.3, queue: .main) { [weak self] in
+///         self?.performSearch()
+///     }
+/// }
+/// ```
+///
+/// The Debouncer itself is only weakly referenced by its timer, so you **must keep a strong reference
+/// to it** for as long as you want it to work. If the last reference is dropped before the timer fires,
+/// neither `action` nor `cancelAction` will run.
 public final class Debouncer {
 	public typealias DebouncerAction = () -> Void
 	
