@@ -13,7 +13,7 @@
 /// See the License for the specific language governing permissions and
 /// limitations under the License.
 
-import Testing
+import Foundation
 import Konkyo
 import Testing
 
@@ -53,6 +53,31 @@ struct CPUInfoTests {
 	func testMockWithLargeCoreCount() {
 		let cpuInfo = CPUInfo(sysctlProvider: MockSysctlProvider(returnValue: 128))
 		#expect(cpuInfo.cpuCoreCount() == 128)
+	}
+
+	@Test("Real provider reads 32-bit values")
+	func testRealProviderReads32BitValue() {
+		// hw.ncpu is a 32-bit int.
+		let provider = RealSysctlProvider()
+		#expect(provider.sysctlInt(for: "hw.ncpu") == ProcessInfo.processInfo.processorCount)
+	}
+
+	@Test("Real provider reads 64-bit values")
+	func testRealProviderReads64BitValue() {
+		// hw.memsize is a 64-bit int.
+		let provider = RealSysctlProvider()
+		#expect(provider.sysctlInt(for: "hw.memsize") == Int(ProcessInfo.processInfo.physicalMemory))
+	}
+
+	@Test("Real provider returns 0 for an unknown name")
+	func testRealProviderUnknownName() {
+		#expect(RealSysctlProvider().sysctlInt(for: "konkyo.does.not.exist") == 0)
+	}
+
+	@Test("Real provider returns 0 for a value that is not a 32 or 64-bit integer")
+	func testRealProviderNonIntegerValue() {
+		// kern.ostype is the string "Darwin" (7 bytes with its terminator).
+		#expect(RealSysctlProvider().sysctlInt(for: "kern.ostype") == 0)
 	}
 
 	@Test("Mock provider returning 0 passes through as-is")
