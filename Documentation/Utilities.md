@@ -49,6 +49,15 @@ init(
 
 - The queue **must** be serial. Using a concurrent queue can cause the event and cancel handlers to fire more than once.
 - `reset()` and `cancel()` are safe to call from any thread.
+- **Avoid retain cycles.** A `Debouncer` keeps its `eventHandler` and `cancelAction` for its whole lifetime (they are not released after firing, since `reset()` can run them again). If the object that owns the `Debouncer` is captured strongly by those closures, neither can ever be freed. Capture the owner weakly:
+
+  ```swift
+  debouncer = Debouncer(delay: 0.3, queue: .main) { [weak self] in
+      self?.performSearch()
+  }
+  ```
+
+- **Keep a strong reference to the `Debouncer`.** Its timer only references it weakly, so if the last reference is dropped before the timer fires, neither the event handler nor the cancel action runs.
 - The timer starts immediately on `init`; call `reset()` to restart the delay window.
 - A debouncer is reusable: after the event handler has fired, calling `reset()` arms a new timer and the handler will fire again. The cancel action is not called for a timer that has already fired.
 
