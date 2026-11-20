@@ -6,7 +6,7 @@ Konkyo provides four threading primitives covering atomic access, mutual exclusi
 
 ## Atomic\<Value\>
 
-`Atomic<Value>` wraps any value and serializes all reads and writes through a private serial `DispatchQueue`, making the wrapped value safe to access from multiple threads.
+`Atomic<Value>` wraps any value and serializes all reads and writes through a lock, making the wrapped value safe to access from multiple threads. The lock and the value are stored inline in the `Atomic` object (it uses the standard library's `Synchronization.Mutex`), so creating one is a single heap allocation with no `DispatchQueue`.
 
 ```swift
 let counter = Atomic(0)
@@ -20,7 +20,8 @@ counter.mutate { $0 += 1 }
 
 **Notes:**
 - Do not read via `.value` and then immediately call `.mutate` expecting the value not to have changed. Use `mutate` to both read and write atomically.
-- Conforms to `Sendable` (marked `@unchecked` because the queue serializes access).
+- Conforms to `Sendable` (marked `@unchecked` because the lock serializes access).
+- Do not call `.value` or `.mutate` from inside a `mutate` closure on the same `Atomic`. The lock is not recursive, so this deadlocks.
 
 ---
 
