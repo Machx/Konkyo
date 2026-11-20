@@ -14,19 +14,27 @@
 /// limitations under the License.
 
 import Foundation
+import Synchronization
 
 /// Provides Thread Safe Atomic access to a variable
 ///
 /// 1.0.0
 public final class Atomic<Value>: @unchecked Sendable {
-	private var _value: Value
-	// Backed by this package's pthread-based `Mutex` rather than a per-instance
-	// DispatchQueue: it avoids allocating a serial queue per instance and has far
-	// lower per-access overhead than `queue.sync`.
-	private let mutex = Mutex()
+	// Backed by the standard library's `Synchronization.Mutex`, which stores the lock and the value
+	// inline in this object. That makes an `Atomic` a single heap allocation, with no per-instance
+	// DispatchQueue and no separately allocated pthread mutex. It is qualified with its module name
+	// because this package defines its own `Mutex`.
+	private let storage: Synchronization.Mutex<Box>
+
+	/// `Synchronization.Mutex` requires `Sendable` values moving in and out of it. `Atomic` is
+	/// `@unchecked Sendable` and accepts any `Value`, so the value is carried in this box. Access to
+	/// the box is always serialized by the lock.
+	private struct Box: @unchecked Sendable {
+		var value: Value
+	}
 
 	public init(_ value: Value) {
-		self._value = value
+		self.storage = Synchronization.Mutex(Box(value: value))
 	}
 
 	/// Safely Reads the value and returns the value in a thread safe manner.
@@ -34,7 +42,7 @@ public final class Atomic<Value>: @unchecked Sendable {
 	/// - returns: The wrapped value in a thread safe manner.
 	/// 1.0.0
 	public var value: Value {
-		mutex.withLock { _value }
+		storage.withLock { $0 }.value
 	}
 
 	/// Passes the value to you and allows you to safely mutate the value.
@@ -47,6 +55,6 @@ public final class Atomic<Value>: @unchecked Sendable {
 	/// - Parameter transform: a block in which the value is passed to you for safe mutation.
 	/// 1.0.0
 	public func mutate(_ transform: (inout Value) -> Void) {
-		mutex.withLock { transform(&_value) }
+		storage.withLock { transform(&$0.value) }
 	}
 }
