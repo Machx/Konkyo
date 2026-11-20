@@ -77,6 +77,15 @@ public final class Debouncer {
 	private var timer: DispatchSourceTimer
 	private let timerMutex = Mutex()
 
+	/// Identifies the most recently armed timer. Bumped by `scheduleTimer`.
+	///
+	/// Each timer captures its own generation, so the cancel handler can tell whether *its* timer's
+	/// event handler already ran without allocating any per-timer state. Guarded by `timerMutex`.
+	private var generation = 0
+
+	/// The generation of the last timer whose event handler ran, or -1 if none has. Guarded by `timerMutex`.
+	private var firedGeneration = -1
+
 	/// The Queue that the event and cancel handlers will be dispatched on.
 	private let queue: DispatchQueue
 	
@@ -111,11 +120,14 @@ public final class Debouncer {
 		}
 	}
 	
+	/// Arms `source`. Must be called with `timerMutex` held, except from `init` where nothing else can
+	/// reference the Debouncer yet.
 	private func scheduleTimer(_ source: DispatchSourceTimer) {
-		let didFireEvent = Atomic(false)
+		generation &+= 1
+		let timerGeneration = generation
 		source.setEventHandler(handler: { [weak self, weak source] in
 			guard let self else { return }
-			didFireEvent.mutate { $0 = true }
+			timerMutex.withLock { firedGeneration = timerGeneration }
 			action()
 			// Cancel the source that fired, not `self.timer`, which a concurrent
 			// `reset()` may already have replaced with a fresh timer.
@@ -123,8 +135,8 @@ public final class Debouncer {
 		})
 		if let cancelAction {
 			source.setCancelHandler(handler: { [weak self] in
-				guard self != nil else { return }
-				guard !didFireEvent.value else { return }
+				guard let self else { return }
+				guard timerMutex.withLock({ firedGeneration != timerGeneration }) else { return }
 				cancelAction()
 			})
 		}
