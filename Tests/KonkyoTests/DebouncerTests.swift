@@ -224,6 +224,49 @@ struct DebouncerTests {
 	}
 }
 
+@Suite("Debouncer Generation Tests")
+struct DebouncerGenerationTests {
+
+	@Test("Many rapid resets fire the action once and the cancel action once per superseded timer")
+	func testRapidResetsAttributeCancelsToTheRightTimer() async throws {
+		let actionCount = Atomic(0)
+		let cancelCount = Atomic(0)
+		let resets = 25
+		let debouncer = Debouncer(delay: 0.15,
+								  queue: DispatchQueue(label: "com.konkyo.test.debouncer.generation"),
+								  { actionCount.mutate { $0 += 1 } },
+								  cancelAction: { cancelCount.mutate { $0 += 1 } })
+		for _ in 0..<resets { debouncer.reset() }
+		try await Task.sleep(for: .milliseconds(500))
+
+		// The initial timer plus every reset but the last were superseded before firing.
+		#expect(actionCount.value == 1)
+		#expect(cancelCount.value == resets)
+		_ = debouncer
+	}
+
+	@Test("A timer that already fired does not report a cancel when a later reset supersedes it")
+	func testFiredTimerIsNotCountedAsCancelled() async throws {
+		let actionCount = Atomic(0)
+		let cancelCount = Atomic(0)
+		let debouncer = Debouncer(delay: 0.03,
+								  queue: DispatchQueue(label: "com.konkyo.test.debouncer.generation.fired"),
+								  { actionCount.mutate { $0 += 1 } },
+								  cancelAction: { cancelCount.mutate { $0 += 1 } })
+		try await Task.sleep(for: .milliseconds(200)) // first timer fires
+		debouncer.reset()
+		try await Task.sleep(for: .milliseconds(200)) // second timer fires
+		debouncer.reset()
+		debouncer.reset()                              // supersedes the third timer before it fires
+		try await Task.sleep(for: .milliseconds(200))
+
+		#expect(actionCount.value == 3)
+		// Only the third timer was cancelled before firing, once, by the second reset.
+		#expect(cancelCount.value == 1)
+		_ = debouncer
+	}
+}
+
 @Suite("Debouncer Memory Tests")
 struct DebouncerMemoryTests {
 
